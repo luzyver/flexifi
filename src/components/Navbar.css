@@ -1,0 +1,58 @@
+/* client/src/components/Navbar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #6a0dad; /* Warna ungu gelap */
+    padding: 15px 25px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border-radius: 10px;
+    max-width: 450px; /* Cocokkan dengan max-width container utama */
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+  
+  .navbar-brand {
+    color: #fff;
+    font-size: 1.8em;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  
+  .navbar-center {
+    display: flex;
+    gap: 25px;
+  }
+  
+  .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: #fff;
+  }
+  
+  /* Jika Anda punya tombol di navbar-right tapi disembunyikan, ini bisa dihapus */
+  .navbar-right {
+      min-width: 50px; /* Untuk menjaga layout tetap stabil */
+  }
+  
+  /* Tambahkan jika Anda menggunakan ModernApp.css */
+  /* :root {
+    --primary-color: #6a0dad;
+    --secondary-color: #8a2be2;
+    --text-color: #333;
+    --light-gray: #f4f4f4;
+    --dark-gray: #666;
+    --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+  } */

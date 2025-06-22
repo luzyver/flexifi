@@ -1,0 +1,363 @@
+/* client/src/ModernApp.css (Buat file baru ini atau gabungkan ke App.css) */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;404;500;600;700&display=swap');
+
+:root {
+  --primary-color: #6a0dad; /* Ungu gelap */
+  --secondary-color: #8a2be2; /* Ungu lebih terang */
+  --text-color: #333;
+  --light-gray: #f4f4f4;
+  --dark-gray: #666;
+  --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --success-color: #28a745; /* Hijau */
+  --danger-color: #dc3545; /* Merah */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--light-gray);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align ke atas agar tidak terlalu ke tengah jika konten panjang */
+  min-height: 100vh;
+  padding: 40px 20px; /* Tambahkan padding agar tidak mepet ke tepi */
+}
+
+.container {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  padding: 30px;
+  width: 100%;
+  max-width: 450px; /* Batasi lebar container */
+  margin: 0 auto; /* Tengahkah di halaman */
+}
+
+h1 {
+  font-size: 2.2em;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.4em;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--light-gray);
+  padding-bottom: 10px;
+  margin: 30px 0 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1em;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.balance-summary {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.balance-summary h2 {
+  font-size: 2.5em;
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.inc-exp-container {
+  background-color: var(--light-gray);
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.inc-exp-container > div {
+  flex: 1;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.inc-exp-container > div:first-of-type {
+  border-right: 1px solid #ccc;
+}
+
+.money {
+  font-size: 1.6em;
+  letter-spacing: 0.5px;
+  margin: 10px 0;
+  font-weight: 600;
+}
+
+.money.plus {
+  color: var(--success-color);
+}
+
+.money.minus {
+  color: var(--danger-color);
+}
+
+/* Form Controls */
+.form-control {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block; /* Agar label di atas input */
+  margin-bottom: 8px;
+  color: var(--dark-gray);
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='date'],
+select {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: block;
+  font-size: 1em;
+  padding: 12px 15px;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fcfcfc;
+}
+
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='date']:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2); /* Shadow saat focus */
+}
+
+.btn {
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  display: block;
+  font-size: 1.1em;
+  padding: 12px 20px;
+  width: 100%;
+  margin-top: 20px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.btn:hover {
+  background-color: var(--primary-color);
+  transform: translateY(-2px); /* Efek sedikit naik */
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Transaction List */
+.transaction-history {
+  margin-top: 40px;
+}
+
+.list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list li {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 15px 20px;
+  margin: 15px 0;
+  transition: transform 0.2s ease;
+}
+
+.list li:hover {
+  transform: translateX(5px);
+}
+
+.list li.plus {
+  border-left: 6px solid var(--success-color); /* Ubah border-right ke border-left */
+}
+
+.list li.minus {
+  border-left: 6px solid var(--danger-color);
+}
+
+.delete-btn {
+  background-color: var(--danger-color);
+  border: 0;
+  color: #fff;
+  font-size: 1.2em;
+  padding: 8px 12px; /* Lebih besar */
+  border-radius: 50%; /* Bulat */
+  cursor: pointer;
+  opacity: 0;
+  position: absolute;
+  left: -20px; /* Sembunyikan di luar */
+  top: 50%;
+  transform: translateY(-50%) scale(0.8); /* Mulai lebih kecil */
+  transition: all 0.3s ease;
+  line-height: 1; /* Pastikan 'x' di tengah */
+}
+
+.list li:hover .delete-btn {
+  opacity: 1;
+  left: -50px; /* Muncul dari kiri */
+  transform: translateY(-50%) scale(1); /* Membesar ke ukuran normal */
+}
+
+.transaction-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.transaction-details span:first-child {
+  font-weight: 500;
+  font-size: 1.1em;
+}
+
+.category-date {
+  font-size: 0.85em;
+  color: var(--dark-gray);
+  margin-top: 4px;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  font-size: 1.2em;
+  text-align: right;
+  min-width: 100px; /* Pastikan ada ruang untuk jumlah */
+}
+
+
+/* Auth Forms */
+.auth-form {
+  background-color: var(--light-gray);
+  padding: 30px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: var(--shadow-light);
+}
+
+.auth-form h3 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  border-bottom: none;
+  font-size: 1.8em;
+  color: var(--primary-color);
+}
+
+.error-message {
+  color: var(--danger-color);
+  background-color: #ffebeb;
+  border: 1px solid var(--danger-color);
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.logout-btn {
+  background-color: var(--danger-color);
+  margin-bottom: 25px;
+  width: auto; /* Agar tidak 100% lebar */
+  padding: 8px 15px;
+  font-size: 0.9em;
+  border-radius: 6px;
+  align-self: flex-end; /* Posisikan ke kanan jika container flex */
+  margin-left: auto; /* Untuk menempatkannya di pojok kanan */
+  display: block; /* Agar margin-left auto bekerja */
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+.auth-toggle-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: var(--dark-gray);
+}
+
+.toggle-link {
+  color: var(--secondary-color);
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* Filter Section */
+.filter-section {
+  margin-bottom: 25px;
+  background-color: var(--light-gray);
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-light);
+}
+
+.filter-section label {
+  margin-bottom: 5px;
+}
+
+.filter-section select {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 1em;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='date'],
+select { /* Pastikan selector ini mencakup 'select' */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: block;
+  font-size: 1em;
+  padding: 12px 15px;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fcfcfc;
+
+  /* --- Tambahkan atau modifikasi baris ini --- */
+  color: var(--text-color, #333); /* Pastikan warna teks terlihat */
+  /* Jika Anda menggunakan ModernApp.css, var(--text-color) akan lebih baik.
+     Jika tidak, gunakan warna heksa seperti #333 atau black. */
+  /* --- Akhir modifikasi --- */
+}
