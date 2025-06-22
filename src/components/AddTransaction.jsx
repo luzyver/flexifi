@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 const AddTransaction = ({ onAddTransaction }) => {
   const categoriesByType = {
     pemasukan: ['Gaji', 'Lembur', 'Joki', 'Lain-lain Pemasukan'],
-    pengeluaran: ['Makanan', 'Transportasi', 'Belanja', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
+    pengeluaran: ['Makanan', 'Transportasi', 'Jajan', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
   };
 
   // Helper untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
