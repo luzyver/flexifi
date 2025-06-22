@@ -3,8 +3,8 @@ import React from 'react';
 import { formatRupiah } from '../utils/formatCurrency'; // Import fungsi helper
 
 const Transaction = ({ transaction, onDeleteTransaction }) => {
-  const sign = transaction.type === 'expense' ? '-' : '+'; // Tanda tetap ada
-  const transactionClass = transaction.type === 'expense' ? 'minus' : 'plus';
+  const sign = transaction.type === 'pengeluaran' ? '-' : '+'; // Tanda tetap ada
+  const transactionClass = transaction.type === 'pengeluaran' ? 'minus' : 'plus';
 
   // Format tanggal transaksi (transaction.date) ke WIB
   // Note: transaction.date adalah tanggal yang diinput user
