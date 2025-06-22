@@ -90,7 +90,7 @@ const AddTransaction = ({ onAddTransaction }) => {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Enter amount..."
-          step="0.01"
+          step="5000"
         />
       </div>
       <div className="form-control">
