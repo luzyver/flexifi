@@ -154,8 +154,11 @@ function App() {
                 expense={totalExpense}
                 balance={balance}
                 onAddTransaction={addTransaction}
-                transactions={filteredTransactions} // Pass transactions for history on home
-                onDeleteTransaction={deleteTransaction} // Pass delete for history on home
+                transactions={filteredTransactions}
+                onDeleteTransaction={deleteTransaction}
+                filterMonth={filterMonth} // Pass to HomePage
+                setFilterMonth={setFilterMonth} // Pass to HomePage
+                availableMonths={availableMonths} // Pass to HomePage
               />
             }
           />
@@ -165,9 +168,7 @@ function App() {
               <HistoryPage
                 transactions={filteredTransactions}
                 onDeleteTransaction={deleteTransaction}
-                filterMonth={filterMonth}
-                setFilterMonth={setFilterMonth}
-                availableMonths={availableMonths}
+                // Removed filterMonth, setFilterMonth, availableMonths props from here
               />
             }
           />
