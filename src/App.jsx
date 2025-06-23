@@ -1,21 +1,31 @@
 // client/src/App.jsx
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
+import './App.css'; // Perubahan pada CSS utama
 
 // Import komponen halaman
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import Navbar from './components/Navbar';
 
+// Komponen layout dasar untuk dashboard
+const DashboardLayout = ({ children }) => {
+  return (
+    <div className="dashboard-container">
+      <Navbar />
+      <div className="main-content">
+        {children}
+      </div>
+    </div>
+  );
+};
+
 // Dapatkan URL dasar API dari variabel lingkungan Vite
-// import.meta.env adalah objek khusus Vite untuk variabel lingkungan
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Pastikan API_BASE_URL tersedia
 if (!API_BASE_URL) {
   console.error("VITE_API_BASE_URL is not defined in the environment. Please check your .env files.");
-  // Anda mungkin ingin menampilkan pesan error di UI atau keluar dari aplikasi di sini.
 }
 
 function App() {
@@ -25,7 +35,6 @@ function App() {
   const [filterMonth, setFilterMonth] = useState('');
 
   useEffect(() => {
-    // Membuat AbortController untuk membatalkan fetch
     const abortController = new AbortController();
     const signal = abortController.signal;
 
@@ -34,7 +43,6 @@ function App() {
       setError(null);
 
       try {
-        // Gunakan API_BASE_URL
         const res = await fetch(`${API_BASE_URL}/transactions`, { signal });
         
         if (signal.aborted) {
@@ -79,7 +87,6 @@ function App() {
 
   const addTransaction = async (transaction) => {
     try {
-      // Gunakan API_BASE_URL
       const res = await fetch(`${API_BASE_URL}/transactions`, {
         method: 'POST',
         headers: {
@@ -100,7 +107,6 @@ function App() {
 
   const deleteTransaction = async (id) => {
     try {
-      // Gunakan API_BASE_URL
       const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
         method: 'DELETE',
       });
@@ -135,9 +141,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
-      <div className="container">
-        <h1>Money Tracker</h1>
+      <DashboardLayout>
         {error && <div className="error-message">{error}</div>}
         {loading && transactions.length === 0 && <div>Loading transactions...</div>}
 
@@ -150,6 +154,8 @@ function App() {
                 expense={totalExpense}
                 balance={balance}
                 onAddTransaction={addTransaction}
+                transactions={filteredTransactions} // Pass transactions for history on home
+                onDeleteTransaction={deleteTransaction} // Pass delete for history on home
               />
             }
           />
@@ -166,7 +172,7 @@ function App() {
             }
           />
         </Routes>
-      </div>
+      </DashboardLayout>
     </Router>
   );
 }

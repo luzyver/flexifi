@@ -1,17 +1,20 @@
-/* client/src/ModernApp.css (Buat file baru ini atau gabungkan ke App.css) */
+/* client/src/App.css */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;404;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary-color: #6a0dad; /* Ungu gelap */
-  --secondary-color: #8a2be2; /* Ungu lebih terang */
+  --primary-color: #4a007c; /* Darker Purple for brand */
+  --secondary-color: #8a2be2; /* Medium Purple for accents/buttons */
+  --accent-color: #00bcd4; /* Cyan for highlights/income */
+  --danger-color: #e53935; /* Red for expenses/delete */
   --text-color: #333;
-  --light-gray: #f4f4f4;
-  --dark-gray: #666;
-  --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.1);
-  --success-color: #28a745; /* Hijau */
-  --danger-color: #dc3545; /* Merah */
+  --light-text-color: #666;
+  --bg-light: #f4f7f6; /* Light background for main content */
+  --bg-dark: #e0e5eb; /* Slightly darker background for overall dashboard */
+  --card-bg: #ffffff;
+  --border-color: #e0e0e0;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -22,22 +25,45 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: var(--light-gray);
+  background-color: var(--bg-dark); /* Overall dashboard background */
   display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align ke atas agar tidak terlalu ke tengah jika konten panjang */
   min-height: 100vh;
-  padding: 40px 20px; /* Tambahkan padding agar tidak mepet ke tepi */
+  padding: 0;
+  width: 100%; /* Ensure body takes full width */
 }
 
-.container {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: var(--shadow-medium);
-  padding: 30px;
+#root {
   width: 100%;
-  max-width: 450px; /* Batasi lebar container */
-  margin: 0 auto; /* Tengahkah di halaman */
+  display: flex;
+  flex-direction: column; /* Default for mobile: stacked */
+  min-height: 100vh;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column for mobile */
+  grid-template-rows: auto 1fr; /* Navbar on top, content below */
+  width: 100%;
+  min-height: 100vh; /* Fill entire viewport height */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+.main-content {
+  background-color: var(--bg-light); /* Lighter background for the main area */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between sections/widgets */
+  overflow-y: auto; /* Allow scrolling if content is long */
+}
+
+/* Card Styling for Dashboard elements */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  padding: 25px;
 }
 
 h1 {
@@ -51,16 +77,16 @@ h1 {
 h3 {
   font-size: 1.4em;
   color: var(--text-color);
-  border-bottom: 2px solid var(--light-gray);
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 10px;
-  margin: 30px 0 20px;
+  margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
 }
 
 h4 {
   font-size: 1em;
-  color: var(--dark-gray);
+  color: var(--light-text-color);
   text-transform: uppercase;
   margin-bottom: 8px;
   font-weight: 500;
@@ -68,49 +94,60 @@ h4 {
 
 .balance-summary {
   text-align: center;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; -> Handled by gap in main-content */
 }
 
 .balance-summary h2 {
-  font-size: 2.5em;
-  color: var(--text-color);
-  margin-bottom: 15px;
+  font-size: 2.8em; /* Larger balance text */
+  color: var(--primary-color);
+  margin-bottom: 20px;
   font-weight: 700;
 }
 
 .inc-exp-container {
-  background-color: var(--light-gray);
-  border-radius: 8px;
-  box-shadow: var(--shadow-light);
-  padding: 20px;
+  background-color: var(--bg-light); /* Use lighter background for this container */
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm); /* Lighter shadow */
+  padding: 15px;
   display: flex;
   justify-content: space-around;
-  margin: 20px 0;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .inc-exp-container > div {
   flex: 1;
   text-align: center;
-  padding: 0 10px;
+  padding: 10px 15px;
+  min-width: 130px;
 }
 
 .inc-exp-container > div:first-of-type {
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--border-color);
+}
+
+@media (max-width: 600px) {
+  .inc-exp-container > div:first-of-type {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+  }
 }
 
 .money {
   font-size: 1.6em;
   letter-spacing: 0.5px;
-  margin: 10px 0;
+  margin-top: 10px;
   font-weight: 600;
 }
 
 .money.plus {
-  color: var(--success-color);
+  color: var(--accent-color); /* Income color */
 }
 
 .money.minus {
-  color: var(--danger-color);
+  color: var(--danger-color); /* Expense color */
 }
 
 /* Form Controls */
@@ -119,9 +156,9 @@ h4 {
 }
 
 label {
-  display: block; /* Agar label di atas input */
+  display: block;
   margin-bottom: 8px;
-  color: var(--dark-gray);
+  color: var(--light-text-color);
   font-weight: 500;
   font-size: 0.95em;
 }
@@ -130,14 +167,15 @@ input[type='text'],
 input[type='number'],
 input[type='date'],
 select {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   display: block;
   font-size: 1em;
   padding: 12px 15px;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-color: #fcfcfc;
+  background-color: var(--bg-light); /* Lighter input background */
+  color: var(--text-color);
 }
 
 input[type='text']:focus,
@@ -145,8 +183,8 @@ input[type='number']:focus,
 input[type='date']:focus,
 select:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2); /* Shadow saat focus */
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2); /* Shadow on focus */
 }
 
 .btn {
@@ -166,7 +204,7 @@ select:focus {
 
 .btn:hover {
   background-color: var(--primary-color);
-  transform: translateY(-2px); /* Efek sedikit naik */
+  transform: translateY(-2px);
 }
 
 .btn:active {
@@ -180,7 +218,7 @@ select:focus {
 
 /* Transaction List */
 .transaction-history {
-  margin-top: 40px;
+  /* margin-top handled by gap in main-content */
 }
 
 .list {
@@ -189,29 +227,32 @@ select:focus {
 }
 
 .list li {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: var(--shadow-light);
+  box-shadow: var(--shadow-sm);
   color: var(--text-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   padding: 15px 20px;
-  margin: 15px 0;
-  transition: transform 0.2s ease;
+  margin: 10px 0; /* Smaller margin for list items */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  border-left: 6px solid transparent; /* Default transparent border */
 }
 
 .list li:hover {
   transform: translateX(5px);
+  box-shadow: var(--shadow-md);
 }
 
 .list li.plus {
-  border-left: 6px solid var(--success-color); /* Ubah border-right ke border-left */
+  border-left-color: var(--accent-color);
 }
 
 .list li.minus {
-  border-left: 6px solid var(--danger-color);
+  border-left-color: var(--danger-color);
 }
 
 .delete-btn {
@@ -219,22 +260,22 @@ select:focus {
   border: 0;
   color: #fff;
   font-size: 1.2em;
-  padding: 8px 12px; /* Lebih besar */
-  border-radius: 50%; /* Bulat */
+  padding: 8px 12px;
+  border-radius: 50%;
   cursor: pointer;
   opacity: 0;
   position: absolute;
-  left: -20px; /* Sembunyikan di luar */
+  left: -20px;
   top: 50%;
-  transform: translateY(-50%) scale(0.8); /* Mulai lebih kecil */
+  transform: translateY(-50%) scale(0.8);
   transition: all 0.3s ease;
-  line-height: 1; /* Pastikan 'x' di tengah */
+  line-height: 1;
 }
 
 .list li:hover .delete-btn {
   opacity: 1;
-  left: -50px; /* Muncul dari kiri */
-  transform: translateY(-50%) scale(1); /* Membesar ke ukuran normal */
+  left: -50px;
+  transform: translateY(-50%) scale(1);
 }
 
 .transaction-details {
@@ -246,11 +287,18 @@ select:focus {
 .transaction-details span:first-child {
   font-weight: 500;
   font-size: 1.1em;
+  color: var(--text-color);
 }
 
 .category-date {
   font-size: 0.85em;
-  color: var(--dark-gray);
+  color: var(--light-text-color);
+  margin-top: 4px;
+}
+
+.created-at {
+  font-size: 0.75em;
+  color: #999;
   margin-top: 4px;
 }
 
@@ -258,106 +306,129 @@ select:focus {
   font-weight: 600;
   font-size: 1.2em;
   text-align: right;
-  min-width: 100px; /* Pastikan ada ruang untuk jumlah */
-}
-
-
-/* Auth Forms */
-.auth-form {
-  background-color: var(--light-gray);
-  padding: 30px;
-  border-radius: 10px;
-  margin-top: 30px;
-  box-shadow: var(--shadow-light);
-}
-
-.auth-form h3 {
-  margin-top: 0;
-  margin-bottom: 25px;
-  border-bottom: none;
-  font-size: 1.8em;
-  color: var(--primary-color);
-}
-
-.error-message {
-  color: var(--danger-color);
-  background-color: #ffebeb;
-  border: 1px solid var(--danger-color);
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  font-size: 0.9em;
-  text-align: center;
-}
-
-.logout-btn {
-  background-color: var(--danger-color);
-  margin-bottom: 25px;
-  width: auto; /* Agar tidak 100% lebar */
-  padding: 8px 15px;
-  font-size: 0.9em;
-  border-radius: 6px;
-  align-self: flex-end; /* Posisikan ke kanan jika container flex */
-  margin-left: auto; /* Untuk menempatkannya di pojok kanan */
-  display: block; /* Agar margin-left auto bekerja */
-}
-
-.logout-btn:hover {
-  background-color: #c0392b;
-}
-
-.auth-toggle-text {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.9em;
-  color: var(--dark-gray);
-}
-
-.toggle-link {
-  color: var(--secondary-color);
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: 500;
+  min-width: 100px;
 }
 
 /* Filter Section */
 .filter-section {
-  margin-bottom: 25px;
-  background-color: var(--light-gray);
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-light);
+  /* margin-bottom handled by gap in main-content */
 }
 
-.filter-section label {
-  margin-bottom: 5px;
+/* Dashboard-specific styling for HomePage sections */
+.home-page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between balance and add transaction cards */
 }
 
-.filter-section select {
-  width: 100%;
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 1em;
-  background-color: #fff;
-  border: 1px solid #ddd;
+.add-transaction-form {
+  /* Use .card directly */
 }
 
-input[type='text'],
-input[type='number'],
-input[type='date'],
-select { /* Pastikan selector ini mencakup 'select' */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  display: block;
-  font-size: 1em;
-  padding: 12px 15px;
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-color: #fcfcfc;
+/* Media Queries for Responsive Dashboard */
 
-  /* --- Tambahkan atau modifikasi baris ini --- */
-  color: var(--text-color, #333); /* Pastikan warna teks terlihat */
-  /* Jika Anda menggunakan ModernApp.css, var(--text-color) akan lebih baik.
-     Jika tidak, gunakan warna heksa seperti #333 atau black. */
-  /* --- Akhir modifikasi --- */
+/* Tablet and larger screens (Sidebar layout) */
+@media (min-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 220px 1fr; /* Fixed sidebar width */
+    grid-template-rows: 1fr; /* Content takes full height */
+  }
+
+  .navbar { /* Navbar becomes sidebar */
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 25px 20px;
+    margin: 0;
+    height: 100%; /* Fill sidebar height */
+    border-radius: 0; /* Remove border-radius for sidebar look */
+    box-shadow: var(--shadow-md); /* Consistent shadow */
+  }
+
+  .navbar-brand {
+    margin-bottom: 40px; /* More space from brand to links */
+    font-size: 2em;
+  }
+
+  .navbar-center {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .nav-link {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: left; /* Align text to left in sidebar */
+  }
+
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Slightly brighter hover */
+    color: #fff;
+  }
+
+  .main-content {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    padding: 30px;
+  }
+
+  h3 {
+    text-align: left; /* Align section titles to left */
+    border-bottom: 2px solid var(--border-color); /* Keep border for sections */
+  }
+
+  /* Homepage layout for larger screens */
+  .home-page-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 20px;
+  }
+
+  .balance-summary {
+    grid-column: span 2; /* Balance takes full width on its row */
+    margin-bottom: 0;
+  }
+
+  .add-transaction-form {
+    grid-column: 1 / 2; /* Add transaction form in first column */
+  }
+
+  .transaction-history {
+    grid-column: 2 / 3; /* Transaction history in second column */
+  }
+
+  /* Specific adjustment for when HistoryPage is active */
+  .history-page-layout .filter-section {
+    grid-column: span 2; /* Filter takes full width at the top */
+  }
+  .history-page-layout .transaction-history {
+    grid-column: span 2; /* Transaction list takes full width below filter */
+  }
+}
+
+/* Desktop and larger screens (optional for more specific adjustments) */
+@media (min-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 250px 1fr; /* Slightly wider sidebar */
+  }
+
+  .main-content {
+    padding: 40px; /* More padding for larger screens */
+  }
+
+  .home-page-layout {
+    grid-template-columns: 1.5fr 1fr; /* Adjust column ratio */
+  }
+  .add-transaction-form {
+    grid-column: 2 / 3; /* Swap places for form and history on desktop */
+  }
+  .transaction-history {
+    grid-column: 1 / 2;
+  }
 }

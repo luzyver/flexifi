@@ -5,7 +5,7 @@ import { formatRupiah } from '../utils/formatCurrency'; // Import fungsi helper
 const Balance = ({ income, expense, balance }) => {
   return (
     <div className="balance-summary">
-      <h2>Your Balance: {formatRupiah(balance)}</h2>
+      <h2>{formatRupiah(balance)}</h2> {/* Removed "Your Balance" text as it's now in HomePage's H3 */}
       <div className="inc-exp-container">
         <div>
           <h4>Income</h4>
