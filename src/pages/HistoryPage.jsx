@@ -27,7 +27,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   onClick={() => paginate(currentPage - 1)}
                   className="pagination-arrow"
                 >
-                  &laquo; Previous
+                  &laquo;
                 </button>
               )}
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => {
@@ -49,7 +49,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   onClick={() => paginate(currentPage + 1)}
                   className="pagination-arrow"
                 >
-                  Next &raquo;
+                  &raquo;
                 </button>
               )}
             </div>
