@@ -1,20 +1,26 @@
-// client/src/components/Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Navbar.css'; // Buat file CSS baru untuk Navbar jika belum ada
 
-const Navbar = () => { // Tidak ada props user atau onLogout
+const Navbar = () => {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  const toggleNav = () => {
+    setIsNavOpen(!isNavOpen);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-brand">Money Tracker</Link>
       </div>
-      <div className="navbar-center">
-        <Link to="/" className="nav-link">Home</Link>
-        <Link to="/history" className="nav-link">History</Link>
+      <div className={`navbar-center ${isNavOpen ? 'open' : ''}`}>
+        <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
+        <Link to="/history" className="nav-link" onClick={() => setIsNavOpen(false)}>History</Link>
       </div>
       <div className="navbar-right">
-        {/* Tidak ada tombol login/logout di sini */}
+        <button className="hamburger-icon" onClick={toggleNav}>
+          &#9776; {/* Hamburger icon */}
+        </button>
       </div>
     </nav>
   );

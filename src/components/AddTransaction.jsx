@@ -1,5 +1,5 @@
-// client/src/components/AddTransaction.jsx
 import React, { useState } from 'react';
+import ValidationDialog from './ValidationDialog';
 
 const AddTransaction = ({ onAddTransaction }) => {
   const categoriesByType = {
@@ -7,11 +7,10 @@ const AddTransaction = ({ onAddTransaction }) => {
     pengeluaran: ['Makanan', 'Transportasi', 'Jajan', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
   };
 
-  // Helper untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Bulan 0-indexed
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
@@ -19,31 +18,29 @@ const AddTransaction = ({ onAddTransaction }) => {
   const [type, setType] = useState('pengeluaran');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-
-  // Perubahan PENTING di sini: Inisialisasi category dengan default untuk 'pengeluaran'
   const [category, setCategory] = useState(categoriesByType['pengeluaran'][0] || '');
-
-  // Perubahan PENTING di sini: Inisialisasi date dengan tanggal hari ini
   const [date, setDate] = useState(getTodayDate());
+  const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
 
   const handleTypeChange = (e) => {
     const newType = e.target.value;
     setType(newType);
-    // Reset category saat type berubah, atau set ke default pertama dari kategori baru
     setCategory(categoriesByType[newType][0] || '');
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
-    // Validasi sekarang harus berfungsi lebih baik karena category dan date memiliki nilai awal
     if (!description || !amount || !category || !date) {
-      alert('Please fill in all fields');
+      setValidationMessage('Please fill in all fields');
+      setValidationDialogOpen(true);
       return;
     }
 
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount)) {
-      alert('Amount must be a valid number');
+      setValidationMessage('Amount must be a valid number');
+      setValidationDialogOpen(true);
       return;
     }
 
@@ -57,62 +54,70 @@ const AddTransaction = ({ onAddTransaction }) => {
 
     onAddTransaction(newTransaction);
 
-    // Reset form setelah submit, pastikan category dan date direset ke default
     setDescription('');
     setAmount('');
-    setCategory(categoriesByType[type][0] || ''); // Reset category sesuai type saat ini
-    setDate(getTodayDate()); // Reset date ke hari ini
+    setCategory(categoriesByType[type][0] || '');
+    setDate(getTodayDate());
   };
 
   return (
-    <form onSubmit={onSubmit} className="add-transaction-form">
-      <h3>Add New Transaction</h3>
-      <div className="form-control">
-        <label htmlFor="type">Type</label>
-        <select value={type} onChange={handleTypeChange}>
-          <option value="pengeluaran">Pengeluaran</option>
-          <option value="pemasukan">Pemasukan</option>
-        </select>
-      </div>
-      <div className="form-control">
-        <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter description..."
+    <>
+      <form onSubmit={onSubmit}>
+        <div className="form-control">
+          <label htmlFor="type">Type</label>
+          <select id="type" value={type} onChange={handleTypeChange}>
+            <option value="pengeluaran">Pengeluaran</option>
+            <option value="pemasukan">Pemasukan</option>
+          </select>
+        </div>
+        <div className="form-control">
+          <label htmlFor="description">Description</label>
+          <input
+            id="description"
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description..."
+          />
+        </div>
+        <div className="form-control">
+          <label htmlFor="amount">Amount</label>
+          <input
+            id="amount"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount..."
+            step="1000"
+          />
+        </div>
+        <div className="form-control">
+          <label htmlFor="category">Category</label>
+          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+            {categoriesByType[type].map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-control">
+          <label htmlFor="date">Date</label>
+          <input
+            id="date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+        <button type="submit" className="btn">Add Transaction</button>
+      </form>
+      <ValidationDialog
+          message={validationMessage}
+          isOpen={isValidationDialogOpen}
+          onClose={() => setValidationDialogOpen(false)}
         />
-      </div>
-      <div className="form-control">
-        <label htmlFor="amount">Amount</label>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Enter amount..."
-          step="5000"
-        />
-      </div>
-      <div className="form-control">
-        <label htmlFor="category">Category</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {categoriesByType[type].map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="form-control">
-        <label htmlFor="date">Date</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-      </div>
-      <button type="submit" className="btn">Add Transaction</button>
-    </form>
+    </>
   );
 };
 

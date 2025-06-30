@@ -1,20 +1,25 @@
-// client/src/components/TransactionList.jsx
 import React from 'react';
 import Transaction from './Transaction';
 
-const TransactionList = ({ transactions, onDeleteTransaction }) => {
+const TransactionList = ({ title, transactions, onDeleteTransaction, limit }) => {
+  const transactionsToDisplay = limit ? transactions.slice(0, limit) : transactions;
+
   return (
     <div className="transaction-history">
-      <h3>History</h3>
-      <ul className="list">
-        {transactions.map((transaction) => (
-          <Transaction
-            key={transaction._id}
-            transaction={transaction}
-            onDeleteTransaction={onDeleteTransaction}
-          />
-        ))}
-      </ul>
+      <h3>{title}</h3>
+      {transactionsToDisplay.length > 0 ? (
+        <ul className="list">
+          {transactionsToDisplay.map((transaction) => (
+            <Transaction
+              key={transaction._id}
+              transaction={transaction}
+              onDeleteTransaction={onDeleteTransaction}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p>No transactions found for this period.</p>
+      )}
     </div>
   );
 };
