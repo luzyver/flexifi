@@ -18,15 +18,6 @@ const HomePage = ({
     <>
       <h1>Dashboard</h1>
       <div className="home-page-layout">
-        <div className="card balance-card">
-          <Balance income={income} expense={expense} balance={balance} />
-        </div>
-
-        <div className="card add-transaction-form">
-          <h3>Add New Transaction</h3>
-          <AddTransaction onAddTransaction={onAddTransaction} />
-        </div>
-
         <div className="card filter-section">
           <h3>Filter Transactions</h3>
           <div className="form-control">
@@ -44,6 +35,15 @@ const HomePage = ({
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="card balance-card">
+          <Balance income={income} expense={expense} balance={balance} />
+        </div>
+
+        <div className="card add-transaction-form">
+          <h3>Add New Transaction</h3>
+          <AddTransaction onAddTransaction={onAddTransaction} />
         </div>
 
         <div className="card transaction-history">
