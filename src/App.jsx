@@ -1,14 +1,13 @@
-// client/src/App.jsx
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'; // Perubahan pada CSS utama
+import './App.css';
 
-// Import komponen halaman
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import Navbar from './components/Navbar';
+import ValidationDialog from './components/ValidationDialog';
+import ConfirmationDialog from './components/ConfirmationDialog';
 
-// Komponen layout dasar untuk dashboard
 const DashboardLayout = ({ children }) => {
   return (
     <div className="dashboard-container">
@@ -20,10 +19,8 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-// Dapatkan URL dasar API dari variabel lingkungan Vite
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Pastikan API_BASE_URL tersedia
 if (!API_BASE_URL) {
   console.error("VITE_API_BASE_URL is not defined in the environment. Please check your .env files.");
 }
@@ -33,6 +30,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterMonth, setFilterMonth] = useState('');
+  const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
+  const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -46,7 +47,7 @@ function App() {
         const res = await fetch(`${API_BASE_URL}/transactions`, { signal });
         
         if (signal.aborted) {
-          console.log('Fetch was intentionally aborted by cleanup.');
+          console.log('Fetch was intentionally aborted by cleanup.'); 
           return;
         }
 
@@ -98,27 +99,44 @@ function App() {
       if (res.ok && data.success) {
         setTransactions([data.data, ...transactions]);
       } else {
-        alert(data.error || `Failed to add transaction (Status: ${res.status}).`);
+        setValidationMessage(data.error || `Failed to add transaction (Status: ${res.status}).`);
+        setValidationDialogOpen(true);
       }
     } catch (err) {
-      alert('Error adding transaction: ' + err.message);
+      setValidationMessage('Error adding transaction: ' + err.message);
+      setValidationDialogOpen(true);
     }
   };
 
-  const deleteTransaction = async (id) => {
+  const handleDeleteClick = (id) => {
+    setTransactionToDeleteId(id);
+    setConfirmationDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setConfirmationDialogOpen(false);
     try {
-      const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/transactions/${transactionToDeleteId}`, {
         method: 'DELETE',
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setTransactions(transactions.filter((transaction) => transaction._id !== id));
+        setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
       } else {
-        alert(data.error || `Failed to delete transaction (Status: ${res.status}).`);
+        setValidationMessage(data.error || `Failed to delete transaction (Status: ${res.status}).`);
+        setValidationDialogOpen(true);
       }
     } catch (err) {
-      alert('Error deleting transaction: ' + err.message);
+      setValidationMessage('Error deleting transaction: ' + err.message);
+      setValidationDialogOpen(true);
+    } finally {
+      setTransactionToDeleteId(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmationDialogOpen(false);
+    setTransactionToDeleteId(null);
   };
 
   const filteredTransactions = filterMonth
@@ -140,12 +158,12 @@ function App() {
   const availableMonths = getAvailableMonths();
 
   return (
-    <Router>
-      <DashboardLayout>
-        {error && <div className="error-message">{error}</div>}
-        {loading && transactions.length === 0 && <div>Loading transactions...</div>}
+    <Router> {/* */}
+      <DashboardLayout> {/* */}
+        {error && <div className="error-message">{error}</div>} {/* */}
+        {loading && transactions.length === 0 && <div>Loading transactions...</div>} {/* */}
 
-        <Routes>
+        <Routes> {/* */}
           <Route
             path="/"
             element={
@@ -155,10 +173,10 @@ function App() {
                 balance={balance}
                 onAddTransaction={addTransaction}
                 transactions={filteredTransactions}
-                onDeleteTransaction={deleteTransaction}
-                filterMonth={filterMonth} // Pass to HomePage
-                setFilterMonth={setFilterMonth} // Pass to HomePage
-                availableMonths={availableMonths} // Pass to HomePage
+                onDeleteTransaction={handleDeleteClick}
+                filterMonth={filterMonth}
+                setFilterMonth={setFilterMonth}
+                availableMonths={availableMonths}
               />
             }
           />
@@ -167,12 +185,22 @@ function App() {
             element={
               <HistoryPage
                 transactions={filteredTransactions}
-                onDeleteTransaction={deleteTransaction}
-                // Removed filterMonth, setFilterMonth, availableMonths props from here
+                onDeleteTransaction={handleDeleteClick}
               />
             }
           />
         </Routes>
+        <ValidationDialog
+          message={validationMessage}
+          isOpen={isValidationDialogOpen}
+          onClose={() => setValidationDialogOpen(false)}
+        />
+        <ConfirmationDialog
+          message="Are you sure you want to delete this transaction?"
+          isOpen={isConfirmationDialogOpen}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
       </DashboardLayout>
     </Router>
   );

@@ -1,18 +1,17 @@
-// client/src/components/Balance.jsx
 import React from 'react';
-import { formatRupiah } from '../utils/formatCurrency'; // Import fungsi helper
+import { formatRupiah } from '../utils/formatCurrency';
 
 const Balance = ({ income, expense, balance }) => {
   return (
     <div className="balance-summary">
-      <h2>{formatRupiah(balance)}</h2> {/* Removed "Your Balance" text as it's now in HomePage's H3 */}
+      <h2>{formatRupiah(balance)}</h2>
       <div className="inc-exp-container">
         <div>
-          <h4>Income</h4>
+          <h4>Pemasukan</h4>
           <p className="money plus">{formatRupiah(income)}</p>
         </div>
         <div>
-          <h4>Expense</h4>
+          <h4>Pengeluaran</h4>
           <p className="money minus">{formatRupiah(expense)}</p>
         </div>
       </div>
