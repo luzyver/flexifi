@@ -1,3 +1,7 @@
+/* client/src/App.css */
+
+/* 1. Google Fonts & Variables
+-------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
@@ -12,9 +16,11 @@
   --card-bg: #ffffff;
   --border-color: #dee2e6;
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --border-radius: 0.5rem;
+  --border-radius: 0.5rem; /* 8px */
 }
 
+/* 2. Base & Global Styles
+-------------------------------------------------- */
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-light);
@@ -332,6 +338,7 @@ select:focus {
   }
 
   .navbar-center {
+    display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
@@ -383,12 +390,12 @@ select:focus {
     grid-template-rows: auto auto 1fr;
   }
 
-  .balance-card {
+  .filter-section {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
   }
 
-  .filter-section {
+  .balance-card {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
   }

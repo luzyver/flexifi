@@ -7,6 +7,7 @@ import HistoryPage from './pages/HistoryPage';
 import Navbar from './components/Navbar';
 import ValidationDialog from './components/ValidationDialog';
 import ConfirmationDialog from './components/ConfirmationDialog';
+import LoadingOverlay from './components/LoadingOverlay';
 
 const DashboardLayout = ({ children }) => {
   return (
@@ -158,12 +159,11 @@ function App() {
   const availableMonths = getAvailableMonths();
 
   return (
-    <Router> {/* */}
-      <DashboardLayout> {/* */}
-        {error && <div className="error-message">{error}</div>} {/* */}
-        {loading && transactions.length === 0 && <div>Loading transactions...</div>} {/* */}
+    <Router>
+      <DashboardLayout>
+        {error && <div className="error-message">{error}</div>}
 
-        <Routes> {/* */}
+        <Routes>
           <Route
             path="/"
             element={
@@ -201,6 +201,7 @@ function App() {
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />
+        <LoadingOverlay isLoading={loading} />
       </DashboardLayout>
     </Router>
   );
