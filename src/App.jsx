@@ -4,6 +4,7 @@ import './App.css';
 
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
+import LoginPage from './pages/LoginPage';
 import Navbar from './components/Navbar';
 import ValidationDialog from './components/ValidationDialog';
 import ConfirmationDialog from './components/ConfirmationDialog';
@@ -27,8 +28,9 @@ if (!API_BASE_URL) {
 }
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filterMonth, setFilterMonth] = useState('');
   const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
@@ -36,47 +38,54 @@ function App() {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
 
+  const handleLogin = () => {
+    setLoading(true);
+    setIsAuthenticated(true);
+  };
+
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    const performFetchTransactions = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/transactions`, { signal });
-        
-        if (signal.aborted) {
-          console.log('Fetch was intentionally aborted by cleanup.'); 
-          return;
+    if (isAuthenticated) {
+      const abortController = new AbortController();
+      const signal = abortController.signal;
+  
+      const performFetchTransactions = async () => {
+        setLoading(true);
+        setError(null);
+  
+        try {
+          const res = await fetch(`${API_BASE_URL}/transactions`, { signal });
+          
+          if (signal.aborted) {
+            console.log('Fetch was intentionally aborted by cleanup.'); 
+            return;
+          }
+  
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setTransactions(data.data);
+          } else {
+            setError(data.error || `Failed to fetch transactions (Status: ${res.status}).`);
+          }
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            console.log('Fetch request was cancelled by AbortController.');
+          } else {
+            setError('Network error or server unreachable: ' + err.message);
+          }
+        } finally {
+          if (!signal.aborted) {
+            setLoading(false);
+          }
         }
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          setTransactions(data.data);
-        } else {
-          setError(data.error || `Failed to fetch transactions (Status: ${res.status}).`);
-        }
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          console.log('Fetch request was cancelled by AbortController.');
-        } else {
-          setError('Network error or server unreachable: ' + err.message);
-        }
-      } finally {
-        if (!signal.aborted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    performFetchTransactions();
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
+      };
+  
+      performFetchTransactions();
+  
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [isAuthenticated]);
 
   const getAvailableMonths = () => {
     const months = new Set();
@@ -160,49 +169,53 @@ function App() {
 
   return (
     <Router>
-      <DashboardLayout>
-        {error && <div className="error-message">{error}</div>}
+      {!isAuthenticated ? (
+        <LoginPage onLogin={handleLogin} />
+      ) : (
+        <DashboardLayout>
+          {error && <div className="error-message">{error}</div>}
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                income={totalIncome}
-                expense={totalExpense}
-                balance={balance}
-                onAddTransaction={addTransaction}
-                transactions={filteredTransactions}
-                onDeleteTransaction={handleDeleteClick}
-                filterMonth={filterMonth}
-                setFilterMonth={setFilterMonth}
-                availableMonths={availableMonths}
-              />
-            }
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  income={totalIncome}
+                  expense={totalExpense}
+                  balance={balance}
+                  onAddTransaction={addTransaction}
+                  transactions={filteredTransactions}
+                  onDeleteTransaction={handleDeleteClick}
+                  filterMonth={filterMonth}
+                  setFilterMonth={setFilterMonth}
+                  availableMonths={availableMonths}
+                />
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <HistoryPage
+                  transactions={filteredTransactions}
+                  onDeleteTransaction={handleDeleteClick}
+                />
+              }
+            />
+          </Routes>
+          <ValidationDialog
+            message={validationMessage}
+            isOpen={isValidationDialogOpen}
+            onClose={() => setValidationDialogOpen(false)}
           />
-          <Route
-            path="/history"
-            element={
-              <HistoryPage
-                transactions={filteredTransactions}
-                onDeleteTransaction={handleDeleteClick}
-              />
-            }
+          <ConfirmationDialog
+            message="Are you sure you want to delete this transaction?"
+            isOpen={isConfirmationDialogOpen}
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
           />
-        </Routes>
-        <ValidationDialog
-          message={validationMessage}
-          isOpen={isValidationDialogOpen}
-          onClose={() => setValidationDialogOpen(false)}
-        />
-        <ConfirmationDialog
-          message="Are you sure you want to delete this transaction?"
-          isOpen={isConfirmationDialogOpen}
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
-        />
-        <LoadingOverlay isLoading={loading} />
-      </DashboardLayout>
+          <LoadingOverlay isLoading={loading} />
+        </DashboardLayout>
+      )}
     </Router>
   );
 }
