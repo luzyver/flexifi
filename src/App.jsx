@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './App.css';
 
 import HomePage from './pages/HomePage';
@@ -10,10 +11,10 @@ import ValidationDialog from './components/ValidationDialog';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, onLogout }) => {
   return (
     <div className="dashboard-container">
-      <Navbar />
+      <Navbar onLogout={onLogout} />
       <div className="main-content">
         {children}
       </div>
@@ -29,8 +30,9 @@ if (!API_BASE_URL) {
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState(null); // New state for username
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with loading true
   const [error, setError] = useState(null);
   const [filterMonth, setFilterMonth] = useState('');
   const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
@@ -38,10 +40,49 @@ function App() {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
 
-  const handleLogin = () => {
-    setLoading(true);
+  const handleLogin = (loggedInUsername) => {
     setIsAuthenticated(true);
+    setUsername(loggedInUsername); // Set username on login
   };
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+    Cookies.remove('token');
+    setIsAuthenticated(false);
+    setUsername(null); // Clear username on logout
+    setTransactions([]);
+  }, []);
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/status`, {
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(true);
+          setUsername(data.username);
+        } else {
+          setIsAuthenticated(false);
+          setUsername(null);
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUsername(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -53,7 +94,10 @@ function App() {
         setError(null);
   
         try {
-          const res = await fetch(`${API_BASE_URL}/transactions`, { signal });
+          const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
+            signal,
+            credentials: 'include'
+          });
           
           if (signal.aborted) {
             console.log('Fetch was intentionally aborted by cleanup.'); 
@@ -61,10 +105,14 @@ function App() {
           }
   
           const data = await res.json();
+          console.log('App.jsx: Received transactions data:', data);
           if (res.ok && data.success) {
             setTransactions(data.data);
           } else {
             setError(data.error || `Failed to fetch transactions (Status: ${res.status}).`);
+            if (res.status === 401 || res.status === 403) {
+              handleLogout();
+            }
           }
         } catch (err) {
           if (err.name === 'AbortError') {
@@ -85,7 +133,7 @@ function App() {
         abortController.abort();
       };
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, handleLogout]);
 
   const getAvailableMonths = () => {
     const months = new Set();
@@ -98,12 +146,13 @@ function App() {
 
   const addTransaction = async (transaction) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/transactions`, {
+      const res = await fetch(`${API_BASE_URL}/transactions/all`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(transaction),
+        credentials: 'include'
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -128,6 +177,7 @@ function App() {
     try {
       const res = await fetch(`${API_BASE_URL}/transactions/${transactionToDeleteId}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -167,12 +217,16 @@ function App() {
   const balance = totalIncome - totalExpense;
   const availableMonths = getAvailableMonths();
 
+  if (loading) {
+    return <LoadingOverlay isLoading={loading} />;
+  }
+
   return (
     <Router>
       {!isAuthenticated ? (
         <LoginPage onLogin={handleLogin} />
       ) : (
-        <DashboardLayout>
+        <DashboardLayout onLogout={handleLogout}>
           {error && <div className="error-message">{error}</div>}
 
           <Routes>
@@ -189,6 +243,7 @@ function App() {
                   filterMonth={filterMonth}
                   setFilterMonth={setFilterMonth}
                   availableMonths={availableMonths}
+                  username={username}
                 />
               }
             />
@@ -213,7 +268,7 @@ function App() {
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
           />
-          <LoadingOverlay isLoading={loading} />
+          <LoadingOverlay isLoading={loading && isAuthenticated} />
         </DashboardLayout>
       )}
     </Router>

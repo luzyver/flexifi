@@ -13,10 +13,11 @@ const HomePage = ({
   filterMonth,
   setFilterMonth,
   availableMonths,
+  username,
 }) => {
   return (
     <>
-      <h1>Dashboard</h1>
+      <h1>Hello, {username}!</h1>
       <div className="home-page-layout">
         <div className="card filter-section">
           <h3>Filter Transactions</h3>

@@ -7,16 +7,34 @@ const LoginPage = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const correctUsername = import.meta.env.VITE_APP_USERNAME;
-    const correctPassword = import.meta.env.VITE_APP_PASSWORD;
+    setLoading(true);
+    setError('');
 
-    if (username === correctUsername && password === correctPassword) {
-      onLogin();
-    } else {
-      setError('Invalid username or password');
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        onLogin(data.username);
+      } else {
+        setError(data.error || 'Invalid username or password');
+      }
+    } catch (err) {
+      setError('Server error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,6 +51,7 @@ const LoginPage = ({ onLogin }) => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
         <div className="form-group">
@@ -43,16 +62,15 @@ const LoginPage = ({ onLogin }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );
-};
-
-LoginPage.propTypes = {
-    onLogin: PropTypes.func.isRequired,
 };
 
 export default LoginPage;
