@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
+  };
+
+  const handleLogoutClick = () => {
+    setIsNavOpen(false);
+    onLogout();
   };
 
   return (
@@ -16,10 +21,13 @@ const Navbar = () => {
       <div className={`navbar-center ${isNavOpen ? 'open' : ''}`}>
         <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
         <Link to="/history" className="nav-link" onClick={() => setIsNavOpen(false)}>History</Link>
+        <button onClick={handleLogoutClick} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.75rem 1rem', width: '100%', textAlign: 'left' }}>
+          Logout
+        </button>
       </div>
       <div className="navbar-right">
         <button className="hamburger-icon" onClick={toggleNav}>
-          &#9776; {/* Hamburger icon */}
+          &#9776;
         </button>
       </div>
     </nav>

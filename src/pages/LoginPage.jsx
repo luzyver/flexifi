@@ -21,12 +21,13 @@ const LoginPage = ({ onLogin }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
+        credentials: 'include'
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
-        onLogin();
+        onLogin(data.username);
       } else {
         setError(data.error || 'Invalid username or password');
       }
@@ -71,7 +72,5 @@ const LoginPage = ({ onLogin }) => {
     </div>
   );
 };
-
-
 
 export default LoginPage;
