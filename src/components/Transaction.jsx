@@ -3,27 +3,34 @@ import { formatRupiah } from '../utils/formatCurrency';
 
 const Transaction = ({ transaction, onDeleteTransaction }) => {
   const sign = transaction.type === 'pengeluaran' ? '-' : '+';
-  const transactionClass = transaction.type === 'pengeluaran' ? 'minus' : 'plus';
+  const amountClass = transaction.type === 'pengeluaran' ? 'text-danger' : 'text-success';
+  const listItemClass = transaction.type === 'pengeluaran' ? 'border-start border-danger border-2' : 'border-start border-success border-2';
 
   const formattedTransactionDate = new Date(transaction.date).toLocaleDateString('id-ID', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    timeZone: 'UTC' // Use UTC to avoid timezone issues
+    timeZone: 'UTC'
   });
 
   return (
-    <li className={transactionClass}>
-      <div className="transaction-details">
-        <span>{transaction.description}</span>
-        <span className="category-date">
-          {transaction.category} &bull; {formattedTransactionDate}
+    <li className={`list-group-item d-flex justify-content-between align-items-center py-2 px-3 rounded-3 shadow-sm ${listItemClass} transition-shadow-hover`}>
+      <div className="d-flex flex-column">
+        <span className={`fw-bold fs-5 ${amountClass}`}>
+          {sign}{formatRupiah(Math.abs(transaction.amount))}
         </span>
+        <div className="fw-bold fs-5">{transaction.description}</div>
+        <small className="text-muted">{transaction.category} &bull; {formattedTransactionDate}</small>
       </div>
-      <span className="transaction-amount">
-        {sign}{formatRupiah(Math.abs(transaction.amount))}
-      </span>
-      <button onClick={() => onDeleteTransaction(transaction._id)} className="delete-btn">x</button>
+      <div>
+        <button
+          onClick={() => onDeleteTransaction(transaction._id)}
+          className="btn btn-outline-danger btn-sm p-1"
+          aria-label="Delete transaction"
+        >
+          <i className="bi bi-trash"></i>
+        </button>
+      </div>
     </li>
   );
 };

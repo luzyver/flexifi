@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import './LoginPage.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const RegisterPage = ({ showToast, token }) => {
@@ -43,26 +41,28 @@ const RegisterPage = ({ showToast, token }) => {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>Register Account</h2>
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <form onSubmit={handleSubmit} className="card p-4 shadow-lg border-0 rounded-3" style={{ maxWidth: '400px', width: '100%' }}>
+        <h2 className="text-center mb-4 text-primary">Register Account</h2>
         
-        <div className="form-group">
-          <label htmlFor="username">Username</label>
+        <div className="mb-3">
+          <label htmlFor="username" className="form-label">Username</label>
           <input
             type="text"
             id="username"
+            className="form-control form-control-lg"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
             disabled={isSubmitting}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">Password</label>
           <input
             type="password"
             id="password"
+            className="form-control form-control-lg"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -70,18 +70,19 @@ const RegisterPage = ({ showToast, token }) => {
             autoComplete="new-password"
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="registerCode">Registration Code</label>
+        <div className="mb-3">
+          <label htmlFor="registerCode" className="form-label">Registration Code</label>
           <input
             type="text"
             id="registerCode"
+            className="form-control form-control-lg"
             value={registerCode}
             onChange={(e) => setRegisterCode(e.target.value)}
             required
             disabled={isSubmitting}
           />
         </div>
-        <button type="submit" disabled={isSubmitting}>
+        <button type="submit" className="btn btn-primary btn-lg w-100" disabled={isSubmitting}>
           {isSubmitting ? 'Registering...' : 'Register'}
         </button>
       </form>
@@ -92,6 +93,7 @@ const RegisterPage = ({ showToast, token }) => {
 
 RegisterPage.propTypes = {
   showToast: PropTypes.func.isRequired,
+  token: PropTypes.string, // Add token to propTypes
 };
 
 export default RegisterPage;

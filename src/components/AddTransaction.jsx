@@ -87,20 +87,24 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
   };
 
   return (
-    <>
+    <div className="card p-4 mb-4 shadow-lg border-0 rounded-3">
+      <h5 className="card-title mb-4 text-primary fw-bold d-flex align-items-center">
+        <i className="bi bi-plus-circle-fill me-2"></i> Add New Transaction
+      </h5>
       <form onSubmit={onSubmit}>
-        <div className="form-control">
-          <label htmlFor="type">Type</label>
-          <select id="type" value={type} onChange={handleTypeChange}>
+        <div className="mb-3">
+          <label htmlFor="type" className="form-label text-muted">Type</label>
+          <select id="type" className="form-select form-select-lg" value={type} onChange={handleTypeChange}>
             <option value="pengeluaran">Pengeluaran</option>
             <option value="pemasukan">Pemasukan</option>
           </select>
         </div>
-        <div className="form-control" ref={descriptionInputRef}>
-          <label htmlFor="description">Description</label>
+        <div className="mb-3 position-relative" ref={descriptionInputRef}>
+          <label htmlFor="description" className="form-label text-muted">Description</label>
           <input
             id="description"
             type="text"
+            className="form-control form-control-lg"
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Enter description..."
@@ -116,20 +120,21 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
             </ul>
           )}
         </div>
-        <div className="form-control">
-          <label htmlFor="amount">Amount</label>
+        <div className="mb-3">
+          <label htmlFor="amount" className="form-label text-muted">Amount</label>
           <input
             id="amount"
             type="number"
+            className="form-control form-control-lg"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount..."
             step="1000"
           />
         </div>
-        <div className="form-control">
-          <label htmlFor="category">Category</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+        <div className="mb-3">
+          <label htmlFor="category" className="form-label text-muted">Category</label>
+          <select id="category" className="form-select form-select-lg" value={category} onChange={(e) => setCategory(e.target.value)}>
             {categoriesByType[type].map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -137,18 +142,19 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
             ))}
           </select>
         </div>
-        <div className="form-control">
-          <label htmlFor="date">Date</label>
+        <div className="mb-3">
+          <label htmlFor="date" className="form-label text-muted">Date</label>
           <input
             id="date"
             type="date"
+            className="form-control form-control-lg"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
         </div>
-        <button type="submit" className="btn">Add Transaction</button>
+        <button type="submit" className="btn btn-primary btn-lg w-100">Add Transaction</button>
       </form>
-    </>
+    </div>
   );
 };
 
