@@ -1,20 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './App.css';
 
 import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage'; // Import RegisterPage
 import Navbar from './components/Navbar';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
 
-const DashboardLayout = ({ children, onLogout }) => {
+const DashboardLayout = ({ children, onLogout, username }) => {
   return (
     <div className="dashboard-container">
-      <Navbar onLogout={onLogout} />
+      <Navbar onLogout={onLogout} username={username} />
       <div className="main-content">
         {children}
       </div>
@@ -29,10 +30,21 @@ if (!API_BASE_URL) {
 }
 
 function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState(null); // New state for username
+  const [username, setUsername] = useState(null);
+  const [token, setToken] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [loading, setLoading] = useState(true);
   const [filterMonth, setFilterMonth] = useState('');
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
@@ -49,50 +61,69 @@ function App() {
     }, 3000); // 3 seconds
   }, []);
 
-  const handleLogin = (loggedInUsername) => {
+  const handleLogin = (loggedInUsername, authToken) => {
     setIsAuthenticated(true);
-    setUsername(loggedInUsername); // Set username on login
+    setUsername(loggedInUsername);
+    setToken(authToken);
+    sessionStorage.setItem('token', authToken);
   };
 
   const handleLogout = useCallback(async () => {
     try {
       await fetch(`${API_BASE_URL}/auth/logout`, {
-        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
     } catch (error) {
       console.error('Logout failed', error);
     }
     Cookies.remove('token');
+    sessionStorage.removeItem('token');
     setIsAuthenticated(false);
-    setUsername(null); // Clear username on logout
+    setUsername(null);
+    setToken(null);
     setTransactions([]);
-  }, []);
+    navigate('/');
+  }, [token, navigate]);
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      setLoading(true); // Set loading to true before checking auth status
-      try {
-        const res = await fetch(`${API_BASE_URL}/auth/status`, {
-          credentials: 'include',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setIsAuthenticated(true);
-          setUsername(data.username);
-        } else {
-          setIsAuthenticated(false);
-          setUsername(null);
+    const refreshToken = async () => {
+      setLoading(true);
+      const storedToken = sessionStorage.getItem('token');
+      if (storedToken) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setIsAuthenticated(true);
+            setUsername(data.username);
+            setToken(data.token);
+            sessionStorage.setItem('token', data.token);
+          } else {
+            handleLogout();
+          }
+        } catch (error) {
+          handleLogout();
         }
-      } catch (error) {
-        setIsAuthenticated(false);
-        setUsername(null);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    checkAuthStatus();
+    refreshToken();
   }, []);
+
+  // Redirect logic
+  useEffect(() => {
+    if (!isAuthenticated && location.pathname !== '/') {
+      navigate('/');
+    }
+  }, [isAuthenticated, location.pathname, navigate]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -106,7 +137,9 @@ function App() {
         try {
           const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
             signal,
-            credentials: 'include'
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
           
           if (signal.aborted) {
@@ -158,9 +191,9 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(transaction),
-        credentials: 'include'
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -184,7 +217,9 @@ function App() {
     try {
       const res = await fetch(`${API_BASE_URL}/transactions/${transactionToDeleteId}`, {
         method: 'DELETE',
-        credentials: 'include'
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -223,18 +258,18 @@ function App() {
   const balance = totalIncome - totalExpense;
   const availableMonths = getAvailableMonths();
 
-  
-
   if (loading) {
     return <LoadingOverlay isLoading={loading} />;
   }
 
   return (
-    <Router>
+    <>
       {!isAuthenticated ? (
-        <LoginPage onLogin={handleLogin} showToast={showToast} />
+        <Routes>
+          <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
+        </Routes>
       ) : (
-        <DashboardLayout onLogout={handleLogout}>
+        <DashboardLayout onLogout={handleLogout} username={username}>
 
           <Routes>
             <Route
@@ -264,6 +299,19 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/register"
+              element={
+                username === 'rezz' ? (
+                  <RegisterPage showToast={showToast} />
+                ) : (
+                  <div className="main-content">
+                    <h1>Unauthorized Access</h1>
+                    <p>You do not have permission to access this page.</p>
+                  </div>
+                )
+              }
+            />
           </Routes>
           <ConfirmationDialog
             message="Are you sure you want to delete this transaction?"
@@ -275,7 +323,7 @@ function App() {
         </DashboardLayout>
       )}
       <ToastNotification message={toastMessage} type={toastType} />
-    </Router>
+    </>
   );
 }
 
