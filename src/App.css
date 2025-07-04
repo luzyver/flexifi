@@ -459,6 +459,17 @@ select:focus {
     align-items: center;
     padding: 1rem 1.5rem;
     height: auto;
+    position: relative;
+    flex-wrap: wrap; /* Allow items to wrap */
+  }
+
+  .navbar-expanded {
+    /* No change to flex-direction here, it remains row */
+  }
+
+  .navbar-left,
+  .navbar-right {
+    flex: 0 0 auto; /* Don't grow, don't shrink, take content width */
   }
 
   .navbar-brand {
@@ -469,17 +480,16 @@ select:focus {
   .navbar-center {
     display: none;
     flex-direction: column;
-    width: 100%;
-    position: absolute;
-    top: 60px;
-    left: 0;
+    width: 100%; /* Force it to take full width and wrap to next line */
     background-color: var(--primary-color);
     padding: 1rem 0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    order: 3; /* Place it after brand and hamburger */
   }
 
-  .navbar-center.open {
+  .navbar-expanded .navbar-center {
     display: flex;
+    position: static; /* Make it take up space in the flow */
   }
 
   .navbar-center .nav-link {
