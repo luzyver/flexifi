@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import ValidationDialog from './ValidationDialog';
 
-const AddTransaction = ({ onAddTransaction }) => {
+const AddTransaction = ({ onAddTransaction, showToast }) => {
   const categoriesByType = {
     pemasukan: ['Gaji', 'Lembur', 'Joki', 'Lain-lain Pemasukan'],
     pengeluaran: ['Makanan', 'Transportasi', 'Jajan', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
@@ -20,8 +19,6 @@ const AddTransaction = ({ onAddTransaction }) => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(categoriesByType['pengeluaran'][0] || '');
   const [date, setDate] = useState(getTodayDate());
-  const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
-  const [validationMessage, setValidationMessage] = useState('');
 
   const handleTypeChange = (e) => {
     const newType = e.target.value;
@@ -32,15 +29,13 @@ const AddTransaction = ({ onAddTransaction }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (!description || !amount || !category || !date) {
-      setValidationMessage('Please fill in all fields');
-      setValidationDialogOpen(true);
+      showToast('Please fill in all fields', 'error');
       return;
     }
 
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount)) {
-      setValidationMessage('Amount must be a valid number');
-      setValidationDialogOpen(true);
+      showToast('Amount must be a valid number', 'error');
       return;
     }
 
@@ -112,11 +107,6 @@ const AddTransaction = ({ onAddTransaction }) => {
         </div>
         <button type="submit" className="btn">Add Transaction</button>
       </form>
-      <ValidationDialog
-          message={validationMessage}
-          isOpen={isValidationDialogOpen}
-          onClose={() => setValidationDialogOpen(false)}
-        />
     </>
   );
 };

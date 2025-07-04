@@ -7,9 +7,9 @@ import HomePage from './pages/HomePage';
 import HistoryPage from './pages/HistoryPage';
 import LoginPage from './pages/LoginPage';
 import Navbar from './components/Navbar';
-import ValidationDialog from './components/ValidationDialog';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
+import ToastNotification from './components/ToastNotification';
 
 const DashboardLayout = ({ children, onLogout }) => {
   return (
@@ -33,12 +33,21 @@ function App() {
   const [username, setUsername] = useState(null); // New state for username
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true); // Start with loading true
-  const [error, setError] = useState(null);
   const [filterMonth, setFilterMonth] = useState('');
-  const [isValidationDialogOpen, setValidationDialogOpen] = useState(false);
-  const [validationMessage, setValidationMessage] = useState('');
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
+
+  // Toast state and function
+  const [toastMessage, setToastMessage] = useState(null);
+  const [toastType, setToastType] = useState('info');
+
+  const showToast = useCallback((message, type = 'info') => {
+    setToastMessage(message);
+    setToastType(type);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000); // 3 seconds
+  }, []);
 
   const handleLogin = (loggedInUsername) => {
     setIsAuthenticated(true);
@@ -61,6 +70,7 @@ function App() {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
+      setLoading(true); // Set loading to true before checking auth status
       try {
         const res = await fetch(`${API_BASE_URL}/auth/status`, {
           credentials: 'include',
@@ -91,7 +101,7 @@ function App() {
   
       const performFetchTransactions = async () => {
         setLoading(true);
-        setError(null);
+        
   
         try {
           const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
@@ -100,25 +110,23 @@ function App() {
           });
           
           if (signal.aborted) {
-            console.log('Fetch was intentionally aborted by cleanup.'); 
             return;
           }
   
           const data = await res.json();
-          console.log('App.jsx: Received transactions data:', data);
           if (res.ok && data.success) {
             setTransactions(data.data);
           } else {
-            setError(data.error || `Failed to fetch transactions (Status: ${res.status}).`);
+            showToast(data.error || `Failed to fetch transactions (Status: ${res.status}).`, 'error');
             if (res.status === 401 || res.status === 403) {
               handleLogout();
             }
           }
         } catch (err) {
           if (err.name === 'AbortError') {
-            console.log('Fetch request was cancelled by AbortController.');
+            // Fetch request was cancelled by AbortController, no need to show error
           } else {
-            setError('Network error or server unreachable: ' + err.message);
+            showToast('Network error or server unreachable: ' + err.message, 'error');
           }
         } finally {
           if (!signal.aborted) {
@@ -157,13 +165,12 @@ function App() {
       const data = await res.json();
       if (res.ok && data.success) {
         setTransactions([data.data, ...transactions]);
+        showToast('Transaction added successfully!', 'success');
       } else {
-        setValidationMessage(data.error || `Failed to add transaction (Status: ${res.status}).`);
-        setValidationDialogOpen(true);
+        showToast(data.error || `Failed to add transaction (Status: ${res.status}).`, 'error');
       }
     } catch (err) {
-      setValidationMessage('Error adding transaction: ' + err.message);
-      setValidationDialogOpen(true);
+      showToast('Error adding transaction: ' + err.message, 'error');
     }
   };
 
@@ -182,13 +189,12 @@ function App() {
       const data = await res.json();
       if (res.ok && data.success) {
         setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
+        showToast('Transaction deleted successfully!', 'success');
       } else {
-        setValidationMessage(data.error || `Failed to delete transaction (Status: ${res.status}).`);
-        setValidationDialogOpen(true);
+        showToast(data.error || `Failed to delete transaction (Status: ${res.status}).`, 'error');
       }
     } catch (err) {
-      setValidationMessage('Error deleting transaction: ' + err.message);
-      setValidationDialogOpen(true);
+      showToast('Error deleting transaction: ' + err.message, 'error');
     } finally {
       setTransactionToDeleteId(null);
     }
@@ -217,6 +223,8 @@ function App() {
   const balance = totalIncome - totalExpense;
   const availableMonths = getAvailableMonths();
 
+  
+
   if (loading) {
     return <LoadingOverlay isLoading={loading} />;
   }
@@ -224,10 +232,9 @@ function App() {
   return (
     <Router>
       {!isAuthenticated ? (
-        <LoginPage onLogin={handleLogin} />
+        <LoginPage onLogin={handleLogin} showToast={showToast} />
       ) : (
         <DashboardLayout onLogout={handleLogout}>
-          {error && <div className="error-message">{error}</div>}
 
           <Routes>
             <Route
@@ -244,6 +251,7 @@ function App() {
                   setFilterMonth={setFilterMonth}
                   availableMonths={availableMonths}
                   username={username}
+                  showToast={showToast}
                 />
               }
             />
@@ -257,20 +265,16 @@ function App() {
               }
             />
           </Routes>
-          <ValidationDialog
-            message={validationMessage}
-            isOpen={isValidationDialogOpen}
-            onClose={() => setValidationDialogOpen(false)}
-          />
           <ConfirmationDialog
             message="Are you sure you want to delete this transaction?"
             isOpen={isConfirmationDialogOpen}
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
           />
-          <LoadingOverlay isLoading={loading && isAuthenticated} />
+
         </DashboardLayout>
       )}
+      <ToastNotification message={toastMessage} type={toastType} />
     </Router>
   );
 }

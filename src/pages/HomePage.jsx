@@ -14,6 +14,7 @@ const HomePage = ({
   setFilterMonth,
   availableMonths,
   username,
+  showToast, // Add showToast prop
 }) => {
   return (
     <>
@@ -44,7 +45,7 @@ const HomePage = ({
 
         <div className="card add-transaction-form">
           <h3>Add New Transaction</h3>
-          <AddTransaction onAddTransaction={onAddTransaction} />
+          <AddTransaction onAddTransaction={onAddTransaction} showToast={showToast} />
         </div>
 
         <div className="card transaction-history">

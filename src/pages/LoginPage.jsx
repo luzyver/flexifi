@@ -2,17 +2,17 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './LoginPage.css';
+import LoadingOverlay from '../components/LoadingOverlay';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, showToast }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    setIsSubmitting(true);
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
@@ -27,14 +27,15 @@ const LoginPage = ({ onLogin }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        setLoading(true);
         onLogin(data.username);
       } else {
-        setError(data.error || 'Invalid username or password');
+        showToast(data.error || 'Invalid username or password', 'error');
       }
     } catch (err) {
-      setError('Server error. Please try again later.');
+      showToast('Server error. Please try again later.', 'error');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -42,7 +43,7 @@ const LoginPage = ({ onLogin }) => {
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Login</h2>
-        {error && <p className="error-message">{error}</p>}
+        
         <div className="form-group">
           <label htmlFor="username">Username</label>
           <input
@@ -51,7 +52,7 @@ const LoginPage = ({ onLogin }) => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            disabled={loading}
+            disabled={isSubmitting}
           />
         </div>
         <div className="form-group">
@@ -62,15 +63,22 @@ const LoginPage = ({ onLogin }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            disabled={loading}
+            disabled={isSubmitting}
+            autoComplete="current-password"
           />
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </form>
+      <LoadingOverlay isLoading={loading} />
     </div>
   );
+};
+
+LoginPage.propTypes = {
+  onLogin: PropTypes.func.isRequired,
+  showToast: PropTypes.func.isRequired,
 };
 
 export default LoginPage;

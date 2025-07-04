@@ -14,14 +14,14 @@ const Navbar = ({ onLogout }) => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isNavOpen ? 'navbar-expanded' : ''}`}>
       <div className="navbar-left">
         <Link to="/" className="navbar-brand">Money Tracker</Link>
       </div>
       <div className={`navbar-center ${isNavOpen ? 'open' : ''}`}>
         <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
         <Link to="/history" className="nav-link" onClick={() => setIsNavOpen(false)}>History</Link>
-        <button onClick={handleLogoutClick} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.75rem 1rem', width: '100%', textAlign: 'left' }}>
+        <button onClick={handleLogoutClick} className="nav-link">
           Logout
         </button>
       </div>
