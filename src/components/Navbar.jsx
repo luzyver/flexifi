@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar = ({ onLogout }) => {
+const Navbar = ({ onLogout, username }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const toggleNav = () => {
@@ -21,9 +21,12 @@ const Navbar = ({ onLogout }) => {
       <div className={`navbar-center ${isNavOpen ? 'open' : ''}`}>
         <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
         <Link to="/history" className="nav-link" onClick={() => setIsNavOpen(false)}>History</Link>
-        <button onClick={handleLogoutClick} className="nav-link">
+        {username === 'rezz' && (
+          <Link to="/register" className="nav-link" onClick={() => setIsNavOpen(false)}>Register</Link>
+        )}
+        <a href="#" onClick={handleLogoutClick} className="nav-link">
           Logout
-        </button>
+        </a>
       </div>
       <div className="navbar-right">
         <button className="hamburger-icon" onClick={toggleNav}>

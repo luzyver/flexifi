@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const AddTransaction = ({ onAddTransaction, showToast }) => {
+const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
   const categoriesByType = {
     pemasukan: ['Gaji', 'Lembur', 'Joki', 'Lain-lain Pemasukan'],
     pengeluaran: ['Makanan', 'Transportasi', 'Jajan', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
@@ -19,6 +19,35 @@ const AddTransaction = ({ onAddTransaction, showToast }) => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(categoriesByType['pengeluaran'][0] || '');
   const [date, setDate] = useState(getTodayDate());
+  const [suggestions, setSuggestions] = useState([]);
+  const [isSuggestionsVisible, setSuggestionsVisible] = useState(false);
+
+  const descriptionInputRef = useRef(null);
+
+  const uniqueDescriptions = Array.from(new Set(transactions.map(t => t.description)));
+
+  useEffect(() => {
+    if (description) {
+      const filteredSuggestions = uniqueDescriptions
+        .filter(d => d.toLowerCase().includes(description.toLowerCase()))
+        .slice(0, 5); // Limit to 5 suggestions
+      setSuggestions(filteredSuggestions);
+      setSuggestionsVisible(true);
+    } else {
+      setSuggestions([]);
+      setSuggestionsVisible(false);
+    }
+  }, [description]);
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setDescription(suggestion);
+    setSuggestions([]);
+    setSuggestionsVisible(false);
+  };
 
   const handleTypeChange = (e) => {
     const newType = e.target.value;
@@ -53,6 +82,8 @@ const AddTransaction = ({ onAddTransaction, showToast }) => {
     setAmount('');
     setCategory(categoriesByType[type][0] || '');
     setDate(getTodayDate());
+    setSuggestions([]);
+    setSuggestionsVisible(false);
   };
 
   return (
@@ -65,15 +96,25 @@ const AddTransaction = ({ onAddTransaction, showToast }) => {
             <option value="pemasukan">Pemasukan</option>
           </select>
         </div>
-        <div className="form-control">
+        <div className="form-control" ref={descriptionInputRef}>
           <label htmlFor="description">Description</label>
           <input
             id="description"
             type="text"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleDescriptionChange}
             placeholder="Enter description..."
+            autoComplete="off"
           />
+          {isSuggestionsVisible && suggestions.length > 0 && (
+            <ul className="suggestions-list">
+              {suggestions.map((suggestion, index) => (
+                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="form-control">
           <label htmlFor="amount">Amount</label>
