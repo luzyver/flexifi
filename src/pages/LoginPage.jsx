@@ -1,7 +1,5 @@
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import './LoginPage.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const LoginPage = ({ onLogin, showToast }) => {
@@ -40,26 +38,28 @@ const LoginPage = ({ onLogin, showToast }) => {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
-        <h2>Login</h2>
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <form onSubmit={handleSubmit} className="card p-4 shadow-lg border-0 rounded-3" style={{ maxWidth: '400px', width: '100%' }}>
+        <h2 className="text-center mb-4 text-primary">Login</h2>
         
-        <div className="form-group">
-          <label htmlFor="username">Username</label>
+        <div className="mb-3">
+          <label htmlFor="username" className="form-label">Username</label>
           <input
             type="text"
             id="username"
+            className="form-control form-control-lg"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
             disabled={isSubmitting}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">Password</label>
           <input
             type="password"
             id="password"
+            className="form-control form-control-lg"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -67,7 +67,7 @@ const LoginPage = ({ onLogin, showToast }) => {
             autoComplete="current-password"
           />
         </div>
-        <button type="submit" disabled={isSubmitting}>
+        <button type="submit" className="btn btn-primary btn-lg w-100" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </form>

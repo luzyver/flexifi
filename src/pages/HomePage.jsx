@@ -17,38 +17,27 @@ const HomePage = ({
   showToast,
 }) => {
   return (
-    <>
-      <h1>Hello, {username}!</h1>
-      <div className="home-page-layout">
-        <div className="card filter-section">
-          <h3>Filter Transactions</h3>
-          <div className="form-control">
-            <label htmlFor="filterMonth">Select Month:</label>
-            <select
-              id="filterMonth"
-              value={filterMonth}
-              onChange={(e) => setFilterMonth(e.target.value)}
-            >
-              <option value="">All Months</option>
-              {availableMonths.map((month) => (
-                <option key={month} value={month}>
-                  {new Date(month + '-02').toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="container mt-4">
+      <h1 className="mb-4 display-4 fw-bold text-center text-primary">Welcome, {username}!</h1>
+      <div className="row">
+        <div className="col-md-12 mb-4">
+          <Balance 
+            income={income}
+            expense={expense}
+            balance={balance}
+            filterMonth={filterMonth}
+            setFilterMonth={setFilterMonth}
+            availableMonths={availableMonths}
+          />
         </div>
+      </div>
 
-        <div className="card balance-card">
-          <Balance income={income} expense={expense} balance={balance} />
-        </div>
-
-        <div className="card add-transaction-form">
-          <h3>Add New Transaction</h3>
+      <div className="row">
+        <div className="col-md-6 mb-4">
           <AddTransaction onAddTransaction={onAddTransaction} showToast={showToast} transactions={transactions} />
         </div>
 
-        <div className="card transaction-history">
+        <div className="col-md-6 mb-4">
           <TransactionList
             title="Recent Transactions"
             transactions={transactions}
@@ -57,7 +46,7 @@ const HomePage = ({
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

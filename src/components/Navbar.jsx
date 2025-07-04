@@ -1,37 +1,59 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = ({ onLogout, username }) => {
-  const [isNavOpen, setIsNavOpen] = useState(false);
-
-  const toggleNav = () => {
-    setIsNavOpen(!isNavOpen);
-  };
-
   const handleLogoutClick = () => {
-    setIsNavOpen(false);
     onLogout();
   };
 
   return (
-    <nav className={`navbar ${isNavOpen ? 'navbar-expanded' : ''}`}>
-      <div className="navbar-left">
-        <Link to="/" className="navbar-brand">Money Tracker</Link>
-      </div>
-      <div className={`navbar-center ${isNavOpen ? 'open' : ''}`}>
-        <Link to="/" className="nav-link" onClick={() => setIsNavOpen(false)}>Home</Link>
-        <Link to="/history" className="nav-link" onClick={() => setIsNavOpen(false)}>History</Link>
-        {username === 'rezz' && (
-          <Link to="/register" className="nav-link" onClick={() => setIsNavOpen(false)}>Register</Link>
-        )}
-        <a href="#" onClick={handleLogoutClick} className="nav-link">
-          Logout
-        </a>
-      </div>
-      <div className="navbar-right">
-        <button className="hamburger-icon" onClick={toggleNav}>
-          &#9776;
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+      <div className="container-fluid">
+        <Link to="/" className="navbar-brand fw-bold fs-4">Money Tracker</Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
         </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link to="/" className="nav-link d-flex align-items-center">
+                <i className="bi bi-house-door-fill me-2"></i> Home
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/history" className="nav-link d-flex align-items-center">
+                <i className="bi bi-clock-history me-2"></i> History
+              </Link>
+            </li>
+            {username === 'rezz' && (
+              <li className="nav-item">
+                <Link to="/register" className="nav-link d-flex align-items-center">
+                  <i className="bi bi-person-plus-fill me-2"></i> Register
+                </Link>
+              </li>
+            )}
+          </ul>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <span className="navbar-text text-white me-3 d-flex align-items-center">
+                <i className="bi bi-person-circle me-2"></i> Logged in as: {username}
+              </span>
+            </li>
+            <li className="nav-item">
+              <a href="#" onClick={handleLogoutClick} className="nav-link d-flex align-items-center">
+                <i className="bi bi-box-arrow-right me-2"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   );

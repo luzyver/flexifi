@@ -14,9 +14,9 @@ import ToastNotification from './components/ToastNotification';
 
 const DashboardLayout = ({ children, onLogout, username }) => {
   return (
-    <div className="dashboard-container">
+    <div className="d-flex flex-column min-vh-100">
       <Navbar onLogout={onLogout} username={username} />
-      <div className="main-content">
+      <div className="flex-grow-1 p-3 p-md-4">
         {children}
       </div>
     </div>
@@ -172,7 +172,7 @@ function AppContent() {
         abortController.abort();
       };
     }
-  }, [isAuthenticated, handleLogout]);
+  }, [isAuthenticated, handleLogout, token]);
 
   const getAvailableMonths = () => {
     const months = new Set();
