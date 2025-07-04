@@ -91,9 +91,4 @@ const RegisterPage = ({ showToast, token }) => {
   );
 };
 
-RegisterPage.propTypes = {
-  showToast: PropTypes.func.isRequired,
-  token: PropTypes.string, // Add token to propTypes
-};
-
 export default RegisterPage;

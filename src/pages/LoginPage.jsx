@@ -76,9 +76,4 @@ const LoginPage = ({ onLogin, showToast }) => {
   );
 };
 
-LoginPage.propTypes = {
-  onLogin: PropTypes.func.isRequired,
-  showToast: PropTypes.func.isRequired,
-};
-
 export default LoginPage;
