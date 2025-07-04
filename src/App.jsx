@@ -48,8 +48,6 @@ function AppContent() {
   const [filterMonth, setFilterMonth] = useState('');
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
-
-  // Toast state and function
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState('info');
 
@@ -58,7 +56,7 @@ function AppContent() {
     setToastType(type);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000); // 3 seconds
+    }, 3000);
   }, []);
 
   const handleLogin = (loggedInUsername, authToken) => {
@@ -303,7 +301,7 @@ function AppContent() {
               path="/register"
               element={
                 username === 'rezz' ? (
-                  <RegisterPage showToast={showToast} />
+                  <RegisterPage showToast={showToast} token={token} />
                 ) : (
                   <div className="main-content">
                     <h1>Unauthorized Access</h1>
