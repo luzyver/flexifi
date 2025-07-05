@@ -33,6 +33,23 @@ const Navbar = ({ onLogout, username }) => {
                 <i className="bi bi-clock-history me-2"></i> History
               </Link>
             </li>
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i className="bi bi-gear-fill me-2"></i> Settings
+              </a>
+              <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <Link to="/categories" className="dropdown-item d-flex align-items-center">
+                    <i className="bi bi-tags-fill me-2"></i> Categories
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/change-password" className="dropdown-item d-flex align-items-center">
+                    <i className="bi bi-key-fill me-2"></i> Change Password
+                  </Link>
+                </li>
+              </ul>
+            </li>
             {username === 'rezz' && (
               <li className="nav-item">
                 <Link to="/register" className="nav-link d-flex align-items-center">
