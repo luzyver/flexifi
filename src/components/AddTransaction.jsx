@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
-  const categoriesByType = {
-    pemasukan: ['Gaji', 'Lembur', 'Joki', 'Lain-lain Pemasukan'],
-    pengeluaran: ['Makanan', 'Transportasi', 'Jajan', 'Tagihan', 'Hiburan', 'E-Money', 'Lain-lain Pengeluaran'],
-  };
-
+const AddTransaction = ({ onAddTransaction, showToast, transactions, categories }) => {
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -17,12 +12,37 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
   const [type, setType] = useState('pengeluaran');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState(categoriesByType['pengeluaran'][0] || '');
+  const [category, setCategory] = useState(''); // Initialize with empty string
   const [date, setDate] = useState(getTodayDate());
   const [suggestions, setSuggestions] = useState([]);
   const [isSuggestionsVisible, setSuggestionsVisible] = useState(false);
 
   const descriptionInputRef = useRef(null);
+
+  // Categories are now expected to be passed as a prop from the parent component.
+  // This centralizes category fetching to avoid redundant network requests.
+
+  useEffect(() => {
+    // Update category selection when type changes or categories are loaded
+    const filteredCategories = categories.filter(cat => cat.type === type);
+    if (filteredCategories.length > 0) {
+      setCategory(filteredCategories[0].category);
+    } else {
+      setCategory(''); // Clear category if no matching categories found
+    }
+  }, [type, categories]); // Add categories as dependency
+
+  // Set default category based on initial type if categories are fetched
+  useEffect(() => {
+    if (categories.length > 0) {
+      const defaultCategory = categories.find(cat => cat.type === type);
+      if (defaultCategory) {
+        setCategory(defaultCategory.category);
+      } else if (categories.length > 0) {
+        setCategory(categories[0].category); // Fallback to first available category
+      }
+    }
+  }, [categories, type]);
 
   const uniqueDescriptions = Array.from(new Set(transactions.map(t => t.description)));
 
@@ -52,7 +72,6 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
   const handleTypeChange = (e) => {
     const newType = e.target.value;
     setType(newType);
-    setCategory(categoriesByType[newType][0] || '');
   };
 
   const onSubmit = (e) => {
@@ -80,40 +99,38 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
 
     setDescription('');
     setAmount('');
-    setCategory(categoriesByType[type][0] || '');
     setDate(getTodayDate());
     setSuggestions([]);
     setSuggestionsVisible(false);
   };
 
+  const filteredCategoriesForType = categories.filter(cat => cat.type === type);
+
   return (
-    <div className="card p-4 mb-4 shadow-lg border-0 rounded-3">
-      <h5 className="card-title mb-4 text-primary fw-bold d-flex align-items-center">
-        <i className="bi bi-plus-circle-fill me-2"></i> Add New Transaction
-      </h5>
+    <div className="card-body">
       <form onSubmit={onSubmit}>
         <div className="mb-3">
-          <label htmlFor="type" className="form-label text-muted">Type</label>
-          <select id="type" className="form-select form-select-lg" value={type} onChange={handleTypeChange}>
+          <label htmlFor="type" className="form-label">Type</label>
+          <select id="type" className="form-select" value={type} onChange={handleTypeChange}>
             <option value="pengeluaran">Pengeluaran</option>
             <option value="pemasukan">Pemasukan</option>
           </select>
         </div>
         <div className="mb-3 position-relative" ref={descriptionInputRef}>
-          <label htmlFor="description" className="form-label text-muted">Description</label>
+          <label htmlFor="description" className="form-label">Description</label>
           <input
             id="description"
             type="text"
-            className="form-control form-control-lg"
+            className="form-control"
             value={description}
             onChange={handleDescriptionChange}
             placeholder="Enter description..."
             autoComplete="off"
           />
           {isSuggestionsVisible && suggestions.length > 0 && (
-            <ul className="suggestions-list">
+            <ul className="list-group position-absolute w-100 z-1">
               {suggestions.map((suggestion, index) => (
-                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                <li key={index} className="list-group-item list-group-item-action" onClick={() => handleSuggestionClick(suggestion)}>
                   {suggestion}
                 </li>
               ))}
@@ -121,11 +138,11 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
           )}
         </div>
         <div className="mb-3">
-          <label htmlFor="amount" className="form-label text-muted">Amount</label>
+          <label htmlFor="amount" className="form-label">Amount</label>
           <input
             id="amount"
             type="number"
-            className="form-control form-control-lg"
+            className="form-control"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount..."
@@ -133,26 +150,29 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions }) => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="category" className="form-label text-muted">Category</label>
-          <select id="category" className="form-select form-select-lg" value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categoriesByType[type].map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+          <label htmlFor="category" className="form-label">Category</label>
+          <select id="category" className="form-select" value={category} onChange={(e) => setCategory(e.target.value)}>
+            {filteredCategoriesForType.map((cat) => (
+              <option key={cat.category} value={cat.category}>
+                {cat.category}
               </option>
             ))}
+            {filteredCategoriesForType.length === 0 && (
+              <option value="" disabled>No categories available</option>
+            )}
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="date" className="form-label text-muted">Date</label>
+          <label htmlFor="date" className="form-label">Date</label>
           <input
             id="date"
             type="date"
-            className="form-control form-control-lg"
+            className="form-control"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
         </div>
-        <button type="submit" className="btn btn-primary btn-lg w-100">Add Transaction</button>
+        <button type="submit" className="btn btn-primary w-100">Add Transaction</button>
       </form>
     </div>
   );
