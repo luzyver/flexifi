@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import Header from '../components/Header'; // Import Header component
 
 const LoginPage = ({ onLogin, showToast }) => {
   const [username, setUsername] = useState('');
@@ -25,8 +26,11 @@ const LoginPage = ({ onLogin, showToast }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setLoading(true);
-        onLogin(data.username, data.token);
+        showToast('Login successful!', 'success');
+        setTimeout(() => {
+          setLoading(true);
+          onLogin(data.username, data.token);
+        }, 3000); // Delay matches toast duration
       } else {
         showToast(data.error || 'Invalid username or password', 'error');
       }
@@ -38,40 +42,44 @@ const LoginPage = ({ onLogin, showToast }) => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <form onSubmit={handleSubmit} className="card p-4 shadow-lg border-0 rounded-3" style={{ maxWidth: '400px', width: '100%' }}>
-        <h2 className="text-center mb-4 text-primary">Login</h2>
-        
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">Username</label>
-          <input
-            type="text"
-            id="username"
-            className="form-control form-control-lg"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            disabled={isSubmitting}
-          />
+    <div className="login-page-container flex-grow-1 d-flex flex-column">
+      <Header />
+      <div className="container d-flex justify-content-center align-items-center flex-grow-1">
+        <div className="card p-4 shadow-lg border-0 rounded-3" style={{ maxWidth: '400px', width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+          <h2 className="text-center mb-4 text-primary">Login</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">Username</label>
+              <input
+                type="text"
+                id="username"
+                className="form-control form-control-lg"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                className="form-control form-control-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isSubmitting}
+                autoComplete="current-password"
+              />
+            </div>
+            <button type="submit" className="btn btn-primary btn-lg w-100" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
         </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            className="form-control form-control-lg"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isSubmitting}
-            autoComplete="current-password"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary btn-lg w-100" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      <LoadingOverlay isLoading={loading} />
+        <LoadingOverlay isLoading={loading} />
+      </div>
     </div>
   );
 };

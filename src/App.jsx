@@ -11,15 +11,16 @@ import Navbar from './components/Navbar';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
+import Footer from './components/Footer'; // Import Footer component
 
 const DashboardLayout = ({ children, onLogout, username }) => {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <>
       <Navbar onLogout={onLogout} username={username} />
-      <div className="flex-grow-1 p-3 p-md-4">
+      <div className="p-3 p-md-4">
         {children}
       </div>
-    </div>
+    </>
   );
 };
 
@@ -104,9 +105,11 @@ function AppContent() {
             setToken(data.token);
             sessionStorage.setItem('token', data.token);
           } else {
+            showToast('Session expired. Please log in again.', 'error');
             handleLogout();
           }
         } catch (error) {
+          showToast('Session expired. Please log in again.', 'error');
           handleLogout();
         }
       }
@@ -261,67 +264,73 @@ function AppContent() {
   }
 
   return (
-    <>
-      {!isAuthenticated ? (
-        <Routes>
-          <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
-        </Routes>
-      ) : (
-        <DashboardLayout onLogout={handleLogout} username={username}>
-
+    <div className="d-flex flex-column min-vh-100">
+      <div className="flex-grow-1 d-flex flex-column">
+        {!isAuthenticated ? (
           <Routes>
-            <Route
-              path="/"
-              element={
-                <HomePage
-                  income={totalIncome}
-                  expense={totalExpense}
-                  balance={balance}
-                  onAddTransaction={addTransaction}
-                  transactions={filteredTransactions}
-                  onDeleteTransaction={handleDeleteClick}
-                  filterMonth={filterMonth}
-                  setFilterMonth={setFilterMonth}
-                  availableMonths={availableMonths}
-                  username={username}
-                  showToast={showToast}
-                />
-              }
-            />
-            <Route
-              path="/history"
-              element={
-                <HistoryPage
-                  transactions={filteredTransactions}
-                  onDeleteTransaction={handleDeleteClick}
-                />
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                username === 'rezz' ? (
-                  <RegisterPage showToast={showToast} token={token} />
-                ) : (
-                  <div className="main-content">
-                    <h1>Unauthorized Access</h1>
-                    <p>You do not have permission to access this page.</p>
-                  </div>
-                )
-              }
-            />
+            <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
           </Routes>
-          <ConfirmationDialog
-            message="Are you sure you want to delete this transaction?"
-            isOpen={isConfirmationDialogOpen}
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-          />
+        ) : (
+          <DashboardLayout onLogout={() => {
+            showToast('You have been logged out.', 'info');
+            handleLogout();
+          }} username={username}>
 
-        </DashboardLayout>
-      )}
-      <ToastNotification message={toastMessage} type={toastType} />
-    </>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <HomePage
+                    income={totalIncome}
+                    expense={totalExpense}
+                    balance={balance}
+                    onAddTransaction={addTransaction}
+                    transactions={filteredTransactions}
+                    onDeleteTransaction={handleDeleteClick}
+                    filterMonth={filterMonth}
+                    setFilterMonth={setFilterMonth}
+                    availableMonths={availableMonths}
+                    username={username}
+                    showToast={showToast}
+                  />
+                }
+              />
+              <Route
+                path="/history"
+                element={
+                  <HistoryPage
+                    transactions={filteredTransactions}
+                    onDeleteTransaction={handleDeleteClick}
+                  />
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  username === 'rezz' ? (
+                    <RegisterPage showToast={showToast} token={token} />
+                  ) : (
+                    <div className="main-content">
+                      <h1>Unauthorized Access</h1>
+                      <p>You do not have permission to access this page.</p>
+                    </div>
+                  )
+                }
+              />
+            </Routes>
+            <ConfirmationDialog
+              message="Are you sure you want to delete this transaction?"
+              isOpen={isConfirmationDialogOpen}
+              onConfirm={handleConfirmDelete}
+              onCancel={handleCancelDelete}
+            />
+
+          </DashboardLayout>
+        )}
+        <ToastNotification message={toastMessage} type={toastType} />
+      </div>
+      <Footer />
+    </div>
   );
 }
 
