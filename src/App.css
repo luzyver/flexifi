@@ -8,8 +8,8 @@
   --expense-color: #dc3545;
   --text-color: #343a40;
   --light-text-color: #6c757d;
-  --bg-light: #87CEEB;
-  --card-bg: #4682B4;
+  --bg-light: #f8f9fa;
+  --card-bg: #ffffff;
   --border-color: #dee2e6;
   --shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   --border-radius: 0.5rem;
@@ -18,12 +18,16 @@
 body {
   font-family: 'Inter', sans-serif;
   color: var(--text-color);
+  background-color: var(--bg-light);
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--bg-light);
+}
+
+.login-page-container {
+  background: skyblue;
 }
 
 /* Basic typography adjustments */
