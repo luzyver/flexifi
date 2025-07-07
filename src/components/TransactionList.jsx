@@ -5,19 +5,24 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   const transactionsToDisplay = limit ? transactions.slice(0, limit) : transactions;
 
   return (
-    <div className="card-body p-0">
+    <div className="transaction-list">
       {transactionsToDisplay.length > 0 ? (
-        <ul className="list-group list-group-flush">
-          {transactionsToDisplay.map((transaction) => (
+        <div className="list-group list-group-flush">
+          {transactionsToDisplay.map((transaction, index) => (
             <Transaction
               key={transaction._id}
               transaction={transaction}
               onDeleteTransaction={onDeleteTransaction}
+              index={index}
             />
           ))}
-        </ul>
+        </div>
       ) : (
-        <p className="text-center text-muted p-4 mb-0 fs-5">No transactions found for this period.</p>
+        <div className="text-center py-4 py-md-5">
+          <i className="bi bi-inbox display-1 text-muted mb-3"></i>
+          <h5 className="text-muted mb-2">No transactions found</h5>
+          <p className="text-muted mb-0 small">No transactions match your current filter criteria.</p>
+        </div>
       )}
     </div>
   );
