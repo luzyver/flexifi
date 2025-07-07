@@ -11,44 +11,52 @@ const Balance = ({
   availableMonths,
 }) => {
   return (
-    <div className="card-body">
-      <h4 className="card-title text-center mb-4">Your Balance</h4>
-      <h1 className="display-3 text-center mb-4">{formatRupiah(balance)}</h1>
+    <div className="text-center">
+      <h4 className="mb-4 text-white-50">Your Current Balance</h4>
+      
+      <div className="balance-amount text-white mb-4">
+        {formatRupiah(balance)}
+      </div>
 
-      <div className="row text-center mb-4">
-        <div className="col">
-          <div className="card bg-light mb-3">
-            <div className="card-body">
-              <h5 className="card-title text-success">Income</h5>
-              <p className="card-text fs-4 text-success">{formatRupiah(income)}</p>
-            </div>
+      <div className="row g-3 mb-4">
+        <div className="col-6">
+          <div className="d-flex flex-column">
+            <span className="text-white-50 small text-uppercase fw-semibold">Income</span>
+            <span className="h5 text-success mb-0">{formatRupiah(income)}</span>
           </div>
         </div>
-        <div className="col">
-          <div className="card bg-light mb-3">
-            <div className="card-body">
-              <h5 className="card-title text-danger">Expense</h5>
-              <p className="card-text fs-4 text-danger">{formatRupiah(expense)}</p>
-            </div>
+        <div className="col-6">
+          <div className="d-flex flex-column">
+            <span className="text-white-50 small text-uppercase fw-semibold">Expense</span>
+            <span className="h5 text-danger mb-0">{formatRupiah(expense)}</span>
           </div>
         </div>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="monthFilter" className="form-label">Filter by Month:</label>
-        <select
-          className="form-select"
-          id="monthFilter"
-          value={filterMonth}
-          onChange={(e) => setFilterMonth(e.target.value)}
-        >
-          <option value="">All Months</option>
-          {availableMonths.map((month) => (
-            <option key={month} value={month}>
-              {new Date(month + '-02').toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-            </option>
-          ))}
-        </select>
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <div className="form-group">
+            <label htmlFor="monthFilter" className="form-label text-white-50 small text-uppercase fw-semibold">
+              Filter by Month
+            </label>
+            <select
+              className="form-select"
+              id="monthFilter"
+              value={filterMonth}
+              onChange={(e) => setFilterMonth(e.target.value)}
+            >
+              <option value="">All Months</option>
+              {availableMonths.map((month) => (
+                <option key={month} value={month}>
+                  {new Date(month + '-02').toLocaleString('en-US', { 
+                    month: 'long', 
+                    year: 'numeric' 
+                  })}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   );

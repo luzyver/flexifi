@@ -3,16 +3,17 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import Cookies from 'js-cookie';
 
 import HomePage from './pages/HomePage';
+import AddTransactionPage from './pages/AddTransactionPage';
 import HistoryPage from './pages/HistoryPage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage'; // Import RegisterPage
+import RegisterPage from './pages/RegisterPage';
 import CategoryPage from './pages/CategoryPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import Navbar from './components/Navbar';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
-import Footer from './components/Footer'; // Import Footer component
+import Footer from './components/Footer';
 
 const DashboardLayout = ({ children, onLogout, username }) => {
   return (
@@ -69,7 +70,6 @@ function AppContent() {
     try {
       const token = sessionStorage.getItem('token');
       if (!token) {
-        // showToast('Authentication token not found. Please log in.', 'error');
         return;
       }
       const res = await fetch(`${API_BASE_URL}/categories`, {
@@ -102,7 +102,6 @@ function AppContent() {
   };
 
   const handleLogout = useCallback(async () => {
-    // Ensure token exists before attempting to send it to the backend for invalidation
     const currentToken = sessionStorage.getItem('token');
     if (currentToken) {
       try {
@@ -112,10 +111,8 @@ function AppContent() {
             Authorization: `Bearer ${currentToken}`,
           },
         });
-        // Optionally, check res.ok here if you want to handle server-side logout failures
         if (!res.ok) {
           console.error('Server-side logout failed with status:', res.status);
-          // You might show a toast here, but usually for logout, client-side clear is primary
         }
       } catch (error) {
         console.error('Network error during logout:', error);
@@ -124,7 +121,6 @@ function AppContent() {
       console.warn('No token found in session storage for logout. Proceeding with client-side logout.');
     }
 
-    // Always clear client-side state regardless of backend logout success
     Cookies.remove('token');
     sessionStorage.removeItem('token');
     setIsAuthenticated(false);
@@ -139,7 +135,7 @@ function AppContent() {
       setLoading(true);
       const storedToken = sessionStorage.getItem('token');
       if (storedToken) {
-        setToken(storedToken); // Set token state from sessionStorage immediately
+        setToken(storedToken);
         try {
           const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
             method: 'POST',
@@ -151,7 +147,7 @@ function AppContent() {
             const data = await res.json();
             setIsAuthenticated(true);
             setUsername(data.username);
-            setToken(data.token); // Update token state with refreshed token
+            setToken(data.token);
             sessionStorage.setItem('token', data.token);
           } else {
             showToast('Session expired. Please log in again.', 'error');
@@ -162,7 +158,6 @@ function AppContent() {
           handleLogout();
         }
       } else {
-        // If no stored token, ensure isAuthenticated is false
         setIsAuthenticated(false);
       }
       setLoading(false);
@@ -171,7 +166,6 @@ function AppContent() {
     loadTokenAndAuthenticate();
   }, []);
 
-  // Redirect logic
   useEffect(() => {
     if (!isAuthenticated && location.pathname !== '/') {
       navigate('/');
@@ -186,7 +180,6 @@ function AppContent() {
       const performFetchTransactions = async () => {
         setLoading(true);
         
-  
         try {
           const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
             signal,
@@ -293,11 +286,9 @@ function AppContent() {
     setTransactionToDeleteId(null);
   };
 
-  // Category Deletion Handlers
   const handleDeleteCategoryClick = (id, onSuccess) => {
     setCategoryToDeleteId(id);
     setCategoryConfirmationDialogOpen(true);
-    // Store the onSuccess callback to be called after confirmation
     setCategoryDeleteSuccessCallback(() => onSuccess);
   };
 
@@ -314,7 +305,7 @@ function AppContent() {
       if (res.ok && data.success) {
         showToast('Category deleted successfully!', 'success');
         if (categoryDeleteSuccessCallback) {
-          categoryDeleteSuccessCallback(); // Call the stored callback
+          categoryDeleteSuccessCallback();
         }
       } else {
         showToast(data.error || `Failed to delete category (Status: ${res.status}).`, 'error');
@@ -323,7 +314,7 @@ function AppContent() {
       showToast('Error deleting category: ' + err.message, 'error');
     } finally {
       setCategoryToDeleteId(null);
-      setCategoryDeleteSuccessCallback(null); // Clear the callback
+      setCategoryDeleteSuccessCallback(null);
     }
   };
 
@@ -366,7 +357,6 @@ function AppContent() {
             showToast('You have been logged out.', 'info');
             handleLogout();
           }} username={username}>
-
             <Routes>
               <Route
                 path="/"
@@ -375,14 +365,22 @@ function AppContent() {
                     income={totalIncome}
                     expense={totalExpense}
                     balance={balance}
-                    onAddTransaction={addTransaction}
                     transactions={filteredTransactions}
                     onDeleteTransaction={handleDeleteClick}
                     filterMonth={filterMonth}
                     setFilterMonth={setFilterMonth}
                     availableMonths={availableMonths}
                     username={username}
+                  />
+                }
+              />
+              <Route
+                path="/add-transaction"
+                element={
+                  <AddTransactionPage
+                    onAddTransaction={addTransaction}
                     showToast={showToast}
+                    transactions={transactions}
                     categories={categories}
                   />
                 }
