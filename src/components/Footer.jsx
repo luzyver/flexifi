@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="row align-items-center">
           <div className="col-md-6 text-md-start">
             <p className="mb-0 text-muted">
-              &copy; {new Date().getFullYear()} Money Tracker. All Rights Reserved.
+              &copy; {new Date().getFullYear()} FlexiFi. All Rights Reserved.
             </p>
           </div>
           <div className="col-md-6 text-md-end">

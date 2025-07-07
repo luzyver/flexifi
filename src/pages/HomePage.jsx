@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Balance from '../components/Balance';
 import TransactionList from '../components/TransactionList';
 
 const HomePage = ({
@@ -9,9 +8,6 @@ const HomePage = ({
   balance,
   transactions,
   onDeleteTransaction,
-  filterMonth,
-  setFilterMonth,
-  availableMonths,
   username,
 }) => {
   return (
@@ -60,49 +56,6 @@ const HomePage = ({
 
       {/* Main Content */}
       <div className="row g-3 g-md-4">
-        {/* Balance Card */}
-        <div className="col-12 col-lg-8">
-          <div className="card balance-card fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="card-body">
-              <Balance 
-                income={income}
-                expense={expense}
-                balance={balance}
-                filterMonth={filterMonth}
-                setFilterMonth={setFilterMonth}
-                availableMonths={availableMonths}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="col-12 col-lg-4">
-          <div className="card fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="card-header">
-              <h5 className="mb-0">
-                <i className="bi bi-lightning-charge-fill me-2"></i>
-                Quick Actions
-              </h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <Link to="/add-transaction" className="btn btn-primary">
-                  <i className="bi bi-plus-circle-fill me-2"></i>
-                  Add Transaction
-                </Link>
-                <Link to="/history" className="btn btn-outline-primary">
-                  <i className="bi bi-clock-history me-2"></i>
-                  View History
-                </Link>
-                <Link to="/categories" className="btn btn-outline-secondary">
-                  <i className="bi bi-tags-fill me-2"></i>
-                  Categories
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Recent Transactions */}
