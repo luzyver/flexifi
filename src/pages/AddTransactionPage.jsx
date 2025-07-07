@@ -11,11 +11,11 @@ const AddTransactionPage = ({
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-lg-8 col-xl-6">
+        <div className="col-12 col-lg-8 col-xl-6">
           {/* Header */}
-          <div className="text-center mb-4 fade-in">
+          <div className="text-center mb-3 mb-md-4 fade-in">
             <h1 className="display-6 fw-bold text-white mb-2">
-              <i className="bi bi-plus-circle-fill me-3"></i>
+              <i className="bi bi-plus-circle-fill me-2 me-md-3"></i>
               Add New Transaction
             </h1>
             <p className="lead text-white-50">
@@ -24,7 +24,7 @@ const AddTransactionPage = ({
           </div>
 
           {/* Breadcrumb */}
-          <nav aria-label="breadcrumb" className="mb-4 fade-in" style={{ animationDelay: '0.1s' }}>
+          <nav aria-label="breadcrumb" className="mb-3 mb-md-4 fade-in" style={{ animationDelay: '0.1s' }}>
             <ol className="breadcrumb">
               <li className="breadcrumb-item">
                 <Link to="/" className="text-white-50 text-decoration-none">
@@ -57,7 +57,7 @@ const AddTransactionPage = ({
           </div>
 
           {/* Quick Tips */}
-          <div className="card mt-4 fade-in" style={{ animationDelay: '0.3s' }}>
+          <div className="card mt-3 mt-md-4 fade-in" style={{ animationDelay: '0.3s' }}>
             <div className="card-body">
               <h6 className="card-title text-primary">
                 <i className="bi bi-lightbulb-fill me-2"></i>

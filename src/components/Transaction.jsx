@@ -6,7 +6,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index }) => {
   const sign = isIncome ? '+' : '-';
   const amountClass = isIncome ? 'text-success' : 'text-danger';
   const iconClass = isIncome ? 'bi-arrow-up-circle-fill' : 'bi-arrow-down-circle-fill';
-  const borderClass = isIncome ? 'border-success' : 'border-danger';
 
   const formattedTransactionDate = new Date(transaction.date).toLocaleDateString('id-ID', {
     year: 'numeric',
@@ -21,26 +20,26 @@ const Transaction = ({ transaction, onDeleteTransaction, index }) => {
       style={{ animationDelay: `${index * 0.1}s` }}
     >
       <div className="d-flex justify-content-between align-items-start">
-        <div className="d-flex align-items-start">
-          <div className={`me-3 mt-1`}>
-            <i className={`bi ${iconClass} fs-4 ${amountClass}`}></i>
+        <div className="d-flex align-items-start flex-grow-1">
+          <div className="me-2 me-md-3 mt-1">
+            <i className={`bi ${iconClass} fs-5 fs-md-4 ${amountClass}`}></i>
           </div>
-          <div className="flex-grow-1">
-            <div className="transaction-description">{transaction.description}</div>
-            <div className="transaction-meta">
-              <span className="badge bg-light text-dark me-2">
+          <div className="flex-grow-1 min-w-0">
+            <div className="transaction-description text-truncate">{transaction.description}</div>
+            <div className="transaction-meta d-flex flex-column flex-sm-row align-items-start align-items-sm-center">
+              <span className="badge bg-light text-dark me-0 me-sm-2 mb-1 mb-sm-0">
                 <i className="bi bi-tag-fill me-1"></i>
                 {transaction.category}
               </span>
-              <span className="text-muted">
+              <span className="text-muted small">
                 <i className="bi bi-calendar3 me-1"></i>
                 {formattedTransactionDate}
               </span>
             </div>
           </div>
         </div>
-        <div className="d-flex align-items-center">
-          <div className={`transaction-amount ${amountClass} me-3 text-end`}>
+        <div className="d-flex align-items-center ms-2">
+          <div className={`transaction-amount ${amountClass} me-2 me-md-3 text-end`}>
             <div className="fw-bold">{sign}{formatRupiah(Math.abs(transaction.amount))}</div>
           </div>
           <button

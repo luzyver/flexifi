@@ -12,29 +12,29 @@ const Balance = ({
 }) => {
   return (
     <div className="text-center">
-      <h4 className="mb-4 text-white-50">Your Current Balance</h4>
+      <h4 className="mb-3 mb-md-4 text-white-50">Your Current Balance</h4>
       
-      <div className="balance-amount text-white mb-4">
+      <div className="balance-amount text-white mb-3 mb-md-4">
         {formatRupiah(balance)}
       </div>
 
-      <div className="row g-3 mb-4">
+      <div className="row g-2 g-md-3 mb-3 mb-md-4">
         <div className="col-6">
           <div className="d-flex flex-column">
             <span className="text-white-50 small text-uppercase fw-semibold">Income</span>
-            <span className="h5 text-success mb-0">{formatRupiah(income)}</span>
+            <span className="h6 h5-md text-success mb-0">{formatRupiah(income)}</span>
           </div>
         </div>
         <div className="col-6">
           <div className="d-flex flex-column">
             <span className="text-white-50 small text-uppercase fw-semibold">Expense</span>
-            <span className="h5 text-danger mb-0">{formatRupiah(expense)}</span>
+            <span className="h6 h5-md text-danger mb-0">{formatRupiah(expense)}</span>
           </div>
         </div>
       </div>
 
       <div className="row justify-content-center">
-        <div className="col-md-8">
+        <div className="col-12 col-md-8">
           <div className="form-group">
             <label htmlFor="monthFilter" className="form-label text-white-50 small text-uppercase fw-semibold">
               Filter by Month
