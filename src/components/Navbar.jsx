@@ -105,11 +105,11 @@ const Navbar = ({ onLogout, username }) => {
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
                   <span className="dropdown-item-text">
-                    <small className="text-muted">Logged in as</small><br>
+                    <small className="text-muted">Logged in as</small><br />
                     <strong>{username}</strong>
                   </span>
                 </li>
-                <li><hr className="dropdown-divider"></li>
+                <li><hr className="dropdown-divider" /></li>
                 <li>
                   <a href="#" onClick={handleLogoutClick} className="dropdown-item d-flex align-items-center text-danger">
                     <i className="bi bi-box-arrow-right me-2"></i> 
