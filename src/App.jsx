@@ -15,10 +15,16 @@ import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
 import Footer from './components/Footer';
 
-const DashboardLayout = ({ children, onLogout, username }) => {
+const DashboardLayout = ({ children, onLogout, username, filterMonth, setFilterMonth, availableMonths }) => {
   return (
     <>
-      <Navbar onLogout={onLogout} username={username} />
+      <Navbar 
+        onLogout={onLogout} 
+        username={username} 
+        filterMonth={filterMonth} 
+        setFilterMonth={setFilterMonth} 
+        availableMonths={availableMonths} 
+      />
       <main className="main-content">
         {children}
       </main>
@@ -47,8 +53,8 @@ function AppContent() {
   const [username, setUsername] = useState(null);
   const [token, setToken] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filterMonth, setFilterMonth] = useState('');
+  const [availableMonths, setAvailableMonths] = useState([]);
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
   const [isCategoryConfirmationDialogOpen, setCategoryConfirmationDialogOpen] = useState(false);
@@ -132,7 +138,6 @@ function AppContent() {
 
   useEffect(() => {
     const loadTokenAndAuthenticate = async () => {
-      setLoading(true);
       const storedToken = sessionStorage.getItem('token');
       if (storedToken) {
         setToken(storedToken);
@@ -160,7 +165,6 @@ function AppContent() {
       } else {
         setIsAuthenticated(false);
       }
-      setLoading(false);
     };
 
     loadTokenAndAuthenticate();
@@ -178,7 +182,6 @@ function AppContent() {
       const signal = abortController.signal;
   
       const performFetchTransactions = async () => {
-        setLoading(true);
         
         try {
           const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
@@ -209,7 +212,6 @@ function AppContent() {
           }
         } finally {
           if (!signal.aborted) {
-            setLoading(false);
           }
         }
       };
@@ -230,6 +232,10 @@ function AppContent() {
     });
     return Array.from(months).sort((a, b) => new Date(b) - new Date(a));
   };
+
+  useEffect(() => {
+    setAvailableMonths(getAvailableMonths());
+  }, [transactions]);
 
   const addTransaction = async (transaction) => {
     try {
@@ -339,11 +345,6 @@ function AppContent() {
   const totalIncome = filteredTransactions.filter((t) => t.type === 'pemasukan').reduce((acc, t) => acc + t.amount, 0);
   const totalExpense = filteredTransactions.filter((t) => t.type === 'pengeluaran').reduce((acc, t) => acc + t.amount, 0);
   const balance = totalIncome - totalExpense;
-  const availableMonths = getAvailableMonths();
-
-  if (loading) {
-    return <LoadingOverlay isLoading={loading} />;
-  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -353,10 +354,16 @@ function AppContent() {
             <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
           </Routes>
         ) : (
-          <DashboardLayout onLogout={() => {
-            showToast('You have been logged out.', 'info');
-            handleLogout();
-          }} username={username}>
+          <DashboardLayout 
+            onLogout={() => {
+              showToast('You have been logged out.', 'info');
+              handleLogout();
+            }} 
+            username={username}
+            filterMonth={filterMonth}
+            setFilterMonth={setFilterMonth}
+            availableMonths={availableMonths}
+          >
             <Routes>
               <Route
                 path="/"
@@ -367,9 +374,6 @@ function AppContent() {
                     balance={balance}
                     transactions={filteredTransactions}
                     onDeleteTransaction={handleDeleteClick}
-                    filterMonth={filterMonth}
-                    setFilterMonth={setFilterMonth}
-                    availableMonths={availableMonths}
                     username={username}
                   />
                 }

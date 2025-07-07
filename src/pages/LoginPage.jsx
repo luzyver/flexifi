@@ -50,7 +50,7 @@ const LoginPage = ({ onLogin, showToast }) => {
               <div className="login-brand-icon mb-3">
                 <i className="bi bi-wallet2 display-3 text-white"></i>
               </div>
-              <h1 className="display-5 fw-bold text-white mb-2">Money Tracker</h1>
+              <h1 className="display-5 fw-bold text-white mb-2">FlexiFi</h1>
               <p className="lead text-white-50 mb-0">Manage your finances with ease</p>
             </div>
 
@@ -144,7 +144,7 @@ const LoginPage = ({ onLogin, showToast }) => {
             {/* Footer */}
             <div className="text-center mt-4 fade-in" style={{ animationDelay: '0.4s' }}>
               <small className="text-white-50">
-                &copy; {new Date().getFullYear()} Money Tracker. All rights reserved.
+                &copy; {new Date().getFullYear()} FlexiFi. All rights reserved.
               </small>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Navbar = ({ onLogout, username }) => {
+const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMonths }) => {
   const location = useLocation();
   
   const handleLogoutClick = () => {
@@ -17,7 +17,7 @@ const Navbar = ({ onLogout, username }) => {
       <div className="container-fluid">
         <Link to="/" className="navbar-brand fw-bold fs-4 text-primary">
           <i className="bi bi-wallet2 me-2"></i>
-          Money Tracker
+          FlexiFi
         </Link>
         
         <button
@@ -71,12 +71,12 @@ const Navbar = ({ onLogout, username }) => {
                     Categories
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link to="/change-password" className="dropdown-item d-flex align-items-center">
                     <i className="bi bi-key-fill me-2"></i> 
                     Change Password
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </li>
             {username === 'rezz' && (
@@ -88,6 +88,33 @@ const Navbar = ({ onLogout, username }) => {
               </li>
             )}
           </ul>
+          
+          {location.pathname === '/' || location.pathname === '/history' ? (
+            <div className="d-flex me-3 align-items-center">
+              <div className="input-group input-group-sm">
+                <span className="input-group-text bg-light border-0">
+                  <i className="bi bi-calendar3"></i>
+                </span>
+                <select
+                  className="form-select form-select-sm"
+                  id="monthFilter"
+                  value={filterMonth}
+                  onChange={(e) => setFilterMonth(e.target.value)}
+                  aria-label="Filter by month"
+                >
+                  <option value="">All Months</option>
+                  {availableMonths && availableMonths.map((month) => (
+                    <option key={month} value={month}>
+                      {new Date(month + '-02').toLocaleString('en-US', { 
+                        month: 'long', 
+                        year: 'numeric' 
+                      })}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ) : null}
           
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
@@ -103,11 +130,17 @@ const Navbar = ({ onLogout, username }) => {
                 {username}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li>
+                {/* <li>
                   <span className="dropdown-item-text">
                     <small className="text-muted">Logged in as</small><br />
                     <strong>{username}</strong>
                   </span>
+                </li> */}
+                <li>
+                  <Link to="/change-password" className="dropdown-item d-flex align-items-center">
+                    <i className="bi bi-key-fill me-2"></i> 
+                    Change Password
+                  </Link>
                 </li>
                 <li><hr className="dropdown-divider" /></li>
                 <li>
