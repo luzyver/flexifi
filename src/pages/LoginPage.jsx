@@ -4,7 +4,6 @@ import LoadingOverlay from '../components/LoadingOverlay';
 const LoginPage = ({ onLogin, showToast }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,10 +25,9 @@ const LoginPage = ({ onLogin, showToast }) => {
 
       if (res.ok && data.success) {
         showToast('Login successful!', 'success');
-        setTimeout(() => {
-          setLoading(true);
-          onLogin(data.username, data.token);
-        }, 1500);
+        // Langsung panggil onLogin tanpa delay dan tanpa mengatur loading
+        // karena loading sudah diatur di App.jsx
+        onLogin(data.username, data.token);
       } else {
         showToast(data.error || 'Invalid username or password', 'error');
       }
@@ -150,7 +148,7 @@ const LoginPage = ({ onLogin, showToast }) => {
           </div>
         </div>
       </div>
-      <LoadingOverlay isLoading={loading} />
+      {/* LoadingOverlay dipindahkan ke App.jsx */}
     </div>
   );
 };

@@ -17,7 +17,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
     }
 
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const res = await fetch(`${API_BASE_URL}/categories`, {
         method: 'POST',
         headers: {
