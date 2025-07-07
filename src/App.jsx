@@ -398,6 +398,7 @@ function AppContent() {
   const handleCancelDeleteCategory = () => {
     setCategoryConfirmationDialogOpen(false);
     setCategoryToDeleteId(null);
+    setCategoryDeleteSuccessCallback(null);
   };
 
   const filteredTransactions = filterMonth
@@ -422,10 +423,12 @@ function AppContent() {
       <LoadingOverlay isLoading={isLoading} />
       <div className="flex-grow-1 d-flex flex-column">
         {!isAuthenticated && !isLoading ? (
-          <Routes>
-            <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
-            <Route path="/register" element={<RegisterPage showToast={showToast} />} />
-          </Routes>
+          <div className="flex-grow-1">
+            <Routes>
+              <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
+              <Route path="/register" element={<RegisterPage showToast={showToast} />} />
+            </Routes>
+          </div>
         ) : isLoading ? null : (
           <DashboardLayout 
             onLogout={() => {
@@ -471,21 +474,7 @@ function AppContent() {
                   />
                 }
               />
-              <Route
-                path="/admin-register"
-                element={
-                  username === 'rezz' ? (
-                    <div className="main-content">
-                      <RegisterPage showToast={showToast} />
-                    </div>
-                  ) : (
-                    <div className="main-content">
-                      <h1>Unauthorized Access</h1>
-                      <p>You do not have permission to access this page.</p>
-                    </div>
-                  )
-                }
-              />
+
               <Route
                 path="/categories"
                 element={
@@ -538,7 +527,7 @@ function AppContent() {
         )}
         <ToastNotification message={toastMessage} type={toastType} />
       </div>
-      <Footer />
+      {isAuthenticated && !isLoading && <Footer />}
     </div>
   );
 }

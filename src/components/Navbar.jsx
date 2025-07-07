@@ -71,29 +71,15 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                     Categories
                   </Link>
                 </li>
-                {/* <li>
-                  <Link to="/change-password" className="dropdown-item d-flex align-items-center">
-                    <i className="bi bi-key-fill me-2"></i> 
-                    Change Password
-                  </Link>
-                </li> */}
               </ul>
             </li>
             {username === 'rezz' && (
-              <>
-                <li className="nav-item">
-                  <Link to="/admin-register" className={`nav-link d-flex align-items-center ${isActive('/admin-register')}`}>
-                    <i className="bi bi-person-plus-fill me-2"></i> 
-                    Admin Register
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/activation-codes" className={`nav-link d-flex align-items-center ${isActive('/activation-codes')}`}>
-                    <i className="bi bi-key-fill me-2"></i> 
-                    Kode Aktivasi
-                  </Link>
-                </li>
-              </>
+              <li className="nav-item">
+                <Link to="/activation-codes" className={`nav-link d-flex align-items-center ${isActive('/activation-codes')}`}>
+                  <i className="bi bi-key-fill me-2"></i> 
+                  Kode Aktivasi
+                </Link>
+              </li>
             )}
           </ul>
           
@@ -138,12 +124,7 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 {username}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                {/* <li>
-                  <span className="dropdown-item-text">
-                    <small className="text-muted">Logged in as</small><br />
-                    <strong>{username}</strong>
-                  </span>
-                </li> */}
+
                 <li>
                   <Link to="/change-password" className="dropdown-item d-flex align-items-center">
                     <i className="bi bi-key-fill me-2"></i> 
