@@ -18,10 +18,10 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-5">
+        <div className="text-center py-4 py-md-5">
           <i className="bi bi-inbox display-1 text-muted mb-3"></i>
-          <h5 className="text-muted">No transactions found</h5>
-          <p className="text-muted mb-0">No transactions match your current filter criteria.</p>
+          <h5 className="text-muted mb-2">No transactions found</h5>
+          <p className="text-muted mb-0 small">No transactions match your current filter criteria.</p>
         </div>
       )}
     </div>
