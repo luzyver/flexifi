@@ -63,6 +63,7 @@ function AppContent() {
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState('info');
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const showToast = useCallback((message, type = 'info') => {
     setToastMessage(message);
@@ -74,7 +75,7 @@ function AppContent() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (!token) {
         return;
       }
@@ -101,14 +102,17 @@ function AppContent() {
   }, [isAuthenticated, fetchCategories]);
 
   const handleLogin = (loggedInUsername, authToken) => {
+    setIsLoading(true);
     setIsAuthenticated(true);
     setUsername(loggedInUsername);
     setToken(authToken);
-    sessionStorage.setItem('token', authToken);
+    // Simpan token di localStorage agar tetap tersimpan saat tab ditutup
+    localStorage.setItem('token', authToken);
+    setIsLoading(false);
   };
 
   const handleLogout = useCallback(async () => {
-    const currentToken = sessionStorage.getItem('token');
+    const currentToken = localStorage.getItem('token');
     if (currentToken) {
       try {
         const res = await fetch(`${API_BASE_URL}/auth/logout`, {
@@ -116,6 +120,8 @@ function AppContent() {
           headers: {
             Authorization: `Bearer ${currentToken}`,
           },
+          // Tambahkan credentials untuk memastikan cookie dikirim dan diterima
+          credentials: 'include'
         });
         if (!res.ok) {
           console.error('Server-side logout failed with status:', res.status);
@@ -124,11 +130,11 @@ function AppContent() {
         console.error('Network error during logout:', error);
       }
     } else {
-      console.warn('No token found in session storage for logout. Proceeding with client-side logout.');
+      console.warn('No token found in local storage for logout. Proceeding with client-side logout.');
     }
 
     Cookies.remove('token');
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
     setUsername(null);
     setToken(null);
@@ -138,37 +144,57 @@ function AppContent() {
 
   useEffect(() => {
     const loadTokenAndAuthenticate = async () => {
-      const storedToken = sessionStorage.getItem('token');
+      const storedToken = localStorage.getItem('token');
       if (storedToken) {
         setToken(storedToken);
         try {
+          // Set loading state saat memulai proses autentikasi
+          setIsLoading(true);
+          
           const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${storedToken}`,
             },
+            // Tambahkan credentials untuk memastikan cookie dikirim
+            credentials: 'include'
           });
           if (res.ok) {
             const data = await res.json();
             setIsAuthenticated(true);
             setUsername(data.username);
             setToken(data.token);
-            sessionStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.token);
           } else {
-            showToast('Session expired. Please log in again.', 'error');
+            // Jangan tampilkan toast error saat pertama kali load
+            // karena ini bisa mengganggu UX
+            console.error('Token refresh failed');
             handleLogout();
           }
         } catch (error) {
-          showToast('Session expired. Please log in again.', 'error');
+          console.error('Token refresh error:', error);
           handleLogout();
+        } finally {
+          setIsLoading(false);
         }
       } else {
         setIsAuthenticated(false);
+        setIsLoading(false);
       }
     };
 
     loadTokenAndAuthenticate();
-  }, []);
+    
+    // Setup interval untuk refresh token secara berkala
+    // Refresh setiap 10 menit untuk mencegah token expired (yang 15 menit)
+    const tokenRefreshInterval = setInterval(() => {
+      if (localStorage.getItem('token')) {
+        loadTokenAndAuthenticate();
+      }
+    }, 10 * 60 * 1000); // 10 menit
+    
+    return () => clearInterval(tokenRefreshInterval);
+  }, [handleLogout]);
 
   useEffect(() => {
     if (!isAuthenticated && location.pathname !== '/') {
@@ -348,12 +374,13 @@ function AppContent() {
 
   return (
     <div className="d-flex flex-column min-vh-100">
+      <LoadingOverlay isLoading={isLoading} />
       <div className="flex-grow-1 d-flex flex-column">
-        {!isAuthenticated ? (
+        {!isAuthenticated && !isLoading ? (
           <Routes>
             <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
           </Routes>
-        ) : (
+        ) : isLoading ? null : (
           <DashboardLayout 
             onLogout={() => {
               showToast('You have been logged out.', 'info');

@@ -23,7 +23,7 @@ const ChangePasswordPage = ({ showToast }) => {
     }
 
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (!token) {
         showToast('Authentication token not found. Please log in.', 'error');
         navigate('/login');
