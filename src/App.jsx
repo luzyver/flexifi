@@ -415,6 +415,8 @@ function AppContent() {
                   <CategoryPage
                     showToast={showToast}
                     onDeleteCategory={handleDeleteCategoryClick}
+                    categories={categories}
+                    onCategoryAdded={fetchCategories}
                   />
                 }
               />

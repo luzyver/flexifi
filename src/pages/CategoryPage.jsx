@@ -1,43 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const CategoryPage = ({ showToast, onDeleteCategory }) => {
-  const [categories, setCategories] = useState([]);
+const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryType, setNewCategoryType] = useState('pengeluaran');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  const fetchCategories = useCallback(async () => {
-    setLoading(true);
-    try {
-      const token = sessionStorage.getItem('token');
-      if (!token) {
-        showToast('Authentication token not found. Please log in.', 'error');
-        setLoading(false);
-        return;
-      }
-      const res = await fetch(`${API_BASE_URL}/categories`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setCategories(data.data);
-      } else {
-        showToast(data.error || 'Failed to fetch categories', 'error');
-      }
-    } catch (error) {
-      showToast('Error fetching categories: ' + error.message, 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [API_BASE_URL, showToast]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
@@ -60,7 +30,7 @@ const CategoryPage = ({ showToast, onDeleteCategory }) => {
       if (res.ok && data.success) {
         showToast('Category added successfully!', 'success');
         setNewCategoryName('');
-        fetchCategories(); // Refresh the list
+        onCategoryAdded(); // Refresh the list via prop
       } else {
         showToast(data.error || 'Failed to add category', 'error');
       }
@@ -70,12 +40,10 @@ const CategoryPage = ({ showToast, onDeleteCategory }) => {
   };
 
   const handleDeleteClick = (id) => {
-    onDeleteCategory(id, fetchCategories); // Pass fetchCategories as a callback
+    onDeleteCategory(id, onCategoryAdded); // Pass onCategoryAdded as a callback
   };
 
-  if (loading) {
-    return <div className="text-center mt-5">Loading categories...</div>; // Simple loading indicator
-  }
+  
 
   return (
     <div className="container mt-4">
