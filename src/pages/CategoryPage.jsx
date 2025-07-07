@@ -32,7 +32,16 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
         setNewCategoryName('');
         onCategoryAdded(); // Refresh the list via prop
       } else {
-        showToast(data.error || 'Failed to add category', 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          // Redirect ke halaman login
+          localStorage.removeItem('token');
+          localStorage.removeItem('sessionId');
+          window.location.href = '/';
+        } else {
+          showToast(data.error || 'Failed to add category', 'error');
+        }
       }
     } catch (error) {
       showToast('Error adding category: ' + error.message, 'error');

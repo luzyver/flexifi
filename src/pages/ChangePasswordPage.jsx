@@ -48,7 +48,16 @@ const ChangePasswordPage = ({ showToast }) => {
         setConfirmNewPassword('');
         navigate('/'); // Redirect to home or profile page
       } else {
-        showToast(data.error || 'Failed to change password', 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          // Redirect ke halaman login
+          localStorage.removeItem('token');
+          localStorage.removeItem('sessionId');
+          navigate('/');
+        } else {
+          showToast(data.error || 'Failed to change password', 'error');
+        }
       }
     } catch (error) {
       showToast('Error changing password: ' + error.message, 'error');

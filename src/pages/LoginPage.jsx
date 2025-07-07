@@ -27,7 +27,7 @@ const LoginPage = ({ onLogin, showToast }) => {
         showToast('Login successful!', 'success');
         // Langsung panggil onLogin tanpa delay dan tanpa mengatur loading
         // karena loading sudah diatur di App.jsx
-        onLogin(data.username, data.token);
+        onLogin(data.username, data.token, data.sessionId);
       } else {
         showToast(data.error || 'Invalid username or password', 'error');
       }
@@ -131,6 +131,12 @@ const LoginPage = ({ onLogin, showToast }) => {
 
                 {/* Additional Info */}
                 <div className="text-center mt-4 pt-3 border-top">
+                  <div className="mb-3">
+                    <a href="/register" className="btn btn-outline-primary">
+                      <i className="bi bi-person-plus me-2"></i>
+                      Register
+                    </a>
+                  </div>
                   <small className="text-muted">
                     <i className="bi bi-shield-check me-1"></i>
                     Your data is secure and encrypted
