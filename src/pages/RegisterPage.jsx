@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
 
-const RegisterPage = ({ showToast, token }) => {
+const RegisterPage = ({ showToast }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [registerCode, setRegisterCode] = useState('');
+  const [activationCode, setActivationCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,9 +34,8 @@ const RegisterPage = ({ showToast, token }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ username, password, registerCode }),
+        body: JSON.stringify({ username, password, activationCode }),
       });
 
       const data = await res.json();
@@ -46,7 +45,7 @@ const RegisterPage = ({ showToast, token }) => {
         setUsername('');
         setPassword('');
         setConfirmPassword('');
-        setRegisterCode('');
+        setActivationCode('');
         setTimeout(() => {
           navigate('/');
         }, 2000);
@@ -61,7 +60,7 @@ const RegisterPage = ({ showToast, token }) => {
     }
   };
 
-  const isFormValid = username && password && confirmPassword && registerCode && password === confirmPassword;
+  const isFormValid = username && password && confirmPassword && activationCode && password === confirmPassword;
 
   return (
     <div className="container">
@@ -191,24 +190,24 @@ const RegisterPage = ({ showToast, token }) => {
                   </div>
 
                   <div className="col-12">
-                    <label htmlFor="registerCode" className="form-label fw-semibold">
+                    <label htmlFor="activationCode" className="form-label fw-semibold">
                       <i className="bi bi-key-fill me-2 text-primary"></i>
-                      Registration Code
+                      Kode Aktivasi
                     </label>
                     <input
                       type="text"
-                      id="registerCode"
+                      id="activationCode"
                       className="form-control form-control-lg"
-                      value={registerCode}
-                      onChange={(e) => setRegisterCode(e.target.value)}
-                      placeholder="Enter registration code"
+                      value={activationCode}
+                      onChange={(e) => setActivationCode(e.target.value)}
+                      placeholder="Masukkan kode aktivasi"
                       required
                       disabled={isSubmitting}
                     />
                     <div className="form-text">
                       <small className="text-muted">
                         <i className="bi bi-info-circle me-1"></i>
-                        Contact administrator for registration code
+                        Hubungi administrator untuk mendapatkan kode aktivasi
                       </small>
                     </div>
                   </div>
@@ -262,7 +261,7 @@ const RegisterPage = ({ showToast, token }) => {
                 </li>
                 <li className="mb-2">
                   <i className="bi bi-check-circle-fill text-success me-2"></i>
-                  Registration requires valid authorization code
+                  Pendaftaran memerlukan kode aktivasi yang valid
                 </li>
                 <li className="mb-0">
                   <i className="bi bi-check-circle-fill text-success me-2"></i>

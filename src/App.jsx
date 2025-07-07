@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CategoryPage from './pages/CategoryPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import ActivationCodePage from './pages/ActivationCodePage';
 import Navbar from './components/Navbar';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
@@ -88,7 +89,13 @@ function AppContent() {
       if (res.ok && data.success) {
         setCategories(data.data);
       } else {
-        showToast(data.error || 'Failed to fetch categories', 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          handleLogout();
+        } else {
+          showToast(data.error || 'Failed to fetch categories', 'error');
+        }
       }
     } catch (error) {
       showToast('Error fetching categories: ' + error.message, 'error');
@@ -101,13 +108,16 @@ function AppContent() {
     }
   }, [isAuthenticated, fetchCategories]);
 
-  const handleLogin = (loggedInUsername, authToken) => {
+  const handleLogin = (loggedInUsername, authToken, sessionId) => {
     setIsLoading(true);
     setIsAuthenticated(true);
     setUsername(loggedInUsername);
     setToken(authToken);
-    // Simpan token di localStorage agar tetap tersimpan saat tab ditutup
+    // Simpan token dan sessionId di localStorage agar tetap tersimpan saat tab ditutup
     localStorage.setItem('token', authToken);
+    if (sessionId) {
+      localStorage.setItem('sessionId', sessionId);
+    }
     setIsLoading(false);
   };
 
@@ -135,6 +145,7 @@ function AppContent() {
 
     Cookies.remove('token');
     localStorage.removeItem('token');
+    localStorage.removeItem('sessionId');
     setIsAuthenticated(false);
     setUsername(null);
     setToken(null);
@@ -159,16 +170,26 @@ function AppContent() {
             // Tambahkan credentials untuk memastikan cookie dikirim
             credentials: 'include'
           });
+          const data = await res.json();
+          
           if (res.ok) {
-            const data = await res.json();
             setIsAuthenticated(true);
             setUsername(data.username);
             setToken(data.token);
             localStorage.setItem('token', data.token);
+            // Simpan sessionId jika ada
+            if (data.sessionId) {
+              localStorage.setItem('sessionId', data.sessionId);
+            }
           } else {
-            // Jangan tampilkan toast error saat pertama kali load
-            // karena ini bisa mengganggu UX
-            console.error('Token refresh failed');
+            // Periksa apakah sesi telah diinvalidasi (login di device lain)
+            if (data.sessionInvalidated) {
+              showToast('Akun Anda telah login di perangkat lain', 'warning');
+            } else {
+              // Jangan tampilkan toast error saat pertama kali load
+              // karena ini bisa mengganggu UX
+              console.error('Token refresh failed');
+            }
             handleLogout();
           }
         } catch (error) {
@@ -197,7 +218,7 @@ function AppContent() {
   }, [handleLogout]);
 
   useEffect(() => {
-    if (!isAuthenticated && location.pathname !== '/') {
+    if (!isAuthenticated && location.pathname !== '/' && location.pathname !== '/register') {
       navigate('/');
     }
   }, [isAuthenticated, location.pathname, navigate]);
@@ -225,9 +246,15 @@ function AppContent() {
           if (res.ok && data.success) {
             setTransactions(data.data);
           } else {
-            showToast(data.error || `Failed to fetch transactions (Status: ${res.status}).`, 'error');
-            if (res.status === 401 || res.status === 403) {
+            // Periksa apakah sesi telah diinvalidasi (login di device lain)
+            if (data.sessionInvalidated) {
+              showToast('Akun Anda telah login di perangkat lain', 'warning');
               handleLogout();
+            } else {
+              showToast(data.error || `Failed to fetch transactions (Status: ${res.status}).`, 'error');
+              if (res.status === 401 || res.status === 403) {
+                handleLogout();
+              }
             }
           }
         } catch (err) {
@@ -278,7 +305,13 @@ function AppContent() {
         setTransactions([data.data, ...transactions]);
         showToast('Transaction added successfully!', 'success');
       } else {
-        showToast(data.error || `Failed to add transaction (Status: ${res.status}).`, 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          handleLogout();
+        } else {
+          showToast(data.error || `Failed to add transaction (Status: ${res.status}).`, 'error');
+        }
       }
     } catch (err) {
       showToast('Error adding transaction: ' + err.message, 'error');
@@ -304,7 +337,13 @@ function AppContent() {
         setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
         showToast('Transaction deleted successfully!', 'success');
       } else {
-        showToast(data.error || `Failed to delete transaction (Status: ${res.status}).`, 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          handleLogout();
+        } else {
+          showToast(data.error || `Failed to delete transaction (Status: ${res.status}).`, 'error');
+        }
       }
     } catch (err) {
       showToast('Error deleting transaction: ' + err.message, 'error');
@@ -340,7 +379,13 @@ function AppContent() {
           categoryDeleteSuccessCallback();
         }
       } else {
-        showToast(data.error || `Failed to delete category (Status: ${res.status}).`, 'error');
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          handleLogout();
+        } else {
+          showToast(data.error || `Failed to delete category (Status: ${res.status}).`, 'error');
+        }
       }
     } catch (err) {
       showToast('Error deleting category: ' + err.message, 'error');
@@ -379,6 +424,7 @@ function AppContent() {
         {!isAuthenticated && !isLoading ? (
           <Routes>
             <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
+            <Route path="/register" element={<RegisterPage showToast={showToast} />} />
           </Routes>
         ) : isLoading ? null : (
           <DashboardLayout 
@@ -426,11 +472,11 @@ function AppContent() {
                 }
               />
               <Route
-                path="/register"
+                path="/admin-register"
                 element={
                   username === 'rezz' ? (
                     <div className="main-content">
-                      <RegisterPage showToast={showToast} token={token} />
+                      <RegisterPage showToast={showToast} />
                     </div>
                   ) : (
                     <div className="main-content">
@@ -457,6 +503,22 @@ function AppContent() {
                   <ChangePasswordPage
                     showToast={showToast}
                   />
+                }
+              />
+              <Route
+                path="/activation-codes"
+                element={
+                  username === 'rezz' ? (
+                    <ActivationCodePage
+                      showToast={showToast}
+                      token={token}
+                    />
+                  ) : (
+                    <div className="main-content">
+                      <h1>Unauthorized Access</h1>
+                      <p>You do not have permission to access this page.</p>
+                    </div>
+                  )
                 }
               />
             </Routes>

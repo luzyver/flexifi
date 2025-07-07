@@ -80,12 +80,20 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
               </ul>
             </li>
             {username === 'rezz' && (
-              <li className="nav-item">
-                <Link to="/register" className={`nav-link d-flex align-items-center ${isActive('/register')}`}>
-                  <i className="bi bi-person-plus-fill me-2"></i> 
-                  Register
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link to="/admin-register" className={`nav-link d-flex align-items-center ${isActive('/admin-register')}`}>
+                    <i className="bi bi-person-plus-fill me-2"></i> 
+                    Admin Register
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/activation-codes" className={`nav-link d-flex align-items-center ${isActive('/activation-codes')}`}>
+                    <i className="bi bi-key-fill me-2"></i> 
+                    Kode Aktivasi
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
           
