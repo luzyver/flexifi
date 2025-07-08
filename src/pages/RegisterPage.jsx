@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAPI } from '../App';
@@ -12,6 +13,11 @@ import {
   SecurityNotice,
   PasswordStrengthMeter
 } from '../components/auth';
+=======
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LoadingOverlay from '../components/LoadingOverlay';
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +43,7 @@ const RegisterPage = ({ showToast }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [animateForm, setAnimateForm] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,6 +51,8 @@ const RegisterPage = ({ showToast }) => {
   useEffect(() => {
     setTimeout(() => setAnimateForm(true), 100);
   }, []);
+=======
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 
@@ -202,6 +211,7 @@ const RegisterPage = ({ showToast }) => {
   );
 
   return (
+<<<<<<< HEAD
     <AuthLayout
       title="Daftar Akun"
       subtitle="Buat akun baru untuk FlexiFi"
@@ -212,6 +222,8 @@ const RegisterPage = ({ showToast }) => {
     </AuthLayout>
 =======
   return (
+=======
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12 col-md-8 col-lg-6 col-xl-5">

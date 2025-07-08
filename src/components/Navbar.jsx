@@ -113,6 +113,9 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                   </Link>
                 </li>
               </>
+<<<<<<< HEAD
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
+=======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
             )}
           </ul>
@@ -155,6 +158,9 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                     <strong>{username}</strong>
                   </span>
                 </li> */}
+<<<<<<< HEAD
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
+=======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
                 <li>
                   <Link to="/change-password" className="dropdown-item d-flex align-items-center">
