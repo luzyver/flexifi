@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { Card, Badge, IconButton, Breadcrumb, SubmitButton } from '../components/auth';
-import { fetchAPI } from '../App';
 
 const ActivationCodePage = ({ showToast, token }) => {
   const navigate = useNavigate();
   const [activationCodes, setActivationCodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const fetchActivationCodes = useCallback(async () => {
     try {
       setLoading(true);
-      const { response, data } = await fetchAPI(
-        `${API_BASE_URL}/activation-codes`,
-        {}
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      if (response.ok && data.success) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         setActivationCodes(data.data);
       } else {
         // Check if session was invalidated (logged in on another device)
@@ -31,15 +31,15 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || 'Gagal mengambil kode aktivasi', 'error');
+          showToast(data.error || 'Failed to fetch activation codes', 'error');
         }
       }
     } catch (error) {
-      showToast('Error mengambil kode aktivasi: ' + error.message, 'error');
+      showToast('Error fetching activation codes: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, showToast, navigate]);
+  }, [token, showToast, navigate]);
 
   useEffect(() => {
     fetchActivationCodes();
@@ -48,15 +48,18 @@ const ActivationCodePage = ({ showToast, token }) => {
   const handleGenerateCode = async () => {
     try {
       setIsGenerating(true);
-      const { response, data } = await fetchAPI(
-        `${API_BASE_URL}/activation-codes/generate`,
-        {
-          method: 'POST',
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes/generate`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (response.ok && data.success) {
-        showToast('Kode aktivasi berhasil dibuat', 'success');
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showToast('Activation code generated successfully', 'success');
         fetchActivationCodes();
       } else {
         // Check if session was invalidated (logged in on another device)
@@ -68,11 +71,11 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || 'Gagal membuat kode aktivasi', 'error');
+          showToast(data.error || 'Failed to generate activation code', 'error');
         }
       }
     } catch (error) {
-      showToast('Error membuat kode aktivasi: ' + error.message, 'error');
+      showToast('Error generating activation code: ' + error.message, 'error');
     } finally {
       setIsGenerating(false);
     }
@@ -81,15 +84,17 @@ const ActivationCodePage = ({ showToast, token }) => {
   const handleToggleActivation = async (id, currentStatus) => {
     try {
       const action = currentStatus ? 'deactivate' : 'activate';
-      const { response, data } = await fetchAPI(
-        `${API_BASE_URL}/activation-codes/${id}/${action}`,
-        {
-          method: 'PUT',
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes/${id}/${action}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      if (response.ok && data.success) {
-        showToast(`Kode aktivasi berhasil ${action === 'activate' ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showToast(`Activation code ${action}d successfully`, 'success');
         fetchActivationCodes();
       } else {
         // Check if session was invalidated (logged in on another device)
@@ -101,11 +106,11 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || `Gagal ${action === 'activate' ? 'mengaktifkan' : 'menonaktifkan'} kode aktivasi`, 'error');
+          showToast(data.error || `Failed to ${action} activation code`, 'error');
         }
       }
     } catch (error) {
-      showToast(`Error ${currentStatus ? 'menonaktifkan' : 'mengaktifkan'} kode aktivasi: ` + error.message, 'error');
+      showToast(`Error ${currentStatus ? 'deactivating' : 'activating'} activation code: ` + error.message, 'error');
     }
   };
 
@@ -117,78 +122,81 @@ const ActivationCodePage = ({ showToast, token }) => {
   return (
     <div className="container py-4">
       <LoadingOverlay isLoading={loading} />
-      
-      {/* Breadcrumb removed */}
-      
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="h3 mb-0">Kode Aktivasi</h1>
-        <SubmitButton
-          text="Generate Kode Baru"
-          icon="bi bi-plus-circle-fill"
+        <button
+          className="btn btn-primary"
           onClick={handleGenerateCode}
-          isLoading={isGenerating}
-          loadingText="Membuat..."
-          variant="primary"
-        />
+          disabled={isGenerating}
+        >
+          {isGenerating ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Generating...
+            </>
+          ) : (
+            <>Generate Kode Baru</>
+          )}
+        </button>
       </div>
 
-      <Card className="fade-in shadow-sm">
-        <div className="table-responsive">
-          <table className="table table-hover">
-            <thead>
-              <tr>
-                <th>Kode</th>
-                <th>Status</th>
-                <th>Digunakan Oleh</th>
-                <th>Tanggal Dibuat</th>
-                <th>Tanggal Digunakan</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activationCodes.length === 0 ? (
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
                 <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    <i className="bi bi-key display-4 text-muted mb-3 d-block"></i>
-                    <p className="text-muted">Tidak ada kode aktivasi</p>
-                  </td>
+                  <th>Kode</th>
+                  <th>Status</th>
+                  <th>Digunakan Oleh</th>
+                  <th>Tanggal Dibuat</th>
+                  <th>Tanggal Digunakan</th>
+                  <th>Aksi</th>
                 </tr>
-              ) : (
-                activationCodes.map((code) => (
-                  <tr key={code._id}>
-                    <td>
-                      <Badge text={code.code} variant="dark" />
-                    </td>
-                    <td>
-                      {code.isUsed ? (
-                        <Badge text="Sudah Digunakan" variant="secondary" />
-                      ) : code.isActivated ? (
-                        <Badge text="Aktif" variant="success" />
-                      ) : (
-                        <Badge text="Tidak Aktif" variant="danger" />
-                      )}
-                    </td>
-                    <td>{code.usedBy || '-'}</td>
-                    <td>{formatDate(code.createdAt)}</td>
-                    <td>{code.usedAt ? formatDate(code.usedAt) : '-'}</td>
-                    <td>
-                      {!code.isUsed && (
-                        <IconButton
-                          icon={code.isActivated ? "bi bi-x-circle" : "bi bi-check-circle"}
-                          variant={code.isActivated ? "outline-danger" : "outline-success"}
-                          size="sm"
-                          onClick={() => handleToggleActivation(code._id, code.isActivated)}
-                          tooltip={code.isActivated ? 'Nonaktifkan' : 'Aktifkan'}
-                        />
-                      )}
+              </thead>
+              <tbody>
+                {activationCodes.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4">
+                      Tidak ada kode aktivasi
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  activationCodes.map((code) => (
+                    <tr key={code._id}>
+                      <td>
+                        <span className="badge bg-dark">{code.code}</span>
+                      </td>
+                      <td>
+                        {code.isUsed ? (
+                          <span className="badge bg-secondary">Sudah Digunakan</span>
+                        ) : code.isActivated ? (
+                          <span className="badge bg-success">Aktif</span>
+                        ) : (
+                          <span className="badge bg-danger">Tidak Aktif</span>
+                        )}
+                      </td>
+                      <td>{code.usedBy || '-'}</td>
+                      <td>{formatDate(code.createdAt)}</td>
+                      <td>{code.usedAt ? formatDate(code.usedAt) : '-'}</td>
+                      <td>
+                        {!code.isUsed && (
+                          <button
+                            className={`btn btn-sm ${code.isActivated ? 'btn-outline-danger' : 'btn-outline-success'}`}
+                            onClick={() => handleToggleActivation(code._id, code.isActivated)}
+                          >
+                            {code.isActivated ? 'Nonaktifkan' : 'Aktifkan'}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

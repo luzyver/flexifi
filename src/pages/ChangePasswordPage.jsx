@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, FormInput, SubmitButton, Breadcrumb, PasswordStrengthMeter } from '../components/auth';
-import { fetchAPI } from '../App';
 
 const ChangePasswordPage = ({ showToast }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,34 +13,36 @@ const ChangePasswordPage = ({ showToast }) => {
     e.preventDefault();
 
     if (newPassword !== confirmNewPassword) {
-      showToast('Kata sandi baru tidak cocok', 'error');
+      showToast('New passwords do not match', 'error');
       return;
     }
 
     if (newPassword.length < 6) {
-      showToast('Kata sandi baru harus minimal 6 karakter', 'error');
+      showToast('New password must be at least 6 characters long', 'error');
       return;
     }
 
     try {
-      setIsLoading(true);
       const token = localStorage.getItem('token');
       if (!token) {
-        showToast('Token autentikasi tidak ditemukan. Silakan login.', 'error');
-        navigate('/');
+        showToast('Authentication token not found. Please log in.', 'error');
+        navigate('/login');
         return;
       }
 
-      const { response, data } = await fetchAPI(
-        `${API_BASE_URL}/auth/change-password`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ currentPassword, newPassword }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
 
-      if (response.ok && data.success) {
-        showToast('Kata sandi berhasil diubah!', 'success');
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showToast('Password changed successfully!', 'success');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
@@ -57,77 +56,64 @@ const ChangePasswordPage = ({ showToast }) => {
           localStorage.removeItem('sessionId');
           navigate('/');
         } else {
-          showToast(data.error || 'Gagal mengubah kata sandi', 'error');
+          showToast(data.error || 'Failed to change password', 'error');
         }
       }
     } catch (error) {
-      showToast('Error mengubah kata sandi: ' + error.message, 'error');
-    } finally {
-      setIsLoading(false);
+      showToast('Error changing password: ' + error.message, 'error');
     }
   };
 
   return (
-    <div className="container mt-4">
-      {/* Breadcrumb removed */}
-      
+    <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <Card 
-            className="fade-in"
-            title="Ubah Kata Sandi"
-            titleClassName="text-center"
-            icon="bi bi-shield-lock-fill"
-            variant="primary"
-          >
-            <form onSubmit={handleSubmit}>
-              <FormInput
-                id="currentPassword"
-                label="Kata Sandi Saat Ini"
-                type="password"
-                icon="bi bi-key-fill"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Masukkan kata sandi saat ini"
-                required
-              />
-              
-              <FormInput
-                id="newPassword"
-                label="Kata Sandi Baru"
-                type="password"
-                icon="bi bi-lock-fill"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Masukkan kata sandi baru"
-                required
-              />
-              
-              {newPassword && (
-                <PasswordStrengthMeter password={newPassword} />
-              )}
-              
-              <FormInput
-                id="confirmNewPassword"
-                label="Konfirmasi Kata Sandi Baru"
-                type="password"
-                icon="bi bi-check-circle-fill"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                placeholder="Konfirmasi kata sandi baru"
-                required
-              />
-              
-              <SubmitButton
-                text="Ubah Kata Sandi"
-                icon="bi bi-arrow-repeat"
-                variant="primary"
-                className="w-100 mt-4"
-                isLoading={isLoading}
-                loadingText="Mengubah..."
-              />
-            </form>
-          </Card>
+          <div className="card shadow-lg border-0 rounded-3">
+            <div className="card-header bg-primary text-white text-center">
+              <h2 className="mb-0">Change Password</h2>
+            </div>
+            <div className="card-body p-4">
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="currentPassword" className="form-label">Current Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="currentPassword"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="newPassword" className="form-label">New Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="confirmNewPassword"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-100">Change Password</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

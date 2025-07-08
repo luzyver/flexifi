@@ -1,217 +1,157 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import TransactionList from '../components/TransactionList';
-import { Accordion, AccordionItem, Card, Badge, Breadcrumb, Pagination } from '../components/auth';
 
 const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState('list'); // 'list' atau 'group'
   const transactionsPerPage = 10;
   const totalPages = Math.ceil(transactions.length / transactionsPerPage);
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
   const currentTransactions = transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  
-  // Mengelompokkan transaksi berdasarkan tanggal
-  const groupedTransactions = useMemo(() => {
-    const groups = {};
-    
-    currentTransactions.forEach(transaction => {
-      const date = new Date(transaction.date).toLocaleDateString('id-ID', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        timeZone: 'UTC'
-      });
-      
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      
-      groups[date].push(transaction);
-    });
-    
-    // Mengurutkan tanggal dari yang terbaru
-    return Object.entries(groups).sort((a, b) => {
-      const dateA = new Date(a[0].split(' ').reverse().join(' '));
-      const dateB = new Date(b[0].split(' ').reverse().join(' '));
-      return dateB - dateA;
-    });
-  }, [currentTransactions]);
 
-  // Fungsi untuk mengubah halaman
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll ke atas halaman saat berpindah halaman
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const getPaginationNumbers = (currentPage, totalPages) => {
+    const pageNumbers = [];
+    const maxVisiblePages = 3;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      let startPage = currentPage - 1;
+      let endPage = currentPage + 1;
+
+      if (startPage < 1) {
+        startPage = 1;
+        endPage = maxVisiblePages;
+      } else if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = totalPages - maxVisiblePages + 1;
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+    }
+    return pageNumbers;
   };
+
+  const paginationNumbers = getPaginationNumbers(currentPage, totalPages);
 
   return (
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12">
-          {/* Breadcrumb removed */}
-          
           {/* Header */}
           <div className="text-center mb-3 mb-md-4 fade-in">
             <h1 className="display-6 fw-bold text-white mb-2">
               <i className="bi bi-clock-history me-2"></i>
-              Riwayat Transaksi
+              Transaction History
             </h1>
             <p className="lead text-white-50">
-              Lihat dan kelola semua transaksi Anda
+              View and manage all your transactions
             </p>
           </div>
 
           {/* Transaction List Card */}
-          <Card 
-            className="fade-in" 
-            style={{ animationDelay: '0.1s' }}
-            header={
-              <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center w-100">
-                <div className="d-flex align-items-center mb-2 mb-md-0">
-                  <i className="bi bi-list-ul me-2"></i>
-                  <h5 className="mb-0">Semua Transaksi</h5>
-                  <Badge 
-                    text={`${transactions.length} total`}
-                    variant="light"
-                    size="sm"
-                    className="ms-2 text-dark"
-                  />
-                </div>
-                <div className="btn-group" role="group" aria-label="View mode">
-                  <button 
-                    type="button" 
-                    className={`btn btn-sm ${viewMode === 'list' ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => setViewMode('list')}
-                  >
-                    <i className="bi bi-list me-1"></i>
-                    Daftar
-                  </button>
-                  <button 
-                    type="button" 
-                    className={`btn btn-sm ${viewMode === 'group' ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => setViewMode('group')}
-                  >
-                    <i className="bi bi-collection me-1"></i>
-                    Grup
-                  </button>
-                </div>
-              </div>
-            }
-            bodyClassName="p-0"
-          >
-            {viewMode === 'list' ? (
+          <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+              <h5 className="mb-2 mb-md-0">
+                <i className="bi bi-list-ul me-2"></i>
+                All Transactions
+              </h5>
+              <span className="badge bg-light text-dark">
+                {transactions.length} total
+              </span>
+            </div>
+            <div className="card-body p-0">
               <TransactionList 
                 transactions={currentTransactions} 
                 onDeleteTransaction={onDeleteTransaction} 
               />
-            ) : (
-              <Accordion id="transactions-by-date" alwaysOpen={true}>
-                {groupedTransactions.map(([date, dateTransactions], index) => (
-                  <AccordionItem 
-                    key={date}
-                    id={`date-${index}`}
-                    title={
-                      <div className="d-flex justify-content-between align-items-center w-100 pe-4">
-                        <span>
-                          <i className="bi bi-calendar3 me-2"></i>
-                          {date}
-                        </span>
-                        <Badge 
-                          text={`${dateTransactions.length} transaksi`}
-                          variant="light"
-                          size="sm"
-                          className="text-dark"
-                        />
-                      </div>
-                    }
-                    defaultOpen={index === 0}
-                  >
-                    <TransactionList 
-                      transactions={dateTransactions} 
-                      onDeleteTransaction={onDeleteTransaction} 
-                    />
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
+            </div>
+            
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="card-footer bg-light">
-                <Pagination 
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  siblingCount={1}
-                  showFirstLast={true}
-                  size="md"
-                />
+                <nav aria-label="Transaction pagination">
+                  <ul className="pagination justify-content-center mb-0">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link" 
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        <i className="bi bi-chevron-left"></i>
+                        <span className="d-none d-sm-inline ms-1">Previous</span>
+                      </button>
+                    </li>
+                    {paginationNumbers.map((number, index) => (
+                      number === '...' ? (
+                        <li key={`ellipsis-${index}`} className="page-item disabled">
+                          <span className="page-link">...</span>
+                        </li>
+                      ) : (
+                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+                          <button 
+                            onClick={() => paginate(number)} 
+                            className="page-link"
+                          >
+                            {number}
+                          </button>
+                        </li>
+                      )
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                      <button 
+                        className="page-link" 
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        <span className="d-none d-sm-inline me-1">Next</span>
+                        <i className="bi bi-chevron-right"></i>
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             )}
-          </Card>
+          </div>
 
           {/* Summary Card */}
           {transactions.length > 0 && (
-            <Card 
-              className="mt-3 mt-md-4 fade-in" 
-              style={{ animationDelay: '0.2s' }}
-              header={
-                <div className="d-flex align-items-center">
-                  <i className="bi bi-bar-chart-fill me-2"></i>
-                  <h5 className="mb-0">Ringkasan Transaksi</h5>
-                </div>
-              }
-            >
-              <div className="row text-center g-3">
-                <div className="col-4">
-                  <Card 
-                    className="h-100" 
-                    variant="success" 
-                    outline 
-                    hoverable
-                  >
-                    <div className="text-success py-2">
+            <div className="card mt-3 mt-md-4 fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="card-body">
+                <div className="row text-center g-3">
+                  <div className="col-4">
+                    <div className="text-success">
                       <i className="bi bi-arrow-up-circle-fill fs-4 mb-2"></i>
-                      <div className="fw-bold fs-5">
+                      <div className="fw-bold">
                         {transactions.filter(t => t.type === 'pemasukan').length}
                       </div>
-                      <small>Pemasukan</small>
+                      <small className="text-muted">Income</small>
                     </div>
-                  </Card>
-                </div>
-                <div className="col-4">
-                  <Card 
-                    className="h-100" 
-                    variant="danger" 
-                    outline 
-                    hoverable
-                  >
-                    <div className="text-danger py-2">
+                  </div>
+                  <div className="col-4">
+                    <div className="text-danger">
                       <i className="bi bi-arrow-down-circle-fill fs-4 mb-2"></i>
-                      <div className="fw-bold fs-5">
+                      <div className="fw-bold">
                         {transactions.filter(t => t.type === 'pengeluaran').length}
                       </div>
-                      <small>Pengeluaran</small>
+                      <small className="text-muted">Expense</small>
                     </div>
-                  </Card>
-                </div>
-                <div className="col-4">
-                  <Card 
-                    className="h-100" 
-                    variant="primary" 
-                    outline 
-                    hoverable
-                  >
-                    <div className="text-primary py-2">
+                  </div>
+                  <div className="col-4">
+                    <div className="text-primary">
                       <i className="bi bi-list-check fs-4 mb-2"></i>
-                      <div className="fw-bold fs-5">{transactions.length}</div>
-                      <small>Total</small>
+                      <div className="fw-bold">{transactions.length}</div>
+                      <small className="text-muted">Total</small>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </div>
-            </Card>
+            </div>
           )}
         </div>
       </div>

@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FormInput, FormSelect, SubmitButton, OutlineButton, LoadingSpinner } from './auth';
 
-const AddTransaction = ({ onAddTransaction, showToast, transactions, categories, initialType = 'pengeluaran' }) => {
+const AddTransaction = ({ onAddTransaction, showToast, transactions, categories }) => {
   const navigate = useNavigate();
-  
-  
   
   const getTodayDate = () => {
     const today = new Date();
@@ -15,12 +12,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
     return `${year}-${month}-${day}`;
   };
 
-  const [type, setType] = useState(initialType);
-  
-  // Update type when initialType changes (when tab changes)
-  useEffect(() => {
-    setType(initialType);
-  }, [initialType]);
+  const [type, setType] = useState('pengeluaran');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -32,11 +24,6 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
   const descriptionInputRef = useRef(null);
 
   useEffect(() => {
-    // Reset form fields when type changes
-    setDescription('');
-    setAmount('');
-    
-    // Set appropriate category based on transaction type
     const filteredCategories = categories.filter(cat => cat.type === type);
     if (filteredCategories.length > 0) {
       setCategory(filteredCategories[0].category);
@@ -102,28 +89,16 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
 
     setIsSubmitting(true);
 
-    // Format date properly
-    const dateObj = new Date(date);
-    // Check if date is valid
-    if (isNaN(dateObj.getTime())) {
-      showToast('Invalid date format', 'error');
-      setIsSubmitting(false);
-      return;
-    }
-
     const newTransaction = {
       type,
-      description: description.trim(),
+      description,
       amount: parsedAmount,
       category,
-      date: dateObj.toISOString(),
+      date: new Date(date).toISOString(),
     };
 
     try {
-      
-      
-      const result = await onAddTransaction(newTransaction);
-      
+      await onAddTransaction(newTransaction);
       
       // Reset form
       setDescription('');
@@ -132,16 +107,13 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
       setSuggestions([]);
       setSuggestionsVisible(false);
       
-      showToast('Transaction added successfully!', 'success');
-      
       // Navigate back to home after successful submission
       setTimeout(() => {
         navigate('/');
       }, 1500);
       
     } catch (error) {
-      
-      showToast(error.message || 'Failed to add transaction', 'error');
+      // Error handling is done in the parent component
     } finally {
       setIsSubmitting(false);
     }
@@ -150,33 +122,53 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
   const filteredCategoriesForType = categories.filter(cat => cat.type === type);
 
   return (
-    <form onSubmit={onSubmit} className="needs-validation animate-fade-in" noValidate>
+    <form onSubmit={onSubmit} className="needs-validation" noValidate>
       <div className="row g-3">
-        {/* Type is now controlled by Tabs */}
+        <div className="col-12">
+          <label htmlFor="type" className="form-label">
+            <i className="bi bi-arrow-up-down me-2"></i>
+            Transaction Type
+          </label>
+          <select 
+            id="type" 
+            className="form-select form-select-lg" 
+            value={type} 
+            onChange={handleTypeChange}
+            disabled={isSubmitting}
+          >
+            <option value="pengeluaran">
+              <i className="bi bi-arrow-down-circle"></i> Expense (Pengeluaran)
+            </option>
+            <option value="pemasukan">
+              <i className="bi bi-arrow-up-circle"></i> Income (Pemasukan)
+            </option>
+          </select>
+        </div>
 
         <div className="col-12">
           <div className="position-relative" ref={descriptionInputRef}>
-            <FormInput
+            <label htmlFor="description" className="form-label">
+              <i className="bi bi-card-text me-2"></i>
+              Description
+            </label>
+            <input
               id="description"
-              label="Deskripsi"
-              icon="bi-card-text"
+              type="text"
+              className="form-control form-control-lg"
               value={description}
               onChange={handleDescriptionChange}
-              placeholder="Masukkan deskripsi transaksi..."
+              placeholder="Enter transaction description..."
               autoComplete="off"
               disabled={isSubmitting}
               required
-              size="lg"
-              className="hover-lift"
             />
             {isSuggestionsVisible && suggestions.length > 0 && (
-              <ul className="suggestions-list animate-fade-in">
+              <ul className="suggestions-list">
                 {suggestions.map((suggestion, index) => (
                   <li 
                     key={index} 
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="d-flex align-items-center hover-lift"
-                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className="d-flex align-items-center"
                   >
                     <i className="bi bi-clock-history me-2 text-muted"></i>
                     {suggestion}
@@ -188,78 +180,95 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories,
         </div>
 
         <div className="col-md-6">
-          <FormInput
-            id="amount"
-            label="Jumlah (IDR)"
-            icon="bi-currency-dollar"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0"
-            step="1000"
-            min="1"
-            disabled={isSubmitting}
-            required
-            size="lg"
-            prepend="Rp"
-            className="hover-lift"
-          />
+          <label htmlFor="amount" className="form-label">
+            <i className="bi bi-currency-dollar me-2"></i>
+            Amount (IDR)
+          </label>
+          <div className="input-group input-group-lg">
+            <span className="input-group-text">Rp</span>
+            <input
+              id="amount"
+              type="number"
+              className="form-control"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0"
+              step="1000"
+              min="1"
+              disabled={isSubmitting}
+              required
+            />
+          </div>
         </div>
 
         <div className="col-md-6">
-          <FormSelect
-            id="category"
-            label="Kategori"
-            icon="bi-tags-fill"
-            value={category}
+          <label htmlFor="category" className="form-label">
+            <i className="bi bi-tags-fill me-2"></i>
+            Category
+          </label>
+          <select 
+            id="category" 
+            className="form-select form-select-lg" 
+            value={category} 
             onChange={(e) => setCategory(e.target.value)}
             disabled={isSubmitting}
             required
-            size="lg"
-            options={filteredCategoriesForType.map((cat) => ({
-              value: cat.category,
-              label: cat.category
-            }))}
-            placeholder={filteredCategoriesForType.length === 0 ? "Tidak ada kategori tersedia" : ""}
-            className="hover-lift"
-          />
+          >
+            {filteredCategoriesForType.map((cat) => (
+              <option key={cat.category} value={cat.category}>
+                {cat.category}
+              </option>
+            ))}
+            {filteredCategoriesForType.length === 0 && (
+              <option value="" disabled>No categories available</option>
+            )}
+          </select>
         </div>
 
         <div className="col-12">
-          <FormInput
+          <label htmlFor="date" className="form-label">
+            <i className="bi bi-calendar-event me-2"></i>
+            Date
+          </label>
+          <input
             id="date"
-            label="Tanggal"
-            icon="bi-calendar-event"
             type="date"
+            className="form-control form-control-lg"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             disabled={isSubmitting}
             required
-            size="lg"
-            className="hover-lift"
           />
         </div>
 
         <div className="col-12 mt-4">
           <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <OutlineButton
-              text="BATAL"
-              icon="bi-x-circle"
+            <button 
+              type="button" 
+              className="btn btn-outline-secondary btn-lg me-md-2"
               onClick={() => navigate('/')}
               disabled={isSubmitting}
-              size="lg"
-              variant="secondary"
-              className="me-md-2 hover-lift"
-            />
-            <SubmitButton
-              text={isSubmitting ? "Menambahkan..." : "TAMBAH TRANSAKSI"}
-              icon={isSubmitting ? null : "bi-check-circle-fill"}
-              isLoading={isSubmitting}
+            >
+              <i className="bi bi-x-circle me-2"></i>
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn-primary btn-lg"
               disabled={isSubmitting}
-              size="lg"
-              variant="primary"
-              className="hover-lift"
-            />
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Adding...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-check-circle-fill me-2"></i>
+                  Add Transaction
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
