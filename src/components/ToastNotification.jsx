@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Badge, IconButton } from './auth';
 
 const ToastNotification = ({ message, type, duration = 3000 }) => {
   const [visible, setVisible] = useState(false);
@@ -31,28 +32,44 @@ const ToastNotification = ({ message, type, duration = 3000 }) => {
     return null;
   }
 
-  const toastClass = {
-    success: 'text-bg-success',
-    error: 'text-bg-danger',
-    info: 'text-bg-info',
-  }[type] || 'text-bg-info';
+  const toastVariant = {
+    success: 'success',
+    error: 'danger',
+    info: 'info',
+    warning: 'warning'
+  }[type] || 'info';
 
   const iconClass = {
     success: 'bi bi-check-circle-fill',
     error: 'bi bi-x-circle-fill',
     info: 'bi bi-info-circle-fill',
+    warning: 'bi bi-exclamation-triangle-fill'
   }[type] || 'bi bi-info-circle-fill';
 
   return (
-    <div className="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
-      <div className={`toast align-items-center ${toastClass} border-0 ${visible ? 'show' : ''}`} role="alert" aria-live="assertive" aria-atomic="true">
-        <div className="d-flex">
-          <div className="toast-body d-flex align-items-center">
-            <i className={`${iconClass} me-2 fs-5`}></i>
-            {displayMessage}
-          </div>
-          <button type="button" className="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onClick={() => setVisible(false)}></button>
+    <div className="toast-container">
+      <div 
+        className={`toast ${toastVariant} ${visible ? 'show' : ''}`} 
+        role="alert" 
+        aria-live="assertive" 
+        aria-atomic="true"
+        style={{
+          opacity: visible ? 1 : 0,
+          transition: 'all 0.3s ease-in-out',
+          transform: visible ? 'translateX(0)' : 'translateX(100%)',
+        }}
+      >
+        <i className={`${iconClass} toast-icon`}></i>
+        <div className="toast-content">
+          {displayMessage}
         </div>
+        <button 
+          className="toast-close" 
+          onClick={() => setVisible(false)}
+          aria-label="Close"
+        >
+          <i className="bi bi-x"></i>
+        </button>
       </div>
     </div>
   );

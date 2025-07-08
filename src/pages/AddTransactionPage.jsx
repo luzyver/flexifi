@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddTransaction from '../components/AddTransaction';
+import { Breadcrumb, Card, Tabs, TabItem } from '../components/auth';
 
 const AddTransactionPage = ({ 
   onAddTransaction, 
@@ -8,77 +9,119 @@ const AddTransactionPage = ({
   transactions, 
   categories 
 }) => {
+  const [activeTab, setActiveTab] = useState('expense');
+  
+  
   return (
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12 col-lg-8 col-xl-6">
           {/* Header */}
-          <div className="text-center mb-3 mb-md-4 fade-in">
-            <h1 className="display-6 fw-bold text-white mb-2">
-              <i className="bi bi-plus-circle-fill me-2 me-md-3"></i>
-              Add New Transaction
-            </h1>
-            <p className="lead text-white-50">
-              Record your income or expense
-            </p>
+          <div className="welcome-banner animate-fade-in">
+            <div className="welcome-content">
+              <h1 className="welcome-title">
+                <i className="bi bi-plus-circle-fill me-2 me-md-3"></i>
+                Tambah Transaksi Baru
+              </h1>
+              <p className="welcome-subtitle">
+                Catat pemasukan atau pengeluaran Anda
+              </p>
+            </div>
           </div>
 
-          {/* Breadcrumb */}
-          <nav aria-label="breadcrumb" className="mb-3 mb-md-4 fade-in" style={{ animationDelay: '0.1s' }}>
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to="/" className="text-white-50 text-decoration-none">
-                  <i className="bi bi-house-door-fill me-1"></i>
-                  Home
-                </Link>
-              </li>
-              <li className="breadcrumb-item active text-white" aria-current="page">
-                Add Transaction
-              </li>
-            </ol>
-          </nav>
+          {/* Breadcrumb removed */}
 
           {/* Add Transaction Form */}
-          <div className="card fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="card-header">
+          <Card 
+            className="animate-fade-in hover-lift" 
+            style={{ animationDelay: '0.2s' }}
+            header={
               <h5 className="mb-0">
                 <i className="bi bi-wallet2 me-2"></i>
-                Transaction Details
+                Detail Transaksi
               </h5>
-            </div>
-            <div className="card-body">
+            }
+          >
+            <Tabs 
+              defaultActiveKey="expense" 
+              variant="tabs"
+              className="mb-3"
+              id="transaction-tabs"
+              activeKey={activeTab}
+              onSelect={(key) => {
+                
+                setActiveTab(key);
+              }}
+            >
+              <TabItem 
+                eventKey="expense" 
+                title={
+                  <span>
+                    <i className="bi bi-arrow-down-circle-fill text-danger me-2"></i>
+                    Pengeluaran
+                  </span>
+                }
+              >
+                {activeTab === 'expense' && (
+                  <div className="animate-fade-in">
+                    {/* Konten tab expense */}
+                  </div>
+                )}
+              </TabItem>
+              <TabItem 
+                eventKey="income" 
+                title={
+                  <span>
+                    <i className="bi bi-arrow-up-circle-fill text-success me-2"></i>
+                    Pemasukan
+                  </span>
+                }
+              >
+                {activeTab === 'income' && (
+                  <div className="animate-fade-in">
+                    {/* Konten tab income */}
+                  </div>
+                )}
+              </TabItem>
+            </Tabs>
+            
+            {/* Render form berdasarkan tab yang aktif */}
+            <div className="mt-3">
               <AddTransaction 
+                key={activeTab}
                 onAddTransaction={onAddTransaction}
                 showToast={showToast}
                 transactions={transactions}
                 categories={categories}
+                initialType={activeTab === 'expense' ? 'pengeluaran' : 'pemasukan'}
               />
             </div>
-          </div>
+          </Card>
 
           {/* Quick Tips */}
-          <div className="card mt-3 mt-md-4 fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="card-body">
-              <h6 className="card-title text-primary">
-                <i className="bi bi-lightbulb-fill me-2"></i>
-                Quick Tips
-              </h6>
-              <ul className="list-unstyled mb-0 small text-muted">
-                <li className="mb-2">
-                  <i className="bi bi-check-circle-fill text-success me-2"></i>
-                  Use descriptive names for easy tracking
-                </li>
-                <li className="mb-2">
-                  <i className="bi bi-check-circle-fill text-success me-2"></i>
-                  Choose the correct category for better insights
-                </li>
-                <li className="mb-0">
-                  <i className="bi bi-check-circle-fill text-success me-2"></i>
-                  Double-check the amount before saving
-                </li>
-              </ul>
-            </div>
-          </div>
+          <Card 
+            className="mt-3 mt-md-4 animate-fade-in hover-lift" 
+            style={{ animationDelay: '0.3s' }}
+            variant="info"
+            outline
+            icon="bi bi-lightbulb-fill"
+            title="Tips Cepat"
+          >
+            <ul className="list-unstyled mb-0 small text-muted">
+              <li className="mb-2">
+                <i className="bi bi-check-circle-fill text-success me-2"></i>
+                Gunakan nama yang deskriptif untuk pelacakan yang mudah
+              </li>
+              <li className="mb-2">
+                <i className="bi bi-check-circle-fill text-success me-2"></i>
+                Pilih kategori yang tepat untuk wawasan yang lebih baik
+              </li>
+              <li className="mb-0">
+                <i className="bi bi-check-circle-fill text-success me-2"></i>
+                Periksa kembali jumlah sebelum menyimpan
+              </li>
+            </ul>
+          </Card>
         </div>
       </div>
     </div>
