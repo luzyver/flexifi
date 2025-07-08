@@ -845,7 +845,11 @@ function AppContent() {
       </div>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+      <Footer />
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
       <Footer />
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)

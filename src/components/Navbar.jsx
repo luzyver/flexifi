@@ -114,6 +114,9 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 </li>
               </>
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
+=======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
@@ -159,6 +162,9 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                   </span>
                 </li> */}
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
+=======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)

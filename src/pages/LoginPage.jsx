@@ -1,7 +1,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+=======
+import React, { useState } from 'react';
+import LoadingOverlay from '../components/LoadingOverlay';
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 import React, { useState } from 'react';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -56,6 +61,7 @@ const LoginPage = ({ onLogin, showToast }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 
   // Render form login
@@ -65,6 +71,8 @@ const LoginPage = ({ onLogin, showToast }) => {
         <h2 className="h3 fw-bold text-primary mb-2">Selamat Datang Kembali!</h2>
         <p className="text-muted mb-4">Masuk ke akun Anda untuk melanjutkan</p>
       </div>
+=======
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 
@@ -130,6 +138,7 @@ const LoginPage = ({ onLogin, showToast }) => {
 
   return (
 <<<<<<< HEAD
+<<<<<<< HEAD
     <AuthLayout
       title="FlexiFi"
       subtitle="Kelola keuangan dengan mudah dan efisien"
@@ -140,6 +149,8 @@ const LoginPage = ({ onLogin, showToast }) => {
     </AuthLayout>
 =======
   return (
+=======
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
 =======
 >>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
     <div className="login-page-container">
