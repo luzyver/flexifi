@@ -1,9 +1,15 @@
 import React from 'react';
+import { LoadingSpinner } from './auth';
 
 const LoadingOverlay = ({ isLoading }) => {
   return (
     <div className={`loading-overlay ${isLoading ? 'show' : ''}`}>
-      <div className="loading-spinner"></div>
+      <LoadingSpinner 
+        size="md" 
+        variant="primary" 
+        text="Memuat..." 
+        fullPage 
+      />
     </div>
   );
 };
