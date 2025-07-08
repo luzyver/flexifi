@@ -56,6 +56,7 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 <span>Riwayat</span>
               </Link>
             </li>
+<<<<<<< HEAD
             <li className="nav-item">
               <Link to="/categories" className={`nav-link d-flex align-items-center ${isActive('/categories')}`}>
                 <i className="bi bi-tags"></i> 
@@ -69,6 +70,50 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                   <span>Kode Aktivasi</span>
                 </Link>
               </li>
+=======
+            <li className="nav-item dropdown">
+              <a 
+                className="nav-link dropdown-toggle d-flex align-items-center" 
+                href="#" 
+                id="navbarDropdown" 
+                role="button" 
+                data-bs-toggle="dropdown" 
+                aria-expanded="false"
+              >
+                <i className="bi bi-gear-fill me-2"></i> 
+                Settings
+              </a>
+              <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <Link to="/categories" className="dropdown-item d-flex align-items-center">
+                    <i className="bi bi-tags-fill me-2"></i> 
+                    Categories
+                  </Link>
+                </li>
+                {/* <li>
+                  <Link to="/change-password" className="dropdown-item d-flex align-items-center">
+                    <i className="bi bi-key-fill me-2"></i> 
+                    Change Password
+                  </Link>
+                </li> */}
+              </ul>
+            </li>
+            {username === 'rezz' && (
+              <>
+                <li className="nav-item">
+                  <Link to="/admin-register" className={`nav-link d-flex align-items-center ${isActive('/admin-register')}`}>
+                    <i className="bi bi-person-plus-fill me-2"></i> 
+                    Admin Register
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/activation-codes" className={`nav-link d-flex align-items-center ${isActive('/activation-codes')}`}>
+                    <i className="bi bi-key-fill me-2"></i> 
+                    Kode Aktivasi
+                  </Link>
+                </li>
+              </>
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
             )}
           </ul>
           
@@ -100,7 +145,17 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 <i className="bi bi-person-circle"></i>
                 <span className="ms-1">{username}</span>
               </a>
+<<<<<<< HEAD
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+=======
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                {/* <li>
+                  <span className="dropdown-item-text">
+                    <small className="text-muted">Logged in as</small><br />
+                    <strong>{username}</strong>
+                  </span>
+                </li> */}
+>>>>>>> parent of 8ef2c7d (Merge pull request #18 from luzyver/develop)
                 <li>
                   <Link to="/change-password" className="dropdown-item d-flex align-items-center">
                     <i className="bi bi-key me-2"></i>
