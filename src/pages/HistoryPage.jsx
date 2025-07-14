@@ -44,23 +44,21 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
       <div className="row justify-content-center">
         <div className="col-12">
           {/* Header */}
-          <div className="text-center mb-3 mb-md-4 fade-in">
-            <h1 className="display-6 fw-bold text-white mb-2">
-              <i className="bi bi-clock-history me-2"></i>
+          <div className="text-center mb-4 fade-in">
+            <h1 className="h3 fw-bold text-dark mb-2">
               Transaction History
             </h1>
-            <p className="lead text-white-50">
+            <p className="text-muted mb-0">
               View and manage all your transactions
             </p>
           </div>
 
           {/* Transaction List Card */}
           <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-              <h5 className="mb-2 mb-md-0">
-                <i className="bi bi-list-ul me-2"></i>
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <h6 className="mb-0 fw-semibold">
                 All Transactions
-              </h5>
+              </h6>
               <span className="badge bg-light text-dark">
                 {transactions.length} total
               </span>
@@ -121,12 +119,12 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
 
           {/* Summary Card */}
           {transactions.length > 0 && (
-            <div className="card mt-3 mt-md-4 fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="card mt-4 fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="card-body">
                 <div className="row text-center g-3">
                   <div className="col-4">
                     <div className="text-success">
-                      <i className="bi bi-arrow-up-circle-fill fs-4 mb-2"></i>
+                      <i className="bi bi-arrow-up-circle fs-4 mb-2"></i>
                       <div className="fw-bold">
                         {transactions.filter(t => t.type === 'pemasukan').length}
                       </div>
@@ -135,7 +133,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   </div>
                   <div className="col-4">
                     <div className="text-danger">
-                      <i className="bi bi-arrow-down-circle-fill fs-4 mb-2"></i>
+                      <i className="bi bi-arrow-down-circle fs-4 mb-2"></i>
                       <div className="fw-bold">
                         {transactions.filter(t => t.type === 'pengeluaran').length}
                       </div>
@@ -143,7 +141,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                     </div>
                   </div>
                   <div className="col-4">
-                    <div className="text-primary">
+                    <div className="text-dark">
                       <i className="bi bi-list-check fs-4 mb-2"></i>
                       <div className="fw-bold">{transactions.length}</div>
                       <small className="text-muted">Total</small>
