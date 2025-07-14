@@ -13,15 +13,15 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div className="container-fluid">
-        <Link to="/" className="navbar-brand fw-bold fs-4 text-primary">
+        <Link to="/" className="navbar-brand fw-bold fs-4 text-dark">
           <i className="bi bi-wallet2 me-2"></i>
           FlexiFi
         </Link>
         
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-0"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
@@ -36,13 +36,13 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link to="/" className={`nav-link d-flex align-items-center ${isActive('/')}`}>
-                <i className="bi bi-house-door-fill me-2"></i> 
+                <i className="bi bi-house me-2"></i> 
                 Dashboard
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/add-transaction" className={`nav-link d-flex align-items-center ${isActive('/add-transaction')}`}>
-                <i className="bi bi-plus-circle-fill me-2"></i> 
+                <i className="bi bi-plus-circle me-2"></i> 
                 Add Transaction
               </Link>
             </li>
@@ -61,13 +61,13 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 data-bs-toggle="dropdown" 
                 aria-expanded="false"
               >
-                <i className="bi bi-gear-fill me-2"></i> 
+                <i className="bi bi-gear me-2"></i> 
                 Settings
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
                   <Link to="/categories" className="dropdown-item d-flex align-items-center">
-                    <i className="bi bi-tags-fill me-2"></i> 
+                    <i className="bi bi-tags me-2"></i> 
                     Categories
                   </Link>
                 </li>
@@ -76,14 +76,14 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
             {username === 'rezz' && (
               <li className="nav-item">
                 <Link to="/activation-codes" className={`nav-link d-flex align-items-center ${isActive('/activation-codes')}`}>
-                  <i className="bi bi-key-fill me-2"></i> 
-                  Kode Aktivasi
+                  <i className="bi bi-key me-2"></i> 
+                  Activation Codes
                 </Link>
               </li>
             )}
           </ul>
           
-          {location.pathname === '/' || location.pathname === '/history' ? (
+          {(location.pathname === '/' || location.pathname === '/history') && (
             <div className="d-flex me-3 align-items-center">
               <div className="input-group input-group-sm">
                 <span className="input-group-text bg-light border-0">
@@ -108,7 +108,7 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 </select>
               </div>
             </div>
-          ) : null}
+          )}
           
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
@@ -124,10 +124,9 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                 {username}
               </a>
               <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-
                 <li>
                   <Link to="/change-password" className="dropdown-item d-flex align-items-center">
-                    <i className="bi bi-key-fill me-2"></i> 
+                    <i className="bi bi-key me-2"></i> 
                     Change Password
                   </Link>
                 </li>
