@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
 
 const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -56,11 +58,25 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4 display-5 fw-bold text-center text-primary">Manage Categories</h2>
+      {/* Breadcrumb */}
+      <Breadcrumb />
+
+      {/* Page Header */}
+      <PageHeader
+        title="Manage Categories"
+        subtitle="Add and organize your transaction categories"
+        icon="bi-tags"
+      />
 
       {/* Add Category Form */}
-      <div className="card p-4 mb-4 shadow-lg border-0 rounded-3">
-        <h5 className="card-title mb-4 text-primary fw-bold">Add New Category</h5>
+      <div className="card mb-4 fade-in">
+        <div className="card-header">
+          <h6 className="mb-0 fw-semibold">
+            <i className="bi bi-plus-circle me-2"></i>
+            Add New Category
+          </h6>
+        </div>
+        <div className="card-body">
         <form onSubmit={handleAddCategory}>
           <div className="mb-3">
             <label htmlFor="newCategoryName" className="form-label text-muted">Category Name</label>
@@ -88,17 +104,31 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
           </div>
           <button type="submit" className="btn btn-primary btn-lg w-100">Add Category</button>
         </form>
+        </div>
       </div>
 
       {/* Category List */}
-      <div className="card p-4 shadow-lg border-0 rounded-3">
-        <h5 className="card-title mb-4 text-primary fw-bold">Existing Categories</h5>
+      <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h6 className="mb-0 fw-semibold">
+            <i className="bi bi-list-ul me-2"></i>
+            Existing Categories
+          </h6>
+          <span className="badge bg-light text-dark">
+            {categories.length} total
+          </span>
+        </div>
+        <div className="card-body p-0">
         {categories.length === 0 ? (
-          <p className="text-center text-muted">No categories found. Add some above!</p>
+          <div className="text-center py-4">
+            <i className="bi bi-tags display-1 text-muted mb-3"></i>
+            <h6 className="text-muted mb-2">No categories found</h6>
+            <p className="text-muted mb-0 small">Add some categories above to get started.</p>
+          </div>
         ) : (
-          <ul className="list-group list-group-flush">
+          <div className="list-group list-group-flush">
             {categories.map((cat) => (
-              <li key={cat._id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div key={cat._id} className="list-group-item d-flex justify-content-between align-items-center">
                 <div>
                   <span className={`badge ms-2 ${cat.type === 'pemasukan' ? 'bg-success' : 'bg-danger'}`}>
                     {cat.type.charAt(0).toUpperCase() + cat.type.slice(1)}
@@ -112,10 +142,11 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 >
                   <i className="bi bi-trash"></i>
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
+        </div>
       </div>
     </div>
   );

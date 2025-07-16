@@ -66,14 +66,22 @@
 /* Minimalist auth container */
 .login-page-container,
 .register-page-container {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: var(--bg-secondary);
   min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+/* Dark mode auth pages */
+body.dark-mode .login-page-container,
+body.dark-mode .register-page-container {
+  background: var(--bg-secondary);
 }
 
 /* Clean card design */
 .card {
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  background-color: var(--bg-primary);
 }
 
 /* Responsive adjustments */

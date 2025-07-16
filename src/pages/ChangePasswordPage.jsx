@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
 
 const ChangePasswordPage = ({ showToast }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -67,12 +69,25 @@ const ChangePasswordPage = ({ showToast }) => {
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow-lg border-0 rounded-3">
-            <div className="card-header bg-primary text-white text-center">
-              <h2 className="mb-0">Change Password</h2>
+        <div className="col-12 col-md-8 col-lg-6">
+          {/* Breadcrumb */}
+          <Breadcrumb />
+
+          {/* Page Header */}
+          <PageHeader
+            title="Change Password"
+            subtitle="Update your account password"
+            icon="bi-key"
+          />
+
+          <div className="card fade-in">
+            <div className="card-header">
+              <h6 className="mb-0 fw-semibold">
+                <i className="bi bi-shield-lock me-2"></i>
+                Password Settings
+              </h6>
             </div>
-            <div className="card-body p-4">
+            <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="currentPassword" className="form-label">Current Password</label>

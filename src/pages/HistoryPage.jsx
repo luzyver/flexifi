@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import TransactionList from '../components/TransactionList';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
 
 const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,15 +45,15 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12">
-          {/* Header */}
-          <div className="text-center mb-4 fade-in">
-            <h1 className="h3 fw-bold text-dark mb-2">
-              Transaction History
-            </h1>
-            <p className="text-muted mb-0">
-              View and manage all your transactions
-            </p>
-          </div>
+          {/* Breadcrumb */}
+          <Breadcrumb />
+
+          {/* Page Header */}
+          <PageHeader
+            title="Transaction History"
+            subtitle="View and manage all your transactions"
+            icon="bi-clock-history"
+          />
 
           {/* Transaction List Card */}
           <div className="card fade-in" style={{ animationDelay: '0.1s' }}>

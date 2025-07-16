@@ -1,32 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary-color: #1a1a1a;
-  --primary-hover: #333333;
-  --primary-light: #f8f9fa;
-  --secondary-color: #6b7280;
-  --success-color: #10b981;
-  --success-light: #d1fae5;
-  --danger-color: #ef4444;
-  --danger-light: #fee2e2;
-  --warning-color: #f59e0b;
-  --warning-light: #fef3c7;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
+  /* Light mode colors */
+  --primary-color: #0d6efd;
+  --primary-hover: #0b5ed7;
+  --primary-light: #e7f1ff;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --success-light: #d1e7dd;
+  --danger-color: #dc3545;
+  --danger-light: #f8d7da;
+  --warning-color: #ffc107;
+  --warning-light: #fff3cd;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
   --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
-  --border-color: #e5e7eb;
-  --border-light: #f3f4f6;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --border-color: #dee2e6;
+  --border-light: #f1f3f4;
+  --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  --shadow-xl: 0 2rem 4rem rgba(0, 0, 0, 0.2);
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
+}
+
+/* Dark mode colors */
+body.dark-mode {
+  --primary-color: #0d6efd;
+  --primary-hover: #3d8bfd;
+  --primary-light: #031633;
+  --secondary-color: #adb5bd;
+  --success-color: #198754;
+  --success-light: #0f2419;
+  --danger-color: #dc3545;
+  --danger-light: #2c0b0e;
+  --warning-color: #ffc107;
+  --warning-light: #332701;
+  --text-primary: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --text-muted: #6c757d;
+  --bg-primary: #212529;
+  --bg-secondary: #343a40;
+  --bg-tertiary: #495057;
+  --border-color: #495057;
+  --border-light: #343a40;
+  --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 2rem 4rem rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -308,10 +335,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navigation - Clean and Minimal */
 .navbar {
-  background: var(--bg-primary) !important;
+  background-color: var(--bg-primary) !important;
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
   padding: 1rem 0;
+  transition: all 0.3s ease;
 }
 
 .navbar-brand {
@@ -335,6 +363,20 @@ h1, h2, h3, h4, h5, h6 {
 .nav-link.active {
   color: var(--primary-color) !important;
   font-weight: 600;
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-secondary);
 }
 
 .navbar-text {
@@ -819,9 +861,10 @@ h1, h2, h3, h4, h5, h6 {
 /* Breadcrumb improvements */
 .breadcrumb {
   background: transparent;
-  padding: 0.5rem 0;
+  padding: 0.75rem 0;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  border-radius: var(--radius-md);
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
@@ -832,6 +875,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .breadcrumb-item.active {
   color: var(--text-secondary);
+}
+
+.breadcrumb-item a {
+  color: var(--primary-color);
+  transition: color 0.2s ease;
 }
 
 /* Page Transitions */
@@ -855,4 +903,91 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header .text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* Dark mode specific adjustments */
+body.dark-mode .navbar {
+  border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .card {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+  background-color: var(--bg-primary);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .dropdown-item {
+  color: var(--text-primary);
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body.dark-mode .list-group-item {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .list-group-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+body.dark-mode .badge.bg-light {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .alert-light {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .footer {
+  background-color: var(--bg-primary);
+  border-top-color: var(--border-color);
+}
+
+body.dark-mode .suggestions-list {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .suggestions-list li:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMonths }) => {
   const location = useLocation();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   
   const handleLogoutClick = () => {
     onLogout();
@@ -13,7 +15,7 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav className="navbar navbar-expand-lg shadow-sm">
       <div className="container-fluid">
         <Link to="/" className="navbar-brand fw-bold fs-4 text-dark">
           <i className="bi bi-wallet2 me-2"></i>
@@ -82,6 +84,15 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
               </li>
             )}
           </ul>
+          
+          <button
+            className="theme-toggle me-3"
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+          </button>
           
           {(location.pathname === '/' || location.pathname === '/history') && (
             <div className="d-flex me-3 align-items-center">

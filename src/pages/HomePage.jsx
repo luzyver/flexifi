@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import TransactionList from '../components/TransactionList';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
 
 const HomePage = ({
   income,
@@ -12,17 +14,21 @@ const HomePage = ({
 }) => {
   return (
     <div className="container-fluid">
-      {/* Welcome Section - Minimalist */}
+      {/* Breadcrumb */}
       <div className="row mb-4">
         <div className="col-12">
-          <div className="text-center fade-in">
-            <h1 className="display-6 fw-bold text-dark mb-2">
-              Hello, {username}
-            </h1>
-            <p className="text-muted mb-0">
-              Your financial overview
-            </p>
-          </div>
+          <Breadcrumb />
+        </div>
+      </div>
+
+      {/* Page Header */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <PageHeader
+            title={`Hello, ${username}`}
+            subtitle="Your financial overview"
+            icon="bi-person-circle"
+          />
         </div>
       </div>
 
