@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
+import Breadcrumb from '../components/Breadcrumb';
+import PageHeader from '../components/PageHeader';
 
 const ActivationCodePage = ({ showToast, token }) => {
   const navigate = useNavigate();
@@ -122,25 +124,43 @@ const ActivationCodePage = ({ showToast, token }) => {
   return (
     <div className="container py-4">
       <LoadingOverlay isLoading={loading} />
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">Kode Aktivasi</h1>
-        <button
-          className="btn btn-primary"
-          onClick={handleGenerateCode}
-          disabled={isGenerating}
-        >
-          {isGenerating ? (
-            <>
-              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Generating...
-            </>
-          ) : (
-            <>Generate Kode Baru</>
-          )}
-        </button>
-      </div>
+      
+      {/* Breadcrumb */}
+      <Breadcrumb />
 
-      <div className="card shadow-sm">
+      {/* Page Header */}
+      <PageHeader
+        title="Activation Codes"
+        subtitle="Manage user registration codes"
+        icon="bi-key-fill"
+        actions={
+          <button
+            className="btn btn-primary"
+            onClick={handleGenerateCode}
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-plus-circle me-2"></i>
+                Generate New Code
+              </>
+            )}
+          </button>
+        }
+      />
+
+      <div className="card fade-in">
+        <div className="card-header">
+          <h6 className="mb-0 fw-semibold">
+            <i className="bi bi-list-ul me-2"></i>
+            All Activation Codes
+          </h6>
+        </div>
         <div className="card-body">
           <div className="table-responsive">
             <table className="table table-hover">

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
 const RegisterPage = ({ showToast }) => {
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -66,6 +68,18 @@ const RegisterPage = ({ showToast }) => {
   return (
     <div className="register-page-container min-vh-100 d-flex align-items-center">
       <div className="container py-4">
+        {/* Theme Toggle */}
+        <div className="position-fixed top-0 end-0 m-3" style={{ zIndex: 1050 }}>
+          <button
+            className="theme-toggle"
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+          </button>
+        </div>
+        
         <div className="row justify-content-center">
           <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
             <div className={`card border-0 shadow-lg ${animateForm ? 'animate__animated animate__fadeIn' : 'opacity-0'}`} 

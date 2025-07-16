@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import HomePage from './pages/HomePage';
 import AddTransactionPage from './pages/AddTransactionPage';
@@ -41,9 +42,11 @@ if (!API_BASE_URL) {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
   );
 }
 
