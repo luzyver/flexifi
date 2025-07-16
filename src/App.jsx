@@ -407,13 +407,36 @@ function AppContent() {
   const filteredTransactions = filterMonth
     ? transactions.filter(t => {
         const transactionDate = new Date(t.date);
-        const filterDateParts = filterMonth.split('-');
-        const filterYear = parseInt(filterDateParts[0]);
-        const filterMonthIndex = parseInt(filterDateParts[1]) - 1;
-        return (
-          transactionDate.getFullYear() === filterYear &&
-          transactionDate.getMonth() === filterMonthIndex
-        );
+        
+        // Filter by date range
+        if (filterMonth.startsWith('dateRange-')) {
+          const dateRangeParts = filterMonth.replace('dateRange-', '').split('-');
+          if (dateRangeParts.length >= 6) {
+            const startDate = new Date(`${dateRangeParts[0]}-${dateRangeParts[1]}-${dateRangeParts[2]}`);
+            const endDate = new Date(`${dateRangeParts[3]}-${dateRangeParts[4]}-${dateRangeParts[5]}`);
+            const transactionDateOnly = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), transactionDate.getDate());
+            return transactionDateOnly >= startDate && transactionDateOnly <= endDate;
+          }
+        }
+        
+        // Filter by year only
+        if (filterMonth.startsWith('year-')) {
+          const filterYear = parseInt(filterMonth.replace('year-', ''));
+          return transactionDate.getFullYear() === filterYear;
+        }
+        
+        // Filter by month and year
+        if (filterMonth.includes('-') && !filterMonth.startsWith('year-')) {
+          const filterDateParts = filterMonth.split('-');
+          const filterYear = parseInt(filterDateParts[0]);
+          const filterMonthIndex = parseInt(filterDateParts[1]) - 1;
+          return (
+            transactionDate.getFullYear() === filterYear &&
+            transactionDate.getMonth() === filterMonthIndex
+          );
+        }
+        
+        return true;
       })
     : transactions;
 
@@ -442,6 +465,8 @@ function AppContent() {
             filterMonth={filterMonth}
             setFilterMonth={setFilterMonth}
             availableMonths={availableMonths}
+            transactions={transactions}
+            transactions={transactions}
           >
             <Routes>
               <Route

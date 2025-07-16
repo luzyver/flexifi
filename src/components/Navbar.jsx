@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import DateRangeFilter from './DateRangeFilter';
 
-const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMonths }) => {
+const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMonths, transactions }) => {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useTheme();
   
@@ -95,8 +96,8 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
           </button>
           
           {(location.pathname === '/' || location.pathname === '/history') && (
-            <div className="d-flex me-3 align-items-center">
-              <div className="input-group input-group-sm">
+            <div className="d-flex me-3 align-items-center gap-2">
+              <div className="input-group input-group-sm" style={{ minWidth: '200px' }}>
                 <span className="input-group-text bg-light border-0">
                   <i className="bi bi-calendar3"></i>
                 </span>
@@ -108,16 +109,39 @@ const Navbar = ({ onLogout, username, filterMonth, setFilterMonth, availableMont
                   aria-label="Filter by month"
                 >
                   <option value="">All Months</option>
-                  {availableMonths && availableMonths.map((month) => (
-                    <option key={month} value={month}>
-                      {new Date(month + '-02').toLocaleString('en-US', { 
-                        month: 'long', 
-                        year: 'numeric' 
-                      })}
-                    </option>
-                  ))}
+                  {availableMonths && availableMonths.length > 0 && (
+                    <>
+                      <optgroup label="By Year">
+                        {[...new Set(availableMonths.map(month => month.split('-')[0]))].sort((a, b) => b - a).map((year) => (
+                          <option key={`year-${year}`} value={`year-${year}`}>
+                            {year}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="By Month">
+                        {availableMonths.map((month) => (
+                          <option key={month} value={month}>
+                            {new Date(month + '-02').toLocaleString('en-US', { 
+                              month: 'long', 
+                              year: 'numeric' 
+                            })}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </>
+                  )}
                 </select>
               </div>
+              <DateRangeFilter 
+                onFilterChange={(filter) => {
+                  if (filter) {
+                    setFilterMonth(`dateRange-${filter.startDate}-${filter.endDate}`);
+                  } else {
+                    setFilterMonth('');
+                  }
+                }}
+                transactions={transactions}
+              />
             </div>
           )}
           
