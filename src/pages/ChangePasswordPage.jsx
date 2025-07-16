@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
+import { useTheme } from '../contexts/ThemeContext';
 
 const ChangePasswordPage = ({ showToast }) => {
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -83,47 +83,50 @@ const ChangePasswordPage = ({ showToast }) => {
                      newPassword === confirmNewPassword && newPassword.length >= 6;
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-12 col-md-8 col-lg-6">
-          {/* Breadcrumb */}
-          <Breadcrumb />
+    <div className="login-page-container min-vh-100 d-flex align-items-center">
+      <div className="container py-4">
+        {/* Theme Toggle */}
+        <div className="position-fixed top-0 end-0 m-3" style={{ zIndex: 1050 }}>
+          <button
+            className="theme-toggle"
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
+          </button>
+        </div>
+        
+        <div className="row justify-content-center">
+          <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+            <div className="card border-0 shadow-lg animate__animated animate__fadeIn" 
+                 style={{ borderRadius: '1rem' }}>
+              
+              {/* Header */}
+              <div className="card-body p-4 p-md-5">
+                <div className="text-center mb-4">
+                  <div className="mb-3">
+                    <i className="bi bi-shield-lock display-4 text-dark"></i>
+                  </div>
+                  <h2 className="h4 fw-bold text-dark mb-2">Change Password</h2>
+                  <p className="text-muted small mb-0">Update your account security</p>
+                </div>
 
-          {/* Page Header */}
-          <PageHeader
-            title="Change Password"
-            subtitle="Update your account password"
-            icon="bi-key"
-          />
-
-          {/* Change Password Form */}
-          <div className="card fade-in">
-            <div className="card-header">
-              <h6 className="mb-0 fw-semibold">
-                <i className="bi bi-shield-lock me-2"></i>
-                Password Settings
-              </h6>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-                {/* Current Password */}
-                <div className="mb-3">
-                  <label htmlFor="currentPassword" className="form-label">
-                    <i className="bi bi-lock me-2"></i>
-                    Current Password
-                  </label>
-                  <div className="position-relative">
+                <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+                  {/* Current Password */}
+                  <div className="form-floating mb-3">
                     <input
                       type={showCurrentPassword ? "text" : "password"}
-                      className="form-control form-control-lg"
                       id="currentPassword"
+                      className="form-control"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter your current password"
+                      placeholder="Current Password"
                       required
                       disabled={isSubmitting}
                       autoComplete="current-password"
                     />
+                    <label htmlFor="currentPassword">Current Password</label>
                     <button
                       type="button"
                       className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
@@ -135,27 +138,22 @@ const ChangePasswordPage = ({ showToast }) => {
                       <i className={`bi ${showCurrentPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
                   </div>
-                </div>
 
-                {/* New Password */}
-                <div className="mb-3">
-                  <label htmlFor="newPassword" className="form-label">
-                    <i className="bi bi-key me-2"></i>
-                    New Password
-                  </label>
-                  <div className="position-relative">
+                  {/* New Password */}
+                  <div className="form-floating mb-3">
                     <input
                       type={showNewPassword ? "text" : "password"}
-                      className="form-control form-control-lg"
                       id="newPassword"
+                      className="form-control"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Enter your new password"
+                      placeholder="New Password"
                       required
                       disabled={isSubmitting}
                       autoComplete="new-password"
                       minLength="6"
                     />
+                    <label htmlFor="newPassword">New Password</label>
                     <button
                       type="button"
                       className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
@@ -166,33 +164,28 @@ const ChangePasswordPage = ({ showToast }) => {
                     >
                       <i className={`bi ${showNewPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
+                    <div className="form-text small">
+                      <i className="bi bi-info-circle me-1"></i>
+                      Minimum 6 characters
+                    </div>
                   </div>
-                  <div className="form-text small">
-                    <i className="bi bi-info-circle me-1"></i>
-                    Minimum 6 characters
-                  </div>
-                </div>
 
-                {/* Confirm New Password */}
-                <div className="mb-4">
-                  <label htmlFor="confirmNewPassword" className="form-label">
-                    <i className="bi bi-check-circle me-2"></i>
-                    Confirm New Password
-                  </label>
-                  <div className="position-relative">
+                  {/* Confirm New Password */}
+                  <div className="form-floating mb-4">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
-                      className={`form-control form-control-lg ${
+                      id="confirmNewPassword"
+                      className={`form-control ${
                         confirmNewPassword && newPassword !== confirmNewPassword ? 'is-invalid' : ''
                       }`}
-                      id="confirmNewPassword"
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      placeholder="Confirm your new password"
+                      placeholder="Confirm New Password"
                       required
                       disabled={isSubmitting}
                       autoComplete="new-password"
                     />
+                    <label htmlFor="confirmNewPassword">Confirm New Password</label>
                     <button
                       type="button"
                       className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
@@ -209,66 +202,71 @@ const ChangePasswordPage = ({ showToast }) => {
                       </div>
                     )}
                   </div>
-                </div>
 
-                {/* Submit Buttons */}
-                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                  {/* Submit Button */}
+                  <div className="d-grid mb-4">
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary btn-lg" 
+                      disabled={isSubmitting || !isFormValid}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-check-circle-fill me-2"></i>
+                          Update Password
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Back Button */}
+                <div className="text-center">
                   <button 
                     type="button" 
-                    className="btn btn-outline-secondary btn-lg me-md-2"
+                    className="btn btn-outline-secondary"
                     onClick={() => navigate('/')}
                     disabled={isSubmitting}
                   >
-                    <i className="bi bi-x-circle me-2"></i>
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="btn btn-primary btn-lg"
-                    disabled={isSubmitting || !isFormValid}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Updating...
-                      </>
-                    ) : (
-                      <>
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        Change Password
-                      </>
-                    )}
+                    <i className="bi bi-arrow-left me-2"></i>
+                    Back to Dashboard
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
 
-          {/* Security Tips */}
-          <div className="card mt-4 fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="card-body">
-              <h6 className="card-title fw-semibold mb-3">
-                <i className="bi bi-shield-check me-2"></i>
-                Security Tips
-              </h6>
-              <ul className="list-unstyled mb-0 small text-muted">
-                <li className="mb-2">
-                  <i className="bi bi-check-circle text-success me-2"></i>
-                  Use a strong password with at least 6 characters
-                </li>
-                <li className="mb-2">
-                  <i className="bi bi-check-circle text-success me-2"></i>
-                  Include a mix of letters, numbers, and symbols
-                </li>
-                <li className="mb-2">
-                  <i className="bi bi-check-circle text-success me-2"></i>
-                  Don't reuse passwords from other accounts
-                </li>
-                <li className="mb-0">
-                  <i className="bi bi-check-circle text-success me-2"></i>
-                  Keep your password private and secure
-                </li>
-              </ul>
+            {/* Security Tips Card */}
+            <div className="card mt-4 border-0 shadow-lg animate__animated animate__fadeIn" 
+                 style={{ borderRadius: '1rem', animationDelay: '0.2s' }}>
+              <div className="card-body p-4">
+                <h6 className="card-title fw-semibold mb-3 text-center">
+                  <i className="bi bi-shield-check me-2 text-success"></i>
+                  Security Tips
+                </h6>
+                <ul className="list-unstyled mb-0 small text-muted">
+                  <li className="mb-2 d-flex align-items-start">
+                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
+                    <span>Use a strong password with at least 6 characters</span>
+                  </li>
+                  <li className="mb-2 d-flex align-items-start">
+                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
+                    <span>Include a mix of letters, numbers, and symbols</span>
+                  </li>
+                  <li className="mb-2 d-flex align-items-start">
+                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
+                    <span>Don't reuse passwords from other accounts</span>
+                  </li>
+                  <li className="mb-0 d-flex align-items-start">
+                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
+                    <span>Keep your password private and secure</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
