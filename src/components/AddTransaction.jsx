@@ -107,10 +107,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
       setSuggestions([]);
       setSuggestionsVisible(false);
       
-      // Navigate back to home after successful submission
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      // Tidak perlu navigasi ke home, tetap di halaman add transaction
       
     } catch (error) {
       // Error handling is done in the parent component
