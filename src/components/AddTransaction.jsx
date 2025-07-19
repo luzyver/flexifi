@@ -107,8 +107,6 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
       setSuggestions([]);
       setSuggestionsVisible(false);
       
-      // Tidak perlu navigasi ke home, tetap di halaman add transaction
-      
     } catch (error) {
       // Error handling is done in the parent component
     } finally {
@@ -120,38 +118,40 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
 
   return (
     <form onSubmit={onSubmit} className="needs-validation" noValidate>
-      <div className="row g-3">
+      <div className="row g-4">
         <div className="col-12">
-          <label htmlFor="type" className="form-label">
-            <i className="bi bi-arrow-up-down me-2"></i>
-            Transaction Type
-          </label>
-          <select 
-            id="type" 
-            className="form-select form-select-lg" 
-            value={type} 
-            onChange={handleTypeChange}
-            disabled={isSubmitting}
-          >
-            <option value="pengeluaran">
-              <i className="bi bi-arrow-down-circle"></i> Expense (Pengeluaran)
-            </option>
-            <option value="pemasukan">
-              <i className="bi bi-arrow-up-circle"></i> Income (Pemasukan)
-            </option>
-          </select>
+          <div className="modern-form-group">
+            <label htmlFor="type" className="modern-form-label">
+              <i className="bi bi-arrow-up-down"></i>
+              Transaction Type
+            </label>
+            <select 
+              id="type" 
+              className="modern-form-select" 
+              value={type} 
+              onChange={handleTypeChange}
+              disabled={isSubmitting}
+            >
+              <option value="pengeluaran">
+                💸 Expense (Pengeluaran)
+              </option>
+              <option value="pemasukan">
+                💰 Income (Pemasukan)
+              </option>
+            </select>
+          </div>
         </div>
 
         <div className="col-12">
-          <div className="position-relative" ref={descriptionInputRef}>
-            <label htmlFor="description" className="form-label">
-              <i className="bi bi-card-text me-2"></i>
+          <div className="modern-form-group position-relative" ref={descriptionInputRef}>
+            <label htmlFor="description" className="modern-form-label">
+              <i className="bi bi-card-text"></i>
               Description
             </label>
             <input
               id="description"
               type="text"
-              className="form-control form-control-lg"
+              className="modern-form-control"
               value={description}
               onChange={handleDescriptionChange}
               placeholder="Enter transaction description..."
@@ -177,72 +177,78 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
         </div>
 
         <div className="col-md-6">
-          <label htmlFor="amount" className="form-label">
-            <i className="bi bi-currency-dollar me-2"></i>
-            Amount (IDR)
-          </label>
-          <div className="input-group input-group-lg">
-            <span className="input-group-text">Rp</span>
+          <div className="modern-form-group">
+            <label htmlFor="amount" className="modern-form-label">
+              <i className="bi bi-currency-dollar"></i>
+              Amount (IDR)
+            </label>
+            <div className="input-group">
+              <span className="input-group-text bg-light border-0">Rp</span>
+              <input
+                id="amount"
+                type="number"
+                className="modern-form-control"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0"
+                step="1000"
+                min="1"
+                disabled={isSubmitting}
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <div className="modern-form-group">
+            <label htmlFor="category" className="modern-form-label">
+              <i className="bi bi-tags-fill"></i>
+              Category
+            </label>
+            <select 
+              id="category" 
+              className="modern-form-select" 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)}
+              disabled={isSubmitting}
+              required
+            >
+              {filteredCategoriesForType.map((cat) => (
+                <option key={cat.category} value={cat.category}>
+                  {cat.category}
+                </option>
+              ))}
+              {filteredCategoriesForType.length === 0 && (
+                <option value="" disabled>No categories available</option>
+              )}
+            </select>
+          </div>
+        </div>
+
+        <div className="col-12">
+          <div className="modern-form-group">
+            <label htmlFor="date" className="modern-form-label">
+              <i className="bi bi-calendar-event"></i>
+              Date
+            </label>
             <input
-              id="amount"
-              type="number"
-              className="form-control"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0"
-              step="1000"
-              min="1"
+              id="date"
+              type="date"
+              className="modern-form-control"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               disabled={isSubmitting}
               required
             />
           </div>
         </div>
 
-        <div className="col-md-6">
-          <label htmlFor="category" className="form-label">
-            <i className="bi bi-tags-fill me-2"></i>
-            Category
-          </label>
-          <select 
-            id="category" 
-            className="form-select form-select-lg" 
-            value={category} 
-            onChange={(e) => setCategory(e.target.value)}
-            disabled={isSubmitting}
-            required
-          >
-            {filteredCategoriesForType.map((cat) => (
-              <option key={cat.category} value={cat.category}>
-                {cat.category}
-              </option>
-            ))}
-            {filteredCategoriesForType.length === 0 && (
-              <option value="" disabled>No categories available</option>
-            )}
-          </select>
-        </div>
-
-        <div className="col-12">
-          <label htmlFor="date" className="form-label">
-            <i className="bi bi-calendar-event me-2"></i>
-            Date
-          </label>
-          <input
-            id="date"
-            type="date"
-            className="form-control form-control-lg"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            disabled={isSubmitting}
-            required
-          />
-        </div>
-
         <div className="col-12 mt-4">
           <div className="d-grid gap-2 d-md-flex justify-content-md-end">
             <button 
               type="button" 
-              className="btn btn-outline-secondary btn-lg me-md-2"
+              className="modern-btn modern-btn-outline me-md-2"
               onClick={() => navigate('/')}
               disabled={isSubmitting}
             >
@@ -251,7 +257,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
             </button>
             <button 
               type="submit" 
-              className="btn btn-primary btn-lg"
+              className="modern-btn modern-btn-primary"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

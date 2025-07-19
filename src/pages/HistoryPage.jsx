@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TransactionList from '../components/TransactionList';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
+import { formatRupiah } from '../utils/formatRupiah';
 
 const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,6 +12,15 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
   const currentTransactions = transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Calculate totals for current page
+  const currentPageIncome = currentTransactions
+    .filter(t => t.type === 'pemasukan')
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const currentPageExpense = currentTransactions
+    .filter(t => t.type === 'pengeluaran')
+    .reduce((sum, t) => sum + t.amount, 0);
 
   const getPaginationNumbers = (currentPage, totalPages) => {
     const pageNumbers = [];
@@ -51,21 +61,91 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
           {/* Page Header */}
           <PageHeader
             title="Transaction History"
-            subtitle="View and manage all your transactions"
+            subtitle="View and manage all your financial transactions"
             icon="bi-clock-history"
           />
 
-          {/* Transaction List Card */}
-          <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="card-header d-flex justify-content-between align-items-center">
-              <h6 className="mb-0 fw-semibold">
-                All Transactions
-              </h6>
-              <span className="badge bg-light text-dark">
-                {transactions.length} total
-              </span>
+          {/* Summary Cards */}
+          {transactions.length > 0 && (
+            <div className="row g-3 mb-4">
+              <div className="col-md-4">
+                <div className="modern-stats-card income fade-in">
+                  <div className="stats-icon income">
+                    <i className="bi bi-arrow-up-circle-fill"></i>
+                  </div>
+                  <div className="stats-label">Total Income</div>
+                  <div className="stats-value text-success">
+                    {formatRupiah(transactions.filter(t => t.type === 'pemasukan').reduce((sum, t) => sum + t.amount, 0))}
+                  </div>
+                  <div className="stats-change positive">
+                    <i className="bi bi-list-check"></i>
+                    {transactions.filter(t => t.type === 'pemasukan').length} transactions
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-4">
+                <div className="modern-stats-card expense fade-in" style={{ animationDelay: '0.1s' }}>
+                  <div className="stats-icon expense">
+                    <i className="bi bi-arrow-down-circle-fill"></i>
+                  </div>
+                  <div className="stats-label">Total Expenses</div>
+                  <div className="stats-value text-danger">
+                    {formatRupiah(transactions.filter(t => t.type === 'pengeluaran').reduce((sum, t) => sum + t.amount, 0))}
+                  </div>
+                  <div className="stats-change negative">
+                    <i className="bi bi-list-check"></i>
+                    {transactions.filter(t => t.type === 'pengeluaran').length} transactions
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-4">
+                <div className="modern-stats-card balance fade-in" style={{ animationDelay: '0.2s' }}>
+                  <div className="stats-icon balance">
+                    <i className="bi bi-wallet2"></i>
+                  </div>
+                  <div className="stats-label">Total Transactions</div>
+                  <div className="stats-value text-primary">
+                    {transactions.length}
+                  </div>
+                  <div className="stats-change positive">
+                    <i className="bi bi-calendar-range"></i>
+                    All time records
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="card-body p-0">
+          )}
+
+          {/* Transaction List Card */}
+          <div className="dashboard-card fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="dashboard-card-header">
+              <div className="d-flex justify-content-between align-items-center w-100">
+                <div className="d-flex align-items-center">
+                  <i className="bi bi-list-ul me-2"></i>
+                  <h6 className="mb-0 fw-semibold">All Transactions</h6>
+                </div>
+                <div className="d-flex align-items-center gap-3">
+                  {currentTransactions.length > 0 && (
+                    <div className="d-none d-md-flex align-items-center gap-3 text-muted small">
+                      <span className="d-flex align-items-center">
+                        <i className="bi bi-arrow-up-circle text-success me-1"></i>
+                        {formatRupiah(currentPageIncome)}
+                      </span>
+                      <span className="d-flex align-items-center">
+                        <i className="bi bi-arrow-down-circle text-danger me-1"></i>
+                        {formatRupiah(currentPageExpense)}
+                      </span>
+                    </div>
+                  )}
+                  <span className="modern-badge light">
+                    {transactions.length} total
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="dashboard-card-body p-0">
               <TransactionList 
                 transactions={currentTransactions} 
                 onDeleteTransaction={onDeleteTransaction} 
@@ -74,12 +154,12 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
             
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="card-footer bg-light">
-                <nav aria-label="Transaction pagination">
+              <div className="dashboard-card-header border-top">
+                <nav aria-label="Transaction pagination" className="w-100">
                   <ul className="pagination justify-content-center mb-0">
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                       <button 
-                        className="page-link" 
+                        className="page-link border-0 bg-transparent" 
                         onClick={() => paginate(currentPage - 1)}
                         disabled={currentPage === 1}
                       >
@@ -90,13 +170,13 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                     {paginationNumbers.map((number, index) => (
                       number === '...' ? (
                         <li key={`ellipsis-${index}`} className="page-item disabled">
-                          <span className="page-link">...</span>
+                          <span className="page-link border-0 bg-transparent">...</span>
                         </li>
                       ) : (
                         <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
                           <button 
                             onClick={() => paginate(number)} 
-                            className="page-link"
+                            className={`page-link border-0 ${currentPage === number ? 'bg-primary text-white' : 'bg-transparent'}`}
                           >
                             {number}
                           </button>
@@ -105,7 +185,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                     ))}
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                       <button 
-                        className="page-link" 
+                        className="page-link border-0 bg-transparent" 
                         onClick={() => paginate(currentPage + 1)}
                         disabled={currentPage === totalPages}
                       >
@@ -118,41 +198,6 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
               </div>
             )}
           </div>
-
-          {/* Summary Card */}
-          {transactions.length > 0 && (
-            <div className="card mt-4 fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="card-body">
-                <div className="row text-center g-3">
-                  <div className="col-4">
-                    <div className="text-success">
-                      <i className="bi bi-arrow-up-circle fs-4 mb-2"></i>
-                      <div className="fw-bold">
-                        {transactions.filter(t => t.type === 'pemasukan').length}
-                      </div>
-                      <small className="text-muted">Income</small>
-                    </div>
-                  </div>
-                  <div className="col-4">
-                    <div className="text-danger">
-                      <i className="bi bi-arrow-down-circle fs-4 mb-2"></i>
-                      <div className="fw-bold">
-                        {transactions.filter(t => t.type === 'pengeluaran').length}
-                      </div>
-                      <small className="text-muted">Expense</small>
-                    </div>
-                  </div>
-                  <div className="col-4">
-                    <div className="text-dark">
-                      <i className="bi bi-list-check fs-4 mb-2"></i>
-                      <div className="fw-bold">{transactions.length}</div>
-                      <small className="text-muted">Total</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
