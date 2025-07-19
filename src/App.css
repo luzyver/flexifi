@@ -379,43 +379,211 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Modern Navigation */
-.modern-navbar {
-  background: var(--bg-primary) !important;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  padding: 1rem 0;
+/* Sidebar Navigation */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  overflow-y: auto;
 }
 
-.modern-navbar-brand {
+.sidebar-brand {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.sidebar-brand-link {
   font-weight: 700;
-  color: var(--primary-color) !important;
+  color: var(--primary-color);
   font-size: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  text-decoration: none;
 }
 
-.modern-nav-link {
-  color: var(--text-primary) !important;
-  font-weight: 500;
+.sidebar-brand-link:hover {
+  color: var(--primary-hover);
+  text-decoration: none;
+}
+
+.sidebar-nav {
+  padding: 0 1rem;
+}
+
+.sidebar-nav-item {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-lg);
   transition: all 0.2s ease;
-  padding: 0.5rem 1rem !important;
+  font-weight: 500;
   font-size: 0.9rem;
-  border-radius: var(--radius-md);
-  margin: 0 0.25rem;
+  gap: 0.75rem;
 }
 
-.modern-nav-link:hover {
-  color: var(--primary-color) !important;
+.sidebar-nav-link:hover {
+  color: var(--primary-color);
   background: var(--primary-light);
+  text-decoration: none;
+  transform: translateX(4px);
 }
 
-.modern-nav-link.active {
-  color: var(--primary-color) !important;
+.sidebar-nav-link.active {
+  color: var(--primary-color);
   background: var(--primary-light);
   font-weight: 600;
+  border-left: 3px solid var(--primary-color);
+}
+
+.sidebar-nav-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* Top Header */
+.top-header {
+  position: fixed;
+  top: 0;
+  left: 280px;
+  right: 0;
+  height: 70px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  transition: all 0.3s ease;
+}
+
+.top-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.top-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Main Content with Sidebar */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content-wrapper {
+  margin-left: 280px;
+  margin-top: 70px;
+  flex: 1;
+  min-height: calc(100vh - 70px);
+  background: var(--bg-secondary);
+}
+
+/* Mobile Sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  
+  .top-header {
+    left: 0;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 0;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Filter Controls in Header */
+.header-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .header-filter-controls {
+    display: none;
+  }
+}
+
+/* Mobile Filter Toggle */
+.mobile-filter-toggle {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .mobile-filter-toggle {
+    display: block;
+  }
+}
+
+/* Theme Toggle in Header */
+.theme-toggle-header {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-toggle-header:hover {
+  background: var(--bg-tertiary);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 /* Modern Transaction Items */

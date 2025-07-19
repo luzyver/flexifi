@@ -44,7 +44,10 @@ const LoginPage = ({ onLogin, showToast }) => {
   };
 
   return (
-    <div className="login-page-container min-vh-100 d-flex align-items-center">
+    <div className="auth-page-container min-vh-100">
+      {/* Background Pattern */}
+      <div className="auth-background"></div>
+      
       <div className="container py-4">
         {/* Theme Toggle */}
         <div className="position-fixed top-0 end-0 m-3" style={{ zIndex: 1050 }}>
@@ -59,26 +62,29 @@ const LoginPage = ({ onLogin, showToast }) => {
         </div>
         
         <div className="row justify-content-center">
-          <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
-            <div className={`card border-0 shadow-lg ${animateForm ? 'animate__animated animate__fadeIn' : 'opacity-0'}`} 
-                 style={{ borderRadius: '1rem' }}>
+          <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4 col-xxl-3">
+            <div className={`auth-card ${animateForm ? 'animate__animated animate__fadeIn' : 'opacity-0'}`}>
               
               {/* Header */}
-              <div className="card-body p-4 p-md-5">
-                <div className="text-center mb-4">
-                  <div className="mb-3">
-                    <i className="bi bi-wallet2 display-4 text-dark"></i>
+              <div className="auth-card-body">
+                <div className="auth-header">
+                  <div className="auth-logo">
+                    <div className="auth-logo-icon">
+                      <i className="bi bi-wallet2"></i>
+                    </div>
+                    <h1 className="auth-logo-text">FlexiFi</h1>
                   </div>
-                  <h2 className="h4 fw-bold text-dark mb-2">Welcome Back</h2>
-                  <p className="text-muted small mb-0">Sign in to your account</p>
+                  <h2 className="auth-title">Welcome Back</h2>
+                  <p className="auth-subtitle">Sign in to your account to continue</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-                  <div className="form-floating mb-3">
+                <form onSubmit={handleSubmit} className="auth-form">
+                  <div className="auth-form-group">
+                    <label htmlFor="username" className="auth-form-label">Username</label>
                     <input
                       type="text"
                       id="username"
-                      className="form-control"
+                      className="auth-form-control"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Username"
@@ -86,14 +92,15 @@ const LoginPage = ({ onLogin, showToast }) => {
                       disabled={isSubmitting}
                       autoComplete="username"
                     />
-                    <label htmlFor="username">Username</label>
                   </div>
 
-                  <div className="form-floating mb-4">
+                  <div className="auth-form-group">
+                    <label htmlFor="password" className="auth-form-label">Password</label>
+                    <div className="auth-password-input">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="form-control"
+                      className="auth-form-control"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password"
@@ -101,33 +108,31 @@ const LoginPage = ({ onLogin, showToast }) => {
                       disabled={isSubmitting}
                       autoComplete="current-password"
                     />
-                    <label htmlFor="password">Password</label>
                     <button
                       type="button"
-                      className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                      className="auth-password-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
-                      tabIndex="-1"
-                      style={{ zIndex: 5 }}
                     >
                       <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
+                    </div>
                   </div>
 
-                  <div className="d-grid mb-4">
+                  <div className="auth-form-group">
                     <button 
                       type="submit" 
-                      className="btn btn-primary btn-lg" 
+                      className="auth-btn auth-btn-primary" 
                       disabled={isSubmitting || !username || !password}
                     >
                       {isSubmitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span className="auth-spinner"></span>
                           Signing in...
                         </>
                       ) : (
                         <>
-                          <i className="bi bi-box-arrow-in-right me-2"></i>
+                          <i className="bi bi-arrow-right me-2"></i>
                           Sign In
                         </>
                       )}
@@ -136,10 +141,9 @@ const LoginPage = ({ onLogin, showToast }) => {
                 </form>
 
                 {/* Footer */}
-                <div className="text-center">
-                  <p className="text-muted small mb-3">Don't have an account?</p>
-                  <Link to="/register" className="btn btn-outline-primary">
-                    <i className="bi bi-person-plus me-2"></i>
+                <div className="auth-footer">
+                  <p className="auth-footer-text">Don't have an account?</p>
+                  <Link to="/register" className="auth-btn auth-btn-outline">
                     Create Account
                   </Link>
                 </div>

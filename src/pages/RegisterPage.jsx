@@ -66,7 +66,10 @@ const RegisterPage = ({ showToast }) => {
   const isFormValid = username && password && confirmPassword && activationCode && password === confirmPassword;
 
   return (
-    <div className="register-page-container min-vh-100 d-flex align-items-center">
+    <div className="auth-page-container min-vh-100">
+      {/* Background Pattern */}
+      <div className="auth-background"></div>
+      
       <div className="container py-4">
         {/* Theme Toggle */}
         <div className="position-fixed top-0 end-0 m-3" style={{ zIndex: 1050 }}>
@@ -81,26 +84,29 @@ const RegisterPage = ({ showToast }) => {
         </div>
         
         <div className="row justify-content-center">
-          <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
-            <div className={`card border-0 shadow-lg ${animateForm ? 'animate__animated animate__fadeIn' : 'opacity-0'}`} 
-                 style={{ borderRadius: '1rem' }}>
+          <div className="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4 col-xxl-3">
+            <div className={`auth-card ${animateForm ? 'animate__animated animate__fadeIn' : 'opacity-0'}`}>
               
               {/* Header */}
-              <div className="card-body p-4 p-md-5">
-                <div className="text-center mb-4">
-                  <div className="mb-3">
-                    <i className="bi bi-person-plus display-4 text-dark"></i>
+              <div className="auth-card-body">
+                <div className="auth-header">
+                  <div className="auth-logo">
+                    <div className="auth-logo-icon">
+                      <i className="bi bi-person-plus"></i>
+                    </div>
+                    <h1 className="auth-logo-text">FlexiFi</h1>
                   </div>
-                  <h2 className="h4 fw-bold text-dark mb-2">Create Account</h2>
-                  <p className="text-muted small mb-0">Join FlexiFi today</p>
+                  <h2 className="auth-title">Create Account</h2>
+                  <p className="auth-subtitle">Join FlexiFi and start managing your finances</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-                  <div className="form-floating mb-3">
+                <form onSubmit={handleSubmit} className="auth-form">
+                  <div className="auth-form-group">
+                    <label htmlFor="username" className="auth-form-label">Username</label>
                     <input
                       type="text"
                       id="username"
-                      className="form-control"
+                      className="auth-form-control"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Username"
@@ -108,14 +114,15 @@ const RegisterPage = ({ showToast }) => {
                       disabled={isSubmitting}
                       autoComplete="username"
                     />
-                    <label htmlFor="username">Username</label>
                   </div>
 
-                  <div className="form-floating mb-3">
+                  <div className="auth-form-group">
+                    <label htmlFor="password" className="auth-form-label">Password</label>
+                    <div className="auth-password-input">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="form-control"
+                      className="auth-form-control"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password"
@@ -124,28 +131,27 @@ const RegisterPage = ({ showToast }) => {
                       autoComplete="new-password"
                       minLength="6"
                     />
-                    <label htmlFor="password">Password</label>
                     <button
                       type="button"
-                      className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                      className="auth-password-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
-                      tabIndex="-1"
-                      style={{ zIndex: 5 }}
                     >
                       <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
-                    <div className="form-text small">
-                      <i className="bi bi-info-circle me-1"></i>
-                      Minimum 6 characters
+                    </div>
+                    <div className="auth-form-help">
+                      Minimum 6 characters required
                     </div>
                   </div>
 
-                  <div className="form-floating mb-3">
+                  <div className="auth-form-group">
+                    <label htmlFor="confirmPassword" className="auth-form-label">Confirm Password</label>
+                    <div className="auth-password-input">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmPassword"
-                      className={`form-control ${confirmPassword && password !== confirmPassword ? 'is-invalid' : ''}`}
+                      className={`auth-form-control ${confirmPassword && password !== confirmPassword ? 'error' : ''}`}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm Password"
@@ -153,92 +159,88 @@ const RegisterPage = ({ showToast }) => {
                       disabled={isSubmitting}
                       autoComplete="new-password"
                     />
-                    <label htmlFor="confirmPassword">Confirm Password</label>
                     <button
                       type="button"
-                      className="btn btn-link position-absolute end-0 top-50 translate-middle-y"
+                      className="auth-password-toggle"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       disabled={isSubmitting}
-                      tabIndex="-1"
-                      style={{ zIndex: 5 }}
                     >
                       <i className={`bi ${showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
+                    </div>
                     {confirmPassword && password !== confirmPassword && (
-                      <div className="invalid-feedback">
+                      <div className="auth-form-error">
                         Passwords do not match
                       </div>
                     )}
                   </div>
 
-                  <div className="form-floating mb-4">
+                  <div className="auth-form-group">
+                    <label htmlFor="activationCode" className="auth-form-label">Activation Code</label>
                     <input
                       type="text"
                       id="activationCode"
-                      className="form-control"
+                      className="auth-form-control"
                       value={activationCode}
                       onChange={(e) => setActivationCode(e.target.value)}
                       placeholder="Activation Code"
                       required
                       disabled={isSubmitting}
                     />
-                    <label htmlFor="activationCode">Activation Code</label>
-                    <div className="form-text small">
-                      <i className="bi bi-info-circle me-1"></i>
-                      Contact <a href="https://t.me/rzvabelioprtma">administrator</a> for activation code
+                    <div className="auth-form-help">
+                      Contact <a href="https://t.me/rzvabelioprtma" className="auth-link">administrator</a> for activation code
                     </div>
                   </div>
 
-                  <div className="d-grid gap-2 mb-4">
+                  <div className="auth-form-group">
                     <button 
                       type="submit" 
-                      className="btn btn-primary btn-lg" 
+                      className="auth-btn auth-btn-primary" 
                       disabled={isSubmitting || !isFormValid}
                     >
                       {isSubmitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span className="auth-spinner"></span>
                           Creating...
                         </>
                       ) : (
                         <>
-                          <i className="bi bi-person-plus me-2"></i>
+                          <i className="bi bi-arrow-right me-2"></i>
                           Create Account
                         </>
                       )}
-                    </button>
-                    <button 
-                      type="button" 
-                      className="btn btn-outline-secondary"
-                      onClick={() => navigate('/')}
-                      disabled={isSubmitting}
-                    >
-                      <i className="bi bi-arrow-left me-2"></i>
-                      Back to Login
                     </button>
                   </div>
                 </form>
 
                 {/* Security Notice */}
-                <div className="alert alert-light border p-3">
-                  <h6 className="alert-heading fw-semibold mb-2">
-                    <i className="bi bi-shield-check me-2"></i>
-                    Security Information
-                  </h6>
-                  <ul className="list-unstyled mb-0 small">
-                    <li className="mb-1">
-                      <i className="bi bi-check-circle text-success me-2"></i>
-                      All passwords are encrypted and secure
-                    </li>
-                    <li className="mb-1">
-                      <i className="bi bi-check-circle text-success me-2"></i>
-                      Registration requires valid activation code
-                    </li>
-                    <li className="mb-0">
-                      <i className="bi bi-check-circle text-success me-2"></i>
-                      Your account data is protected and private
-                    </li>
-                  </ul>
+                <div className="auth-security-notice">
+                  <div className="auth-security-header">
+                    <i className="bi bi-shield-check"></i>
+                    <span>Security Information</span>
+                  </div>
+                  <div className="auth-security-list">
+                    <div className="auth-security-item">
+                      <i className="bi bi-check-circle"></i>
+                      <span>All passwords are encrypted and secure</span>
+                    </div>
+                    <div className="auth-security-item">
+                      <i className="bi bi-check-circle"></i>
+                      <span>Registration requires valid activation code</span>
+                    </div>
+                    <div className="auth-security-item">
+                      <i className="bi bi-check-circle"></i>
+                      <span>Your account data is protected and private</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="auth-footer">
+                  <p className="auth-footer-text">Already have an account?</p>
+                  <Link to="/" className="auth-btn auth-btn-outline">
+                    Sign In
+                  </Link>
                 </div>
               </div>
             </div>

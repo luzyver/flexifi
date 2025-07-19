@@ -11,26 +11,46 @@ import RegisterPage from './pages/RegisterPage';
 import CategoryPage from './pages/CategoryPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ActivationCodePage from './pages/ActivationCodePage';
-import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import TopHeader from './components/TopHeader';
 import ConfirmationDialog from './components/ConfirmationDialog';
 import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
 import Footer from './components/Footer';
 
-const DashboardLayout = ({ children, onLogout, username, filterMonth, setFilterMonth, availableMonths }) => {
+const DashboardLayout = ({ children, onLogout, username, filterMonth, setFilterMonth, availableMonths, transactions }) => {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const handleMobileMenuToggle = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
+
+  const handleMobileSidebarClose = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
   return (
-    <>
-      <Navbar 
+    <div className="app-layout">
+      <Sidebar 
+        username={username}
+        isMobileOpen={isMobileSidebarOpen}
+        onMobileClose={handleMobileSidebarClose}
+      />
+      <TopHeader 
         onLogout={onLogout} 
         username={username} 
         filterMonth={filterMonth} 
         setFilterMonth={setFilterMonth} 
-        availableMonths={availableMonths} 
+        availableMonths={availableMonths}
+        transactions={transactions}
+        onMobileMenuToggle={handleMobileMenuToggle}
       />
-      <main className="main-content">
-        {children}
-      </main>
-    </>
+      <div className="main-content-wrapper">
+        <main className="main-content">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 };
 
