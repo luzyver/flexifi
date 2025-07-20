@@ -96,37 +96,6 @@ const HomePage = ({
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="quick-actions fade-in" style={{ animationDelay: '0.3s' }}>
-            <Link to="/add-transaction" className="quick-action-card">
-              <div className="quick-action-icon">
-                <i className="bi bi-plus-circle"></i>
-              </div>
-              <h6 className="fw-semibold mb-1">Tambah Transaksi</h6>
-              <p className="text-muted small mb-0">Catat pemasukan atau pengeluaran</p>
-            </Link>
-            
-            <Link to="/history" className="quick-action-card">
-              <div className="quick-action-icon">
-                <i className="bi bi-clock-history"></i>
-              </div>
-              <h6 className="fw-semibold mb-1">Lihat Riwayat</h6>
-              <p className="text-muted small mb-0">Jelajahi semua transaksi</p>
-            </Link>
-            
-            <Link to="/categories" className="quick-action-card">
-              <div className="quick-action-icon">
-                <i className="bi bi-tags"></i>
-              </div>
-              <h6 className="fw-semibold mb-1">Kelola Kategori</h6>
-              <p className="text-muted small mb-0">Atur pengeluaran Anda</p>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* Financial Insights */}
       <div className="row g-3 g-md-4 mb-4">
         <div className="col-12 col-lg-8">

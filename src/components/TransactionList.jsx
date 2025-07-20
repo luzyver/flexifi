@@ -7,13 +7,11 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   
   // Debug activeTransactionId changes
   useEffect(() => {
-    console.log('Active transaction ID changed to:', activeTransactionId);
+    // Monitor active transaction ID changes
   }, [activeTransactionId]);
   
   // Custom function to set active transaction ID with debugging
   const handleSetActiveTransactionId = (id) => {
-    console.log('Setting active transaction ID to:', id);
-    
     // If we're setting to null (closing) or setting to a new ID (opening a different popup)
     // then update the active ID
     if (id === null) {

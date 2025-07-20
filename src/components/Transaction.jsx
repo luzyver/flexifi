@@ -21,7 +21,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
   // We'll use local state only for controlling popup visibility
   // and only sync with parent when we need to close other popups
   useEffect(() => {
-    console.log('isActive changed:', isActive, 'for transaction:', transaction._id);
     if (isActive === false && showOptions === true) {
       // Only close this popup if parent explicitly wants to close it
       setShowOptions(false);
@@ -31,17 +30,13 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
   // Close options when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      console.log('Document clicked, checking if outside popup');
       // Only process if options are shown
       if (showOptions) {
         // Check if click was outside the popup and not on the transaction item itself
         if (optionsRef.current && !optionsRef.current.contains(event.target) && 
             !event.target.closest('.modern-transaction-item')) {
-          console.log('Click was outside popup and transaction, closing options');
           setShowOptions(false);
           setActiveTransactionId(null);
-        } else {
-          console.log('Click was inside popup or transaction, keeping options open');
         }
       }
     };
@@ -56,18 +51,15 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
     // Prevent event bubbling and default behavior
     e.stopPropagation();
     e.preventDefault();
-    console.log('Transaction clicked:', transaction._id);
     
     // Toggle options visibility
     const newOptionsState = !showOptions;
     
     if (newOptionsState) {
       // Opening the popup - set this transaction as active
-      console.log('Opening options for transaction:', transaction._id);
       setActiveTransactionId(transaction._id);
     } else {
       // Closing the popup - clear active transaction
-      console.log('Closing options for transaction:', transaction._id);
       setActiveTransactionId(null);
     }
     
@@ -132,13 +124,11 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               className="mobile-popup-overlay d-md-none"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Mobile overlay clicked, closing options');
                 setShowOptions(false);
                 setActiveTransactionId(null);
               }}
               onMouseDown={(e) => {
                 e.stopPropagation();
-                console.log('Mobile overlay mouse down, stopping propagation');
               }}
               style={{
                 position: 'fixed',
@@ -153,15 +143,13 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               }}
             />
             <div 
+              className="transaction-options-popup" 
               ref={optionsRef}
-              className="transaction-options-popup"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Popup clicked, stopping propagation');
               }}
               onMouseDown={(e) => {
                 e.stopPropagation();
-                console.log('Popup mouse down, stopping propagation');
               }}
               style={{ 
                 zIndex: 1060, 
@@ -184,7 +172,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Edit button clicked');
                   // Menutup popup opsi sebelum navigasi
                   setShowOptions(false);
                   setActiveTransactionId(null);
@@ -192,7 +179,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
                 }}
                 onMouseDown={(e) => {
                   e.stopPropagation();
-                  console.log('Edit button mouse down');
                 }}
                 className="d-flex align-items-center gap-2 btn btn-sm w-100 text-start mb-1"
               >
@@ -202,7 +188,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log('Delete button clicked');
                   // Menutup popup opsi sebelum menampilkan dialog konfirmasi
                   setShowOptions(false);
                   setActiveTransactionId(null);
@@ -211,7 +196,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
                 }}
                 onMouseDown={(e) => {
                   e.stopPropagation();
-                  console.log('Delete button mouse down');
                 }}
                 className="d-flex align-items-center gap-2 btn btn-sm w-100 text-start"
               >

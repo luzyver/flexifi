@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { formatRupiah, parseRupiahToNumber } from '../utils/formatRupiah';
 
 const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categories, onCancel }) => {
