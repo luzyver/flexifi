@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage';
 import CategoryPage from './pages/CategoryPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ActivationCodePage from './pages/ActivationCodePage';
+import EditTransactionPage from './pages/EditTransactionPage';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
 import ConfirmationDialog from './components/ConfirmationDialog';
@@ -341,9 +342,52 @@ function AppContent() {
     }
   };
 
+  // State untuk menyimpan detail transaksi yang akan dihapus
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
+
   const handleDeleteClick = (id) => {
-    setTransactionToDeleteId(id);
-    setConfirmationDialogOpen(true);
+    // Cari transaksi yang akan dihapus untuk mendapatkan detailnya
+    const transaction = transactions.find(t => t._id === id);
+    if (transaction) {
+      // Simpan ID dan detail transaksi yang akan dihapus
+      setTransactionToDeleteId(id);
+      setTransactionToDelete(transaction);
+      // Buka dialog konfirmasi
+      setConfirmationDialogOpen(true);
+    }
+  };
+  
+  const updateTransaction = async (id, updatedTransaction) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedTransaction),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTransactions(transactions.map(transaction => 
+          transaction._id === id ? data.data : transaction
+        ));
+        showToast('Transaction updated successfully!', 'success');
+        return true;
+      } else {
+        // Periksa apakah sesi telah diinvalidasi (login di device lain)
+        if (data.sessionInvalidated) {
+          showToast('Akun Anda telah login di perangkat lain', 'warning');
+          handleLogout();
+        } else {
+          showToast(data.error || `Failed to update transaction (Status: ${res.status}).`, 'error');
+        }
+        return false;
+      }
+    } catch (err) {
+      showToast('Error updating transaction: ' + err.message, 'error');
+      return false;
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -358,32 +402,43 @@ function AppContent() {
       const data = await res.json();
       if (res.ok && data.success) {
         setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
-        showToast('Transaction deleted successfully!', 'success');
+        showToast('Transaksi berhasil dihapus!', 'success');
       } else {
         // Periksa apakah sesi telah diinvalidasi (login di device lain)
         if (data.sessionInvalidated) {
           showToast('Akun Anda telah login di perangkat lain', 'warning');
           handleLogout();
         } else {
-          showToast(data.error || `Failed to delete transaction (Status: ${res.status}).`, 'error');
+          showToast(data.error || `Gagal menghapus transaksi (Status: ${res.status}).`, 'error');
         }
       }
     } catch (err) {
-      showToast('Error deleting transaction: ' + err.message, 'error');
+      showToast('Error menghapus transaksi: ' + err.message, 'error');
     } finally {
       setTransactionToDeleteId(null);
+      setTransactionToDelete(null);
     }
   };
 
   const handleCancelDelete = () => {
     setConfirmationDialogOpen(false);
     setTransactionToDeleteId(null);
+    setTransactionToDelete(null);
   };
 
+  // State untuk menyimpan detail kategori yang akan dihapus
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+
   const handleDeleteCategoryClick = (id, onSuccess) => {
-    setCategoryToDeleteId(id);
-    setCategoryConfirmationDialogOpen(true);
-    setCategoryDeleteSuccessCallback(() => onSuccess);
+    // Cari kategori yang akan dihapus untuk mendapatkan detailnya
+    const category = categories.find(c => c._id === id);
+    if (category) {
+      // Simpan ID dan detail kategori yang akan dihapus
+      setCategoryToDeleteId(id);
+      setCategoryToDelete(category);
+      setCategoryConfirmationDialogOpen(true);
+      setCategoryDeleteSuccessCallback(() => onSuccess);
+    }
   };
 
   const handleConfirmDeleteCategory = async () => {
@@ -397,7 +452,7 @@ function AppContent() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        showToast('Category deleted successfully!', 'success');
+        showToast('Kategori berhasil dihapus!', 'success');
         if (categoryDeleteSuccessCallback) {
           categoryDeleteSuccessCallback();
         }
@@ -407,13 +462,14 @@ function AppContent() {
           showToast('Akun Anda telah login di perangkat lain', 'warning');
           handleLogout();
         } else {
-          showToast(data.error || `Failed to delete category (Status: ${res.status}).`, 'error');
+          showToast(data.error || `Gagal menghapus kategori (Status: ${res.status}).`, 'error');
         }
       }
     } catch (err) {
-      showToast('Error deleting category: ' + err.message, 'error');
+      showToast('Error menghapus kategori: ' + err.message, 'error');
     } finally {
       setCategoryToDeleteId(null);
+      setCategoryToDelete(null);
       setCategoryDeleteSuccessCallback(null);
     }
   };
@@ -421,6 +477,7 @@ function AppContent() {
   const handleCancelDeleteCategory = () => {
     setCategoryConfirmationDialogOpen(false);
     setCategoryToDeleteId(null);
+    setCategoryToDelete(null);
     setCategoryDeleteSuccessCallback(null);
   };
 
@@ -548,6 +605,17 @@ function AppContent() {
                 }
               />
               <Route
+                path="/edit-transaction/:id"
+                element={
+                  <EditTransactionPage
+                    onUpdateTransaction={updateTransaction}
+                    showToast={showToast}
+                    transactions={transactions}
+                    categories={categories}
+                  />
+                }
+              />
+              <Route
                 path="/change-password"
                 element={
                   <ChangePasswordPage
@@ -573,13 +641,39 @@ function AppContent() {
               />
             </Routes>
             <ConfirmationDialog
-              message="Are you sure you want to delete this transaction?"
+              title="Konfirmasi Hapus Transaksi"
+              message={
+                transactionToDelete ? 
+                `Apakah Anda yakin ingin menghapus transaksi berikut?\n\n` +
+                `Nama: ${transactionToDelete.description}\n` +
+                `Jumlah: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(transactionToDelete.amount)}\n` +
+                `Tanggal: ${new Date(transactionToDelete.date).toLocaleDateString('id-ID')}\n` +
+                `Tipe: ${transactionToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
+                : 'Apakah Anda yakin ingin menghapus transaksi ini?'
+              }
+              confirmText="Hapus"
+              cancelText="Batal"
+              confirmIcon="bi-trash-fill"
+              confirmButtonClass="btn-danger"
+              headerClass="bg-danger"
               isOpen={isConfirmationDialogOpen}
               onConfirm={handleConfirmDelete}
               onCancel={handleCancelDelete}
             />
             <ConfirmationDialog
-              message="Are you sure you want to delete this category?"
+              title="Konfirmasi Hapus Kategori"
+              message={
+                categoryToDelete ? 
+                `Apakah Anda yakin ingin menghapus kategori berikut?\n\n` +
+                `Nama: ${categoryToDelete.name}\n` +
+                `Tipe: ${categoryToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
+                : 'Apakah Anda yakin ingin menghapus kategori ini?'
+              }
+              confirmText="Hapus"
+              cancelText="Batal"
+              confirmIcon="bi-trash-fill"
+              confirmButtonClass="btn-danger"
+              headerClass="bg-danger"
               isOpen={isCategoryConfirmationDialogOpen}
               onConfirm={handleConfirmDeleteCategory}
               onCancel={handleCancelDeleteCategory}

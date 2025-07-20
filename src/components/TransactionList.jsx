@@ -1,7 +1,30 @@
 import Transaction from './Transaction';
+import { useState, useEffect } from 'react';
 
 const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   const transactionsToDisplay = limit ? transactions.slice(0, limit) : transactions;
+  const [activeTransactionId, setActiveTransactionId] = useState(null);
+  
+  // Debug activeTransactionId changes
+  useEffect(() => {
+    console.log('Active transaction ID changed to:', activeTransactionId);
+  }, [activeTransactionId]);
+  
+  // Custom function to set active transaction ID with debugging
+  const handleSetActiveTransactionId = (id) => {
+    console.log('Setting active transaction ID to:', id);
+    
+    // If we're setting to null (closing) or setting to a new ID (opening a different popup)
+    // then update the active ID
+    if (id === null) {
+      // Closing a popup
+      setActiveTransactionId(null);
+    } else if (id !== activeTransactionId) {
+      // Opening a new popup - close any existing popup first
+      setActiveTransactionId(id);
+    }
+    // If id === activeTransactionId, we're toggling the same popup, so don't change parent state
+  };
 
   return (
     <div className="transaction-list">
@@ -13,6 +36,8 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
               transaction={transaction}
               onDeleteTransaction={onDeleteTransaction}
               index={index}
+              isActive={activeTransactionId === transaction._id}
+              setActiveTransactionId={handleSetActiveTransactionId}
             />
           ))}
         </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 
 const RegisterPage = ({ showToast }) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -177,9 +178,7 @@ const RegisterPage = ({ showToast }) => {
                       <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
                   </div>
-                  <div className="auth-input-help">
-                    Minimal 6 karakter diperlukan
-                  </div>
+                  <PasswordStrengthMeter password={password} />
                 </div>
               </div>
 

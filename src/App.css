@@ -1,5 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Password Strength Meter Styles */
+.password-strength-meter .progress {
+  background-color: var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.password-strength-meter .progress-bar {
+  height: 100%;
+  transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.password-requirements .bi-check-circle-fill {
+  font-size: 0.75rem;
+}
+
+.password-requirements .bi-circle {
+  font-size: 0.75rem;
+}
+
 :root {
   /* Light mode colors - Modern palette */
   --primary-color: #3b82f6;
@@ -301,6 +321,39 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
   background: var(--bg-primary);
   width: 100%;
+}
+
+/* Input Group Styling */
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-top-left-radius: var(--radius-lg);
+  border-bottom-left-radius: var(--radius-lg);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid var(--border-color);
+  border-right: 0;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  min-width: 60px;
+  width: 60px;
+  text-align: center;
+}
+
+.input-group .modern-form-control {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  flex: 1;
 }
 
 .modern-form-control:focus, .modern-form-select:focus {
@@ -1306,4 +1359,140 @@ body.dark-mode .modern-form-select:focus {
 /* Smooth transitions for theme switching */
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cursor pointer */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transaction hover and active states */
+.modern-transaction-item {
+  transition: all 0.2s ease;
+}
+
+.modern-transaction-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+.modern-transaction-item.active-transaction {
+  background-color: var(--bg-secondary);
+}
+
+/* Transaction options popup */
+.transaction-options-popup {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.2s ease-out;
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  min-width: 180px;
+}
+
+.transaction-options-popup button {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+}
+
+.transaction-options-popup button:last-child {
+  margin-bottom: 0;
+}
+
+.transaction-options-popup button:hover {
+  background-color: var(--bg-secondary);
+  transform: translateX(2px);
+}
+
+.transaction-options-popup button:active {
+  transform: translateX(0);
+}
+
+/* Mobile adjustments for transaction options */
+@media (max-width: 768px) {
+  .transaction-options-popup {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    transform: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 1rem;
+    z-index: 1050;
+    animation: slideUp 0.3s ease-out;
+    margin: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .transaction-options-popup button {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    transition: all 0.2s ease;
+  }
+  
+  .transaction-options-popup button:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+  }
+  
+  .transaction-options-popup button:active {
+    transform: translateY(0);
+  }
+  
+  .transaction-options-popup button:last-child {
+    margin-bottom: 0;
+  }
+  
+  @keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 }

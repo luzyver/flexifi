@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 
 const ChangePasswordPage = ({ showToast }) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -163,10 +164,7 @@ const ChangePasswordPage = ({ showToast }) => {
                       <i className={`bi ${showNewPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
                     </button>
                   </div>
-                  <div className="form-text">
-                    <i className="bi bi-info-circle me-1"></i>
-                    Minimal 6 karakter diperlukan
-                  </div>
+                  <PasswordStrengthMeter password={newPassword} />
                 </div>
 
                 {/* Confirm New Password */}

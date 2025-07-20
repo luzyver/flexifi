@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatRupiah, parseRupiahToNumber } from '../utils/formatRupiah';
 
 const AddTransaction = ({ onAddTransaction, showToast, transactions, categories }) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
   const [type, setType] = useState('pengeluaran');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [formattedAmount, setFormattedAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState(getTodayDate());
   const [suggestions, setSuggestions] = useState([]);
@@ -73,6 +75,20 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
     setType(newType);
   };
 
+  // Fungsi untuk memformat input jumlah
+  const handleAmountChange = (value) => {
+    // Simpan nilai numerik asli
+    const numericValue = parseRupiahToNumber(value);
+    setAmount(numericValue.toString());
+    
+    // Format untuk tampilan
+    if (numericValue === 0) {
+      setFormattedAmount('');
+    } else {
+      setFormattedAmount(formatRupiah(numericValue).replace('Rp', '').trim());
+    }
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     
@@ -81,7 +97,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
       return;
     }
 
-    const parsedAmount = parseFloat(amount);
+    const parsedAmount = parseInt(amount, 10);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       showToast('Jumlah harus berupa angka positif yang valid', 'error');
       return;
@@ -103,6 +119,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
       // Reset form
       setDescription('');
       setAmount('');
+      setFormattedAmount('');
       setDate(getTodayDate());
       setSuggestions([]);
       setSuggestionsVisible(false);
@@ -182,19 +199,19 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
               <i className="bi bi-currency-dollar"></i>
               Jumlah (IDR)
             </label>
-            <div className="input-group">
-              <span className="input-group-text bg-light border-0">Rp</span>
+            <div className="input-group w-100">
+              <span className="input-group-text">Rp</span>
               <input
                 id="amount"
-                type="number"
+                type="text"
                 className="modern-form-control"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                value={formattedAmount}
+                onChange={(e) => handleAmountChange(e.target.value)}
                 placeholder="0"
-                step="1000"
-                min="1"
                 disabled={isSubmitting}
                 required
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </div>
           </div>
