@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import TransactionList from '../components/TransactionList';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
@@ -60,8 +60,8 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
 
           {/* Page Header */}
           <PageHeader
-            title="Transaction History"
-            subtitle="View and manage all your financial transactions"
+            title="Riwayat Transaksi"
+            subtitle="Lihat dan kelola semua transaksi keuangan Anda"
             icon="bi-clock-history"
           />
 
@@ -73,13 +73,13 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   <div className="stats-icon income">
                     <i className="bi bi-arrow-up-circle-fill"></i>
                   </div>
-                  <div className="stats-label">Total Income</div>
+                  <div className="stats-label">Total Pemasukan</div>
                   <div className="stats-value text-success">
                     {formatRupiah(transactions.filter(t => t.type === 'pemasukan').reduce((sum, t) => sum + t.amount, 0))}
                   </div>
                   <div className="stats-change positive">
                     <i className="bi bi-list-check"></i>
-                    {transactions.filter(t => t.type === 'pemasukan').length} transactions
+                    {transactions.filter(t => t.type === 'pemasukan').length} transaksi
                   </div>
                 </div>
               </div>
@@ -89,13 +89,13 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   <div className="stats-icon expense">
                     <i className="bi bi-arrow-down-circle-fill"></i>
                   </div>
-                  <div className="stats-label">Total Expenses</div>
+                  <div className="stats-label">Total Pengeluaran</div>
                   <div className="stats-value text-danger">
                     {formatRupiah(transactions.filter(t => t.type === 'pengeluaran').reduce((sum, t) => sum + t.amount, 0))}
                   </div>
                   <div className="stats-change negative">
                     <i className="bi bi-list-check"></i>
-                    {transactions.filter(t => t.type === 'pengeluaran').length} transactions
+                    {transactions.filter(t => t.type === 'pengeluaran').length} transaksi
                   </div>
                 </div>
               </div>
@@ -105,13 +105,13 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                   <div className="stats-icon balance">
                     <i className="bi bi-wallet2"></i>
                   </div>
-                  <div className="stats-label">Total Transactions</div>
+                  <div className="stats-label">Total Transaksi</div>
                   <div className="stats-value text-primary">
                     {transactions.length}
                   </div>
                   <div className="stats-change positive">
                     <i className="bi bi-calendar-range"></i>
-                    All time records
+                    Catatan sepanjang waktu
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
               <div className="d-flex justify-content-between align-items-center w-100">
                 <div className="d-flex align-items-center">
                   <i className="bi bi-list-ul me-2"></i>
-                  <h6 className="mb-0 fw-semibold">All Transactions</h6>
+                  <h6 className="mb-0 fw-semibold">Semua Transaksi</h6>
                 </div>
                 <div className="d-flex align-items-center gap-3">
                   {currentTransactions.length > 0 && (
@@ -140,7 +140,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                     </div>
                   )}
                   <span className="modern-badge light">
-                    {transactions.length} total
+                    {transactions.length} transaksi
                   </span>
                 </div>
               </div>
@@ -164,7 +164,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                         disabled={currentPage === 1}
                       >
                         <i className="bi bi-chevron-left"></i>
-                        <span className="d-none d-sm-inline ms-1">Previous</span>
+                        <span className="d-none d-sm-inline ms-1">Sebelumnya</span>
                       </button>
                     </li>
                     {paginationNumbers.map((number, index) => (
@@ -189,7 +189,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
                         onClick={() => paginate(currentPage + 1)}
                         disabled={currentPage === totalPages}
                       >
-                        <span className="d-none d-sm-inline me-1">Next</span>
+                        <span className="d-none d-sm-inline me-1">Berikutnya</span>
                         <i className="bi bi-chevron-right"></i>
                       </button>
                     </li>

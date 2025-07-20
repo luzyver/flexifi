@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
@@ -43,7 +42,7 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
               <div className="sidebar-nav-icon">
                 <i className="bi bi-house-door"></i>
               </div>
-              <span>Dashboard</span>
+              <span>Dasbor</span>
             </Link>
           </div>
 
@@ -56,7 +55,7 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
               <div className="sidebar-nav-icon">
                 <i className="bi bi-plus-circle"></i>
               </div>
-              <span>Add Transaction</span>
+              <span>Tambah Transaksi</span>
             </Link>
           </div>
 
@@ -69,7 +68,7 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
               <div className="sidebar-nav-icon">
                 <i className="bi bi-clock-history"></i>
               </div>
-              <span>Transaction History</span>
+              <span>Riwayat Transaksi</span>
             </Link>
           </div>
 
@@ -82,7 +81,7 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
               <div className="sidebar-nav-icon">
                 <i className="bi bi-tags"></i>
               </div>
-              <span>Categories</span>
+              <span>Kategori</span>
             </Link>
           </div>
 
@@ -96,7 +95,7 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
                 <div className="sidebar-nav-icon">
                   <i className="bi bi-key"></i>
                 </div>
-                <span>Activation Codes</span>
+                <span>Kode Aktivasi</span>
               </Link>
             </div>
           )}

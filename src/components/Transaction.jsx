@@ -1,4 +1,3 @@
-import React from 'react';
 import { formatRupiah } from '../utils/formatRupiah';
 
 const Transaction = ({ transaction, onDeleteTransaction, index }) => {
@@ -53,8 +52,8 @@ const Transaction = ({ transaction, onDeleteTransaction, index }) => {
           <button
             onClick={() => onDeleteTransaction(transaction._id)}
             className="modern-btn modern-btn-outline modern-btn-sm text-danger border-danger"
-            aria-label="Delete transaction"
-            title="Delete transaction"
+            aria-label="Hapus transaksi"
+            title="Hapus transaksi"
           >
             <i className="bi bi-trash"></i>
           </button>

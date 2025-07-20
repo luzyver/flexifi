@@ -428,25 +428,39 @@ function AppContent() {
     ? transactions.filter(t => {
         const transactionDate = new Date(t.date);
         
-        // Filter by date range
-        if (filterMonth.startsWith('dateRange-')) {
-          const dateRangeParts = filterMonth.replace('dateRange-', '').split('-');
-          if (dateRangeParts.length >= 6) {
-            const startDate = new Date(`${dateRangeParts[0]}-${dateRangeParts[1]}-${dateRangeParts[2]}`);
-            const endDate = new Date(`${dateRangeParts[3]}-${dateRangeParts[4]}-${dateRangeParts[5]}`);
-            const transactionDateOnly = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), transactionDate.getDate());
-            return transactionDateOnly >= startDate && transactionDateOnly <= endDate;
-          }
+        // Filter by single date
+        if (filterMonth.startsWith('singleDate-')) {
+          const selectedDate = filterMonth.replace('singleDate-', '');
+          const selectedDateObj = new Date(selectedDate);
+          const transactionDateOnly = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), transactionDate.getDate());
+          const selectedDateOnly = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate());
+          return transactionDateOnly.getTime() === selectedDateOnly.getTime();
         }
         
         // Filter by year only
-        if (filterMonth.startsWith('year-')) {
-          const filterYear = parseInt(filterMonth.replace('year-', ''));
+        if (filterMonth.startsWith('year-') || filterMonth.startsWith('byYear-')) {
+          const filterYear = parseInt(filterMonth.startsWith('year-') 
+            ? filterMonth.replace('year-', '') 
+            : filterMonth.replace('byYear-', ''));
           return transactionDate.getFullYear() === filterYear;
         }
         
         // Filter by month and year
-        if (filterMonth.includes('-') && !filterMonth.startsWith('year-')) {
+        if ((filterMonth.includes('-') && !filterMonth.startsWith('year-') && !filterMonth.startsWith('singleDate-')) || 
+            filterMonth.startsWith('byMonth-')) {
+          
+          // Handle new byMonth format
+          if (filterMonth.startsWith('byMonth-')) {
+            const parts = filterMonth.replace('byMonth-', '').split('-');
+            const filterYear = parseInt(parts[1]);
+            const filterMonthIndex = parseInt(parts[0]);
+            return (
+              transactionDate.getFullYear() === filterYear &&
+              transactionDate.getMonth() === filterMonthIndex
+            );
+          }
+          
+          // Handle original format
           const filterDateParts = filterMonth.split('-');
           const filterYear = parseInt(filterDateParts[0]);
           const filterMonthIndex = parseInt(filterDateParts[1]) - 1;
@@ -485,7 +499,6 @@ function AppContent() {
             filterMonth={filterMonth}
             setFilterMonth={setFilterMonth}
             availableMonths={availableMonths}
-            transactions={transactions}
             transactions={transactions}
           >
             <Routes>

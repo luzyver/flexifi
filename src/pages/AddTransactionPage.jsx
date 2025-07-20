@@ -1,4 +1,3 @@
-import React from 'react';
 import AddTransaction from '../components/AddTransaction';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
@@ -18,8 +17,8 @@ const AddTransactionPage = ({
 
           {/* Page Header */}
           <PageHeader
-            title="Add New Transaction"
-            subtitle="Record your income or expense transaction"
+            title="Tambah Transaksi Baru"
+            subtitle="Catat transaksi pemasukan atau pengeluaran Anda"
             icon="bi-plus-circle"
           />
 
@@ -28,7 +27,7 @@ const AddTransactionPage = ({
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
                 <i className="bi bi-wallet2 me-2"></i>
-                <h6 className="mb-0 fw-semibold">Transaction Details</h6>
+                <h6 className="mb-0 fw-semibold">Detail Transaksi</h6>
               </div>
             </div>
             <div className="dashboard-card-body">
@@ -46,7 +45,7 @@ const AddTransactionPage = ({
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
                 <i className="bi bi-lightbulb me-2"></i>
-                <h6 className="mb-0 fw-semibold">Pro Tips</h6>
+                <h6 className="mb-0 fw-semibold">Tips Pro</h6>
               </div>
             </div>
             <div className="dashboard-card-body">
@@ -57,8 +56,8 @@ const AddTransactionPage = ({
                       <i className="bi bi-check-circle"></i>
                     </div>
                     <div>
-                      <h6 className="fw-semibold mb-1">Be Descriptive</h6>
-                      <p className="text-muted small mb-0">Use clear, descriptive names for easy tracking and categorization.</p>
+                      <h6 className="fw-semibold mb-1">Buat Deskripsi Jelas</h6>
+                      <p className="text-muted small mb-0">Gunakan nama yang jelas dan deskriptif untuk pelacakan dan kategorisasi yang mudah.</p>
                     </div>
                   </div>
                 </div>
@@ -68,8 +67,8 @@ const AddTransactionPage = ({
                       <i className="bi bi-tags"></i>
                     </div>
                     <div>
-                      <h6 className="fw-semibold mb-1">Choose Categories</h6>
-                      <p className="text-muted small mb-0">Select the right category for better financial insights and reports.</p>
+                      <h6 className="fw-semibold mb-1">Pilih Kategori</h6>
+                      <p className="text-muted small mb-0">Pilih kategori yang tepat untuk wawasan dan laporan keuangan yang lebih baik.</p>
                     </div>
                   </div>
                 </div>
@@ -79,8 +78,8 @@ const AddTransactionPage = ({
                       <i className="bi bi-calculator"></i>
                     </div>
                     <div>
-                      <h6 className="fw-semibold mb-1">Double Check</h6>
-                      <p className="text-muted small mb-0">Verify the amount and date before saving to maintain accurate records.</p>
+                      <h6 className="fw-semibold mb-1">Periksa Ulang</h6>
+                      <p className="text-muted small mb-0">Verifikasi jumlah dan tanggal sebelum menyimpan untuk menjaga catatan yang akurat.</p>
                     </div>
                   </div>
                 </div>
@@ -90,8 +89,8 @@ const AddTransactionPage = ({
                       <i className="bi bi-clock"></i>
                     </div>
                     <div>
-                      <h6 className="fw-semibold mb-1">Stay Consistent</h6>
-                      <p className="text-muted small mb-0">Record transactions regularly for the most accurate financial picture.</p>
+                      <h6 className="fw-semibold mb-1">Tetap Konsisten</h6>
+                      <p className="text-muted small mb-0">Catat transaksi secara teratur untuk gambaran keuangan yang paling akurat.</p>
                     </div>
                   </div>
                 </div>

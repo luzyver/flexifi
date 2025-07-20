@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
@@ -19,17 +19,17 @@ const ChangePasswordPage = ({ showToast }) => {
     e.preventDefault();
 
     if (newPassword !== confirmNewPassword) {
-      showToast('New passwords do not match', 'error');
+      showToast('Kata sandi baru tidak cocok', 'error');
       return;
     }
 
     if (newPassword.length < 6) {
-      showToast('New password must be at least 6 characters long', 'error');
+      showToast('Kata sandi baru harus minimal 6 karakter', 'error');
       return;
     }
 
     if (currentPassword === newPassword) {
-      showToast('New password must be different from current password', 'error');
+      showToast('Kata sandi baru harus berbeda dari kata sandi saat ini', 'error');
       return;
     }
 
@@ -38,7 +38,7 @@ const ChangePasswordPage = ({ showToast }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        showToast('Authentication token not found. Please log in.', 'error');
+        showToast('Token autentikasi tidak ditemukan. Silakan masuk.', 'error');
         navigate('/');
         return;
       }
@@ -55,7 +55,7 @@ const ChangePasswordPage = ({ showToast }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        showToast('Password changed successfully!', 'success');
+        showToast('Kata sandi berhasil diubah!', 'success');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
@@ -69,11 +69,11 @@ const ChangePasswordPage = ({ showToast }) => {
           localStorage.removeItem('sessionId');
           navigate('/');
         } else {
-          showToast(data.error || 'Failed to change password', 'error');
+          showToast(data.error || 'Gagal mengubah kata sandi', 'error');
         }
       }
     } catch (error) {
-      showToast('Error changing password: ' + error.message, 'error');
+      showToast('Kesalahan mengubah kata sandi: ' + error.message, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -91,8 +91,8 @@ const ChangePasswordPage = ({ showToast }) => {
 
           {/* Page Header */}
           <PageHeader
-            title="Change Password"
-            subtitle="Update your account security"
+            title="Ubah Kata Sandi"
+            subtitle="Perbarui keamanan akun Anda"
             icon="bi-shield-lock"
           />
 
@@ -101,7 +101,7 @@ const ChangePasswordPage = ({ showToast }) => {
             <div className="card-header">
               <h6 className="mb-0 fw-semibold">
                 <i className="bi bi-key me-2"></i>
-                Password Update
+                Pembaruan Kata Sandi
               </h6>
             </div>
             <div className="card-body">
@@ -110,7 +110,7 @@ const ChangePasswordPage = ({ showToast }) => {
                 <div className="mb-3">
                   <label htmlFor="currentPassword" className="form-label">
                     <i className="bi bi-lock me-2"></i>
-                    Current Password
+                    Kata Sandi Saat Ini
                   </label>
                   <div className="input-group">
                     <input
@@ -119,7 +119,7 @@ const ChangePasswordPage = ({ showToast }) => {
                       className="form-control form-control-lg"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter your current password"
+                      placeholder="Masukkan kata sandi saat ini"
                       required
                       disabled={isSubmitting}
                       autoComplete="current-password"
@@ -139,7 +139,7 @@ const ChangePasswordPage = ({ showToast }) => {
                 <div className="mb-3">
                   <label htmlFor="newPassword" className="form-label">
                     <i className="bi bi-shield-lock me-2"></i>
-                    New Password
+                    Kata Sandi Baru
                   </label>
                   <div className="input-group">
                     <input
@@ -148,7 +148,7 @@ const ChangePasswordPage = ({ showToast }) => {
                       className="form-control form-control-lg"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Enter your new password"
+                      placeholder="Masukkan kata sandi baru"
                       required
                       disabled={isSubmitting}
                       autoComplete="new-password"
@@ -165,7 +165,7 @@ const ChangePasswordPage = ({ showToast }) => {
                   </div>
                   <div className="form-text">
                     <i className="bi bi-info-circle me-1"></i>
-                    Minimum 6 characters required
+                    Minimal 6 karakter diperlukan
                   </div>
                 </div>
 
@@ -173,7 +173,7 @@ const ChangePasswordPage = ({ showToast }) => {
                 <div className="mb-4">
                   <label htmlFor="confirmNewPassword" className="form-label">
                     <i className="bi bi-shield-check me-2"></i>
-                    Confirm New Password
+                    Konfirmasi Kata Sandi Baru
                   </label>
                   <div className="input-group">
                     <input
@@ -184,7 +184,7 @@ const ChangePasswordPage = ({ showToast }) => {
                       }`}
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      placeholder="Confirm your new password"
+                      placeholder="Konfirmasi kata sandi baru Anda"
                       required
                       disabled={isSubmitting}
                       autoComplete="new-password"
@@ -200,7 +200,7 @@ const ChangePasswordPage = ({ showToast }) => {
                   </div>
                   {confirmNewPassword && newPassword !== confirmNewPassword && (
                     <div className="invalid-feedback">
-                      Passwords do not match
+                      Kata sandi tidak cocok
                     </div>
                   )}
                 </div>
@@ -214,7 +214,7 @@ const ChangePasswordPage = ({ showToast }) => {
                     disabled={isSubmitting}
                   >
                     <i className="bi bi-arrow-left me-2"></i>
-                    Cancel
+                    Batal
                   </button>
                   <button 
                     type="submit" 
@@ -224,12 +224,12 @@ const ChangePasswordPage = ({ showToast }) => {
                     {isSubmitting ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Updating...
+                        Memperbarui...
                       </>
                     ) : (
                       <>
                         <i className="bi bi-check-circle-fill me-2"></i>
-                        Update Password
+                        Perbarui Kata Sandi
                       </>
                     )}
                   </button>
@@ -243,31 +243,31 @@ const ChangePasswordPage = ({ showToast }) => {
             <div className="card-body">
               <h6 className="card-title fw-semibold mb-3">
                 <i className="bi bi-shield-check me-2 text-success"></i>
-                Security Tips
+                Tips Keamanan
               </h6>
               <div className="row g-3">
                 <div className="col-md-6">
                   <div className="d-flex align-items-start">
                     <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Use at least 6 characters</small>
+                    <small className="text-muted">Gunakan minimal 6 karakter</small>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="d-flex align-items-start">
                     <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Include letters and numbers</small>
+                    <small className="text-muted">Sertakan huruf dan angka</small>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="d-flex align-items-start">
                     <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Don't reuse old passwords</small>
+                    <small className="text-muted">Jangan gunakan kembali kata sandi lama</small>
                   </div>
                 </div>
                 <div className="col-md-6">
                   <div className="d-flex align-items-start">
                     <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Keep it private and secure</small>
+                    <small className="text-muted">Jaga kerahasiaan dan keamanannya</small>
                   </div>
                 </div>
               </div>

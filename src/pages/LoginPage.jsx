@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -31,13 +31,13 @@ const LoginPage = ({ onLogin, showToast }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        showToast('Login successful!', 'success');
+        showToast('Login berhasil!', 'success');
         onLogin(data.username, data.token, data.sessionId);
       } else {
-        showToast(data.error || 'Invalid username or password', 'error');
+        showToast(data.error || 'Nama pengguna atau kata sandi tidak valid', 'error');
       }
     } catch (err) {
-      showToast('Server error. Please try again later.', 'error');
+      showToast('Kesalahan server. Silakan coba lagi nanti.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +69,7 @@ const LoginPage = ({ onLogin, showToast }) => {
               <i className="bi bi-wallet2"></i>
             </div>
             <h1 className="auth-brand-title">FlexiFi</h1>
-            <p className="auth-brand-subtitle">Smart Financial Management</p>
+            <p className="auth-brand-subtitle">Manajemen Keuangan Cerdas</p>
           </div>
           
           <div className="auth-features">
@@ -78,8 +78,8 @@ const LoginPage = ({ onLogin, showToast }) => {
                 <i className="bi bi-graph-up-arrow"></i>
               </div>
               <div>
-                <h3>Track Expenses</h3>
-                <p>Monitor your spending patterns and financial habits</p>
+                <h3>Lacak Pengeluaran</h3>
+                <p>Pantau pola pengeluaran dan kebiasaan keuangan Anda</p>
               </div>
             </div>
             
@@ -88,8 +88,8 @@ const LoginPage = ({ onLogin, showToast }) => {
                 <i className="bi bi-pie-chart"></i>
               </div>
               <div>
-                <h3>Budget Planning</h3>
-                <p>Create and manage budgets for better financial control</p>
+                <h3>Perencanaan Anggaran</h3>
+                <p>Buat dan kelola anggaran untuk kontrol keuangan yang lebih baik</p>
               </div>
             </div>
             
@@ -98,8 +98,8 @@ const LoginPage = ({ onLogin, showToast }) => {
                 <i className="bi bi-shield-check"></i>
               </div>
               <div>
-                <h3>Secure & Private</h3>
-                <p>Your financial data is encrypted and protected</p>
+                <h3>Aman & Privat</h3>
+                <p>Data keuangan Anda dienkripsi dan dilindungi</p>
               </div>
             </div>
           </div>
@@ -108,50 +108,52 @@ const LoginPage = ({ onLogin, showToast }) => {
         <div className="auth-right">
           <div className={`auth-form-container ${animateForm ? 'animate-in' : ''}`}>
             <div className="auth-form-header">
-              <h2>Welcome Back</h2>
-              <p>Sign in to your FlexiFi account</p>
+              <h2>Selamat Datang Kembali</h2>
+              <p>Masuk ke akun FlexiFi Anda</p>
             </div>
 
             <form onSubmit={handleSubmit} className="auth-form">
-              <div className="auth-input-group">
-                <label htmlFor="username">Username</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-person"></i>
-                  <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
-                    required
-                    disabled={isSubmitting}
-                    autoComplete="username"
-                  />
+              <div className="row-inputs">
+                <div className="auth-input-group">
+                  <label htmlFor="username">Nama Pengguna</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-person"></i>
+                    <input
+                      type="text"
+                      id="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Masukkan nama pengguna"
+                      required
+                      disabled={isSubmitting}
+                      autoComplete="username"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="auth-input-group">
-                <label htmlFor="password">Password</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-lock"></i>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    disabled={isSubmitting}
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    className="auth-password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isSubmitting}
-                  >
-                    <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
+                <div className="auth-input-group">
+                  <label htmlFor="password">Kata Sandi</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-lock"></i>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Masukkan kata sandi"
+                      required
+                      disabled={isSubmitting}
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="auth-password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                    >
+                      <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -163,11 +165,11 @@ const LoginPage = ({ onLogin, showToast }) => {
                 {isSubmitting ? (
                   <>
                     <div className="auth-spinner"></div>
-                    Signing in...
+                    Sedang Masuk...
                   </>
                 ) : (
                   <>
-                    Sign In
+                    Masuk
                     <i className="bi bi-arrow-right"></i>
                   </>
                 )}
@@ -175,11 +177,11 @@ const LoginPage = ({ onLogin, showToast }) => {
             </form>
 
             <div className="auth-divider">
-              <span>Don't have an account?</span>
+              <span>Belum punya akun?</span>
             </div>
 
             <Link to="/register" className="auth-secondary-btn">
-              Create Account
+              Buat Akun
             </Link>
           </div>
         </div>

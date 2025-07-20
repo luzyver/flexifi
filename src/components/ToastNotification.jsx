@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ToastNotification = ({ message, type, duration = 3000 }) => {
   const [visible, setVisible] = useState(false);

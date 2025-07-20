@@ -77,13 +77,13 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
     e.preventDefault();
     
     if (!description || !amount || !category || !date) {
-      showToast('Please fill in all fields', 'error');
+      showToast('Harap isi semua kolom', 'error');
       return;
     }
 
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      showToast('Amount must be a valid positive number', 'error');
+      showToast('Jumlah harus berupa angka positif yang valid', 'error');
       return;
     }
 
@@ -123,7 +123,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
           <div className="modern-form-group">
             <label htmlFor="type" className="modern-form-label">
               <i className="bi bi-arrow-up-down"></i>
-              Transaction Type
+              Jenis Transaksi
             </label>
             <select 
               id="type" 
@@ -146,7 +146,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
           <div className="modern-form-group position-relative" ref={descriptionInputRef}>
             <label htmlFor="description" className="modern-form-label">
               <i className="bi bi-card-text"></i>
-              Description
+              Deskripsi
             </label>
             <input
               id="description"
@@ -154,7 +154,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
               className="modern-form-control"
               value={description}
               onChange={handleDescriptionChange}
-              placeholder="Enter transaction description..."
+              placeholder="Masukkan deskripsi transaksi..."
               autoComplete="off"
               disabled={isSubmitting}
               required
@@ -180,7 +180,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
           <div className="modern-form-group">
             <label htmlFor="amount" className="modern-form-label">
               <i className="bi bi-currency-dollar"></i>
-              Amount (IDR)
+              Jumlah (IDR)
             </label>
             <div className="input-group">
               <span className="input-group-text bg-light border-0">Rp</span>
@@ -204,7 +204,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
           <div className="modern-form-group">
             <label htmlFor="category" className="modern-form-label">
               <i className="bi bi-tags-fill"></i>
-              Category
+              Kategori
             </label>
             <select 
               id="category" 
@@ -220,7 +220,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
                 </option>
               ))}
               {filteredCategoriesForType.length === 0 && (
-                <option value="" disabled>No categories available</option>
+                <option value="" disabled>Tidak ada kategori tersedia</option>
               )}
             </select>
           </div>
@@ -230,7 +230,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
           <div className="modern-form-group">
             <label htmlFor="date" className="modern-form-label">
               <i className="bi bi-calendar-event"></i>
-              Date
+              Tanggal
             </label>
             <input
               id="date"
@@ -253,7 +253,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
               disabled={isSubmitting}
             >
               <i className="bi bi-x-circle me-2"></i>
-              Cancel
+              Batal
             </button>
             <button 
               type="submit" 
@@ -263,12 +263,12 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
               {isSubmitting ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Adding...
+                  Menambahkan...
                 </>
               ) : (
                 <>
                   <i className="bi bi-check-circle-fill me-2"></i>
-                  Add Transaction
+                  Tambah Transaksi
                 </>
               )}
             </button>

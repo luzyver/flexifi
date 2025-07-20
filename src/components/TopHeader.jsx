@@ -1,7 +1,7 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import DateRangeFilter from './DateRangeFilter';
+import { useState } from 'react';
 
 const TopHeader = ({ 
   onLogout, 
@@ -14,12 +14,17 @@ const TopHeader = ({
 }) => {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const handleLogoutClick = () => {
     onLogout();
   };
 
   const showFilters = location.pathname === '/' || location.pathname === '/history';
+
+  const toggleMobileFilters = () => {
+    setShowMobileFilters(!showMobileFilters);
+  };
 
   return (
     <div className="top-header">
@@ -36,12 +41,12 @@ const TopHeader = ({
         {/* Page Title */}
         <div className="d-none d-md-block">
           <h5 className="mb-0 fw-semibold text-primary">
-            {location.pathname === '/' && 'Dashboard'}
-            {location.pathname === '/add-transaction' && 'Add Transaction'}
-            {location.pathname === '/history' && 'Transaction History'}
-            {location.pathname === '/categories' && 'Categories'}
-            {location.pathname === '/change-password' && 'Change Password'}
-            {location.pathname === '/activation-codes' && 'Activation Codes'}
+            {location.pathname === '/' && 'Dasbor'}
+            {location.pathname === '/add-transaction' && 'Tambah Transaksi'}
+            {location.pathname === '/history' && 'Riwayat Transaksi'}
+            {location.pathname === '/categories' && 'Kategori'}
+            {location.pathname === '/change-password' && 'Ubah Kata Sandi'}
+            {location.pathname === '/activation-codes' && 'Kode Aktivasi'}
           </h5>
         </div>
       </div>
@@ -50,45 +55,17 @@ const TopHeader = ({
         {/* Filter Controls - Desktop */}
         {showFilters && (
           <div className="header-filter-controls">
-            <div className="input-group" style={{ minWidth: '200px' }}>
-              <span className="input-group-text bg-light border-0">
-                <i className="bi bi-calendar3"></i>
-              </span>
-              <select
-                className="form-select"
-                id="monthFilter"
-                value={filterMonth}
-                onChange={(e) => setFilterMonth(e.target.value)}
-                aria-label="Filter by month"
-              >
-                <option value="">All Months</option>
-                {availableMonths && availableMonths.length > 0 && (
-                  <>
-                    <optgroup label="By Year">
-                      {[...new Set(availableMonths.map(month => month.split('-')[0]))].sort((a, b) => b - a).map((year) => (
-                        <option key={`year-${year}`} value={`year-${year}`}>
-                          {year}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="By Month">
-                      {availableMonths.map((month) => (
-                        <option key={month} value={month}>
-                          {new Date(month + '-02').toLocaleString('en-US', { 
-                            month: 'long', 
-                            year: 'numeric' 
-                          })}
-                        </option>
-                      ))}
-                    </optgroup>
-                  </>
-                )}
-              </select>
-            </div>
+
             <DateRangeFilter 
               onFilterChange={(filter) => {
                 if (filter) {
-                  setFilterMonth(`dateRange-${filter.startDate}-${filter.endDate}`);
+                  if (filter.type === 'singleDate') {
+                    setFilterMonth(`singleDate-${filter.selectedDate}`);
+                  } else if (filter.type === 'byYear') {
+                    setFilterMonth(`byYear-${filter.selectedYear}`);
+                  } else if (filter.type === 'byMonth') {
+                    setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
+                  }
                 } else {
                   setFilterMonth('');
                 }
@@ -100,9 +77,49 @@ const TopHeader = ({
 
         {/* Mobile Filter Toggle */}
         {showFilters && (
-          <button className="modern-btn modern-btn-outline modern-btn-sm mobile-filter-toggle">
+          <button 
+            className="modern-btn modern-btn-outline modern-btn-sm mobile-filter-toggle"
+            onClick={toggleMobileFilters}
+          >
             <i className="bi bi-funnel"></i>
           </button>
+        )}
+        
+        {/* Mobile Filters Dropdown */}
+        {showFilters && showMobileFilters && (
+          <div className="mobile-filters-dropdown">
+            <div className="p-3">
+              <h6 className="mb-3">Filter Transaksi</h6>
+              
+
+              <div className="mb-3">
+                <label className="form-label small fw-semibold">Filter Tanggal</label>
+                <DateRangeFilter 
+                  onFilterChange={(filter) => {
+                    if (filter) {
+                      if (filter.type === 'singleDate') {
+                        setFilterMonth(`singleDate-${filter.selectedDate}`);
+                      } else if (filter.type === 'byYear') {
+                        setFilterMonth(`byYear-${filter.selectedYear}`);
+                      } else if (filter.type === 'byMonth') {
+                        setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
+                      }
+                    } else {
+                      setFilterMonth('');
+                    }
+                  }}
+                  transactions={transactions}
+                />
+              </div>
+              
+              <button 
+                className="btn btn-sm btn-outline-secondary w-100"
+                onClick={toggleMobileFilters}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
         )}
         
         {/* Theme Toggle */}
@@ -110,7 +127,7 @@ const TopHeader = ({
           className="theme-toggle-header"
           onClick={toggleDarkMode}
           aria-label="Toggle dark mode"
-          title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={isDarkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
         >
           <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
         </button>
@@ -131,7 +148,7 @@ const TopHeader = ({
             <li>
               <Link to="/change-password" className="dropdown-item d-flex align-items-center">
                 <i className="bi bi-key me-2"></i> 
-                Change Password
+                Ubah Kata Sandi
               </Link>
             </li>
             <li><hr className="dropdown-divider" /></li>
@@ -141,7 +158,7 @@ const TopHeader = ({
                 className="dropdown-item d-flex align-items-center text-danger border-0 bg-transparent w-100"
               >
                 <i className="bi bi-box-arrow-right me-2"></i> 
-                Logout
+                Keluar
               </button>
             </li>
           </ul>

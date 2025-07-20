@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -22,12 +22,12 @@ const RegisterPage = ({ showToast }) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      showToast('Passwords do not match', 'error');
+      showToast('Kata sandi tidak cocok', 'error');
       return;
     }
 
     if (password.length < 6) {
-      showToast('Password must be at least 6 characters long', 'error');
+      showToast('Kata sandi harus minimal 6 karakter', 'error');
       return;
     }
 
@@ -45,7 +45,7 @@ const RegisterPage = ({ showToast }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        showToast('Registration successful! Redirecting...', 'success');
+        showToast('Pendaftaran berhasil! Mengalihkan...', 'success');
         setUsername('');
         setPassword('');
         setConfirmPassword('');
@@ -54,10 +54,10 @@ const RegisterPage = ({ showToast }) => {
           navigate('/');
         }, 2000);
       } else {
-        showToast(data.error || 'Registration failed. Please try again.', 'error');
+        showToast(data.error || 'Pendaftaran gagal. Silakan coba lagi.', 'error');
       }
     } catch (err) {
-      showToast('Server error. Please try again later.', 'error');
+      showToast('Kesalahan server. Silakan coba lagi nanti.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -90,8 +90,8 @@ const RegisterPage = ({ showToast }) => {
             <div className="auth-brand-icon">
               <i className="bi bi-person-plus"></i>
             </div>
-            <h1 className="auth-brand-title">Join FlexiFi</h1>
-            <p className="auth-brand-subtitle">Start your financial journey today</p>
+            <h1 className="auth-brand-title">Bergabung dengan FlexiFi</h1>
+            <p className="auth-brand-subtitle">Mulai perjalanan keuangan Anda hari ini</p>
           </div>
           
           <div className="auth-features">
@@ -100,8 +100,8 @@ const RegisterPage = ({ showToast }) => {
                 <i className="bi bi-speedometer2"></i>
               </div>
               <div>
-                <h3>Quick Setup</h3>
-                <p>Get started in minutes with our simple onboarding</p>
+                <h3>Pengaturan Cepat</h3>
+                <p>Mulai dalam hitungan menit dengan proses pendaftaran sederhana kami</p>
               </div>
             </div>
             
@@ -110,8 +110,8 @@ const RegisterPage = ({ showToast }) => {
                 <i className="bi bi-graph-up"></i>
               </div>
               <div>
-                <h3>Smart Analytics</h3>
-                <p>Get insights into your spending and saving patterns</p>
+                <h3>Analitik Cerdas</h3>
+                <p>Dapatkan wawasan tentang pola pengeluaran dan tabungan Anda</p>
               </div>
             </div>
             
@@ -120,8 +120,8 @@ const RegisterPage = ({ showToast }) => {
                 <i className="bi bi-people"></i>
               </div>
               <div>
-                <h3>Trusted by Users</h3>
-                <p>Join thousands of users managing their finances</p>
+                <h3>Dipercaya oleh Pengguna</h3>
+                <p>Bergabunglah dengan ribuan pengguna yang mengelola keuangan mereka</p>
               </div>
             </div>
           </div>
@@ -130,104 +130,108 @@ const RegisterPage = ({ showToast }) => {
         <div className="auth-right">
           <div className={`auth-form-container ${animateForm ? 'animate-in' : ''}`}>
             <div className="auth-form-header">
-              <h2>Create Account</h2>
-              <p>Join FlexiFi and take control of your finances</p>
+              <h2>Buat Akun</h2>
+              <p>Bergabung dengan FlexiFi dan kendalikan keuangan Anda</p>
             </div>
 
             <form onSubmit={handleSubmit} className="auth-form">
-              <div className="auth-input-group">
-                <label htmlFor="username">Username</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-person"></i>
-                  <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Choose a username"
-                    required
-                    disabled={isSubmitting}
-                    autoComplete="username"
-                  />
-                </div>
-              </div>
-
-              <div className="auth-input-group">
-                <label htmlFor="password">Password</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-lock"></i>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create a password"
-                    required
-                    disabled={isSubmitting}
-                    autoComplete="new-password"
-                    minLength="6"
-                  />
-                  <button
-                    type="button"
-                    className="auth-password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isSubmitting}
-                  >
-                    <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
-                </div>
-                <div className="auth-input-help">
-                  Minimum 6 characters required
-                </div>
-              </div>
-
-              <div className="auth-input-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-shield-check"></i>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    className={confirmPassword && password !== confirmPassword ? 'error' : ''}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
-                    required
-                    disabled={isSubmitting}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    className="auth-password-toggle"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    disabled={isSubmitting}
-                  >
-                    <i className={`bi ${showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                  </button>
-                </div>
-                {confirmPassword && password !== confirmPassword && (
-                  <div className="auth-input-error">
-                    Passwords do not match
+              <div className="row-inputs">
+                <div className="auth-input-group">
+                  <label htmlFor="username">Nama Pengguna</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-person"></i>
+                    <input
+                      type="text"
+                      id="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Pilih nama pengguna"
+                      required
+                      disabled={isSubmitting}
+                      autoComplete="username"
+                    />
                   </div>
-                )}
+                </div>
+
+                <div className="auth-input-group">
+                  <label htmlFor="password">Kata Sandi</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-lock"></i>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Buat kata sandi"
+                      required
+                      disabled={isSubmitting}
+                      autoComplete="new-password"
+                      minLength="6"
+                    />
+                    <button
+                      type="button"
+                      className="auth-password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
+                    >
+                      <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
+                  <div className="auth-input-help">
+                    Minimal 6 karakter diperlukan
+                  </div>
+                </div>
               </div>
 
-              <div className="auth-input-group">
-                <label htmlFor="activationCode">Activation Code</label>
-                <div className="auth-input-wrapper">
-                  <i className="bi bi-key"></i>
-                  <input
-                    type="text"
-                    id="activationCode"
-                    value={activationCode}
-                    onChange={(e) => setActivationCode(e.target.value)}
-                    placeholder="Enter activation code"
-                    required
-                    disabled={isSubmitting}
-                  />
+              <div className="row-inputs">
+                <div className="auth-input-group">
+                  <label htmlFor="confirmPassword">Konfirmasi Kata Sandi</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-shield-check"></i>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      id="confirmPassword"
+                      className={confirmPassword && password !== confirmPassword ? 'error' : ''}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Konfirmasi kata sandi Anda"
+                      required
+                      disabled={isSubmitting}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      className="auth-password-toggle"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      disabled={isSubmitting}
+                    >
+                      <i className={`bi ${showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                    </button>
+                  </div>
+                  {confirmPassword && password !== confirmPassword && (
+                    <div className="auth-input-error">
+                      Kata sandi tidak cocok
+                    </div>
+                  )}
                 </div>
-                <div className="auth-input-help">
-                  Contact <a href="https://t.me/rzvabelioprtma" target="_blank" rel="noopener noreferrer">administrator</a> for activation code
+
+                <div className="auth-input-group">
+                  <label htmlFor="activationCode">Kode Aktivasi</label>
+                  <div className="auth-input-wrapper">
+                    <i className="bi bi-key"></i>
+                    <input
+                      type="text"
+                      id="activationCode"
+                      value={activationCode}
+                      onChange={(e) => setActivationCode(e.target.value)}
+                      placeholder="Masukkan kode aktivasi"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div className="auth-input-help">
+                    Hubungi <a href="https://t.me/rzvabelioprtma" target="_blank" rel="noopener noreferrer">administrator</a> untuk kode aktivasi
+                  </div>
                 </div>
               </div>
 
@@ -239,11 +243,11 @@ const RegisterPage = ({ showToast }) => {
                 {isSubmitting ? (
                   <>
                     <div className="auth-spinner"></div>
-                    Creating Account...
+                    Membuat Akun...
                   </>
                 ) : (
                   <>
-                    Create Account
+                    Buat Akun
                     <i className="bi bi-arrow-right"></i>
                   </>
                 )}
@@ -253,30 +257,30 @@ const RegisterPage = ({ showToast }) => {
             <div className="auth-security-info">
               <div className="auth-security-header">
                 <i className="bi bi-shield-check"></i>
-                <span>Your data is secure</span>
+                <span>Data Anda aman</span>
               </div>
               <div className="auth-security-items">
                 <div className="auth-security-item">
                   <i className="bi bi-check-circle-fill"></i>
-                  <span>End-to-end encryption</span>
+                  <span>Enkripsi end-to-end</span>
                 </div>
                 <div className="auth-security-item">
                   <i className="bi bi-check-circle-fill"></i>
-                  <span>Privacy protected</span>
+                  <span>Privasi terlindungi</span>
                 </div>
                 <div className="auth-security-item">
                   <i className="bi bi-check-circle-fill"></i>
-                  <span>Secure authentication</span>
+                  <span>Autentikasi aman</span>
                 </div>
               </div>
             </div>
 
             <div className="auth-divider">
-              <span>Already have an account?</span>
+              <span>Sudah punya akun?</span>
             </div>
 
             <Link to="/" className="auth-secondary-btn">
-              Sign In
+              Masuk
             </Link>
           </div>
         </div>

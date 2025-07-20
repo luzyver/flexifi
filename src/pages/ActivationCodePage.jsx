@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Breadcrumb from '../components/Breadcrumb';
@@ -33,11 +33,11 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || 'Failed to fetch activation codes', 'error');
+          showToast(data.error || 'Gagal mengambil kode aktivasi', 'error');
         }
       }
     } catch (error) {
-      showToast('Error fetching activation codes: ' + error.message, 'error');
+      showToast('Error mengambil kode aktivasi: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ const ActivationCodePage = ({ showToast, token }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        showToast('Activation code generated successfully', 'success');
+        showToast('Kode aktivasi berhasil dibuat', 'success');
         fetchActivationCodes();
       } else {
         // Check if session was invalidated (logged in on another device)
@@ -73,11 +73,11 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || 'Failed to generate activation code', 'error');
+          showToast(data.error || 'Gagal membuat kode aktivasi', 'error');
         }
       }
     } catch (error) {
-      showToast('Error generating activation code: ' + error.message, 'error');
+      showToast('Error membuat kode aktivasi: ' + error.message, 'error');
     } finally {
       setIsGenerating(false);
     }
@@ -96,7 +96,7 @@ const ActivationCodePage = ({ showToast, token }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        showToast(`Activation code ${action}d successfully`, 'success');
+        showToast(`Kode aktivasi berhasil ${action === 'activate' ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
         fetchActivationCodes();
       } else {
         // Check if session was invalidated (logged in on another device)
@@ -108,11 +108,11 @@ const ActivationCodePage = ({ showToast, token }) => {
           // Redirect to home page
           navigate('/');
         } else {
-          showToast(data.error || `Failed to ${action} activation code`, 'error');
+          showToast(data.error || `Gagal ${action === 'activate' ? 'mengaktifkan' : 'menonaktifkan'} kode aktivasi`, 'error');
         }
       }
     } catch (error) {
-      showToast(`Error ${currentStatus ? 'deactivating' : 'activating'} activation code: ` + error.message, 'error');
+      showToast(`Error ${currentStatus ? 'menonaktifkan' : 'mengaktifkan'} kode aktivasi: ` + error.message, 'error');
     }
   };
 
@@ -130,8 +130,8 @@ const ActivationCodePage = ({ showToast, token }) => {
 
       {/* Page Header */}
       <PageHeader
-        title="Activation Codes"
-        subtitle="Manage user registration codes"
+        title="Kode Aktivasi"
+        subtitle="Kelola kode pendaftaran pengguna"
         icon="bi-key-fill"
         actions={
           <button
@@ -142,12 +142,12 @@ const ActivationCodePage = ({ showToast, token }) => {
             {isGenerating ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Generating...
+                Membuat...
               </>
             ) : (
               <>
                 <i className="bi bi-plus-circle me-2"></i>
-                Generate New Code
+                Buat Kode Baru
               </>
             )}
           </button>
@@ -158,7 +158,7 @@ const ActivationCodePage = ({ showToast, token }) => {
         <div className="card-header">
           <h6 className="mb-0 fw-semibold">
             <i className="bi bi-list-ul me-2"></i>
-            All Activation Codes
+            Semua Kode Aktivasi
           </h6>
         </div>
         <div className="card-body">

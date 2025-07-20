@@ -1,7 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import TransactionList from '../components/TransactionList';
-import Breadcrumb from '../components/Breadcrumb';
 import { formatRupiah } from '../utils/formatRupiah';
 
 const HomePage = ({
@@ -25,16 +23,16 @@ const HomePage = ({
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h1 className="h3 fw-bold text-primary mb-1 fade-in">
-                Welcome back, {username}! 👋
+                Selamat datang kembali, {username}! 👋
               </h1>
               <p className="text-muted mb-0 fade-in" style={{ animationDelay: '0.1s' }}>
-                Here's your financial overview for today
+                Berikut ikhtisar keuangan Anda hari ini
               </p>
             </div>
             <div className="d-none d-md-block fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="text-end">
                 <div className="text-muted small">
-                  {new Date().toLocaleDateString('en-US', { 
+                  {new Date().toLocaleDateString('id-ID', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
@@ -54,13 +52,13 @@ const HomePage = ({
             <div className="stats-icon income">
               <i className="bi bi-arrow-up-circle-fill"></i>
             </div>
-            <div className="stats-label">Total Income</div>
+            <div className="stats-label">Total Pemasukan</div>
             <div className="stats-value text-success">
               {formatRupiah(income)}
             </div>
             <div className="stats-change positive">
               <i className="bi bi-arrow-up"></i>
-              +{incomeChange}% from last month
+              +{incomeChange}% dari bulan lalu
             </div>
           </div>
         </div>
@@ -70,13 +68,13 @@ const HomePage = ({
             <div className="stats-icon expense">
               <i className="bi bi-arrow-down-circle-fill"></i>
             </div>
-            <div className="stats-label">Total Expenses</div>
+            <div className="stats-label">Total Pengeluaran</div>
             <div className="stats-value text-danger">
               {formatRupiah(expense)}
             </div>
             <div className="stats-change negative">
               <i className="bi bi-arrow-down"></i>
-              {expenseChange}% from last month
+              {expenseChange}% dari bulan lalu
             </div>
           </div>
         </div>
@@ -86,13 +84,13 @@ const HomePage = ({
             <div className="stats-icon balance">
               <i className="bi bi-wallet2"></i>
             </div>
-            <div className="stats-label">Current Balance</div>
+            <div className="stats-label">Saldo Saat Ini</div>
             <div className={`stats-value ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
               {formatRupiah(balance)}
             </div>
             <div className={`stats-change ${balanceChange >= 0 ? 'positive' : 'negative'}`}>
               <i className={`bi ${balanceChange >= 0 ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
-              {balanceChange >= 0 ? '+' : ''}{balanceChange}% from last month
+              {balanceChange >= 0 ? '+' : ''}{balanceChange}% dari bulan lalu
             </div>
           </div>
         </div>
@@ -106,24 +104,24 @@ const HomePage = ({
               <div className="quick-action-icon">
                 <i className="bi bi-plus-circle"></i>
               </div>
-              <h6 className="fw-semibold mb-1">Add Transaction</h6>
-              <p className="text-muted small mb-0">Record income or expense</p>
+              <h6 className="fw-semibold mb-1">Tambah Transaksi</h6>
+              <p className="text-muted small mb-0">Catat pemasukan atau pengeluaran</p>
             </Link>
             
             <Link to="/history" className="quick-action-card">
               <div className="quick-action-icon">
                 <i className="bi bi-clock-history"></i>
               </div>
-              <h6 className="fw-semibold mb-1">View History</h6>
-              <p className="text-muted small mb-0">Browse all transactions</p>
+              <h6 className="fw-semibold mb-1">Lihat Riwayat</h6>
+              <p className="text-muted small mb-0">Jelajahi semua transaksi</p>
             </Link>
             
             <Link to="/categories" className="quick-action-card">
               <div className="quick-action-icon">
                 <i className="bi bi-tags"></i>
               </div>
-              <h6 className="fw-semibold mb-1">Manage Categories</h6>
-              <p className="text-muted small mb-0">Organize your expenses</p>
+              <h6 className="fw-semibold mb-1">Kelola Kategori</h6>
+              <p className="text-muted small mb-0">Atur pengeluaran Anda</p>
             </Link>
           </div>
         </div>
@@ -138,11 +136,11 @@ const HomePage = ({
               <div className="d-flex justify-content-between align-items-center w-100">
                 <div className="d-flex align-items-center">
                   <i className="bi bi-clock-history me-2"></i>
-                  <h6 className="mb-0 fw-semibold">Recent Transactions</h6>
+                  <h6 className="mb-0 fw-semibold">Transaksi Terbaru</h6>
                 </div>
                 {transactions.length > 5 && (
                   <Link to="/history" className="modern-btn modern-btn-outline modern-btn-sm">
-                    View All
+                    Lihat Semua
                   </Link>
                 )}
               </div>
@@ -159,11 +157,11 @@ const HomePage = ({
                   <div className="mb-3">
                     <i className="bi bi-wallet2 display-1 text-muted"></i>
                   </div>
-                  <h6 className="text-muted mb-2">No transactions yet</h6>
-                  <p className="text-muted small mb-3">Start tracking your finances today</p>
+                  <h6 className="text-muted mb-2">Belum ada transaksi</h6>
+                  <p className="text-muted small mb-3">Mulai lacak keuangan Anda hari ini</p>
                   <Link to="/add-transaction" className="modern-btn modern-btn-primary">
                     <i className="bi bi-plus-circle me-2"></i>
-                    Add First Transaction
+                    Tambah Transaksi Pertama
                   </Link>
                 </div>
               )}
@@ -177,7 +175,7 @@ const HomePage = ({
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
                 <i className="bi bi-graph-up me-2"></i>
-                <h6 className="mb-0 fw-semibold">Quick Stats</h6>
+                <h6 className="mb-0 fw-semibold">Statistik Cepat</h6>
               </div>
             </div>
             <div className="dashboard-card-body">
@@ -185,7 +183,7 @@ const HomePage = ({
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
                     <div>
-                      <div className="text-muted small">Total Transactions</div>
+                      <div className="text-muted small">Total Transaksi</div>
                       <div className="fw-bold">{transactions.length}</div>
                     </div>
                     <div className="text-primary">
@@ -197,7 +195,7 @@ const HomePage = ({
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
                     <div>
-                      <div className="text-muted small">Income Transactions</div>
+                      <div className="text-muted small">Transaksi Pemasukan</div>
                       <div className="fw-bold text-success">
                         {transactions.filter(t => t.type === 'pemasukan').length}
                       </div>
@@ -211,7 +209,7 @@ const HomePage = ({
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
                     <div>
-                      <div className="text-muted small">Expense Transactions</div>
+                      <div className="text-muted small">Transaksi Pengeluaran</div>
                       <div className="fw-bold text-danger">
                         {transactions.filter(t => t.type === 'pengeluaran').length}
                       </div>
@@ -230,7 +228,7 @@ const HomePage = ({
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
                 <i className="bi bi-heart-pulse me-2"></i>
-                <h6 className="mb-0 fw-semibold">Financial Health</h6>
+                <h6 className="mb-0 fw-semibold">Kesehatan Keuangan</h6>
               </div>
             </div>
             <div className="dashboard-card-body">
@@ -239,12 +237,12 @@ const HomePage = ({
                   {balance >= 0 ? '😊' : '😟'}
                 </div>
                 <div className={`fw-semibold ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
-                  {balance >= 0 ? 'Healthy' : 'Needs Attention'}
+                  {balance >= 0 ? 'Sehat' : 'Perlu Perhatian'}
                 </div>
                 <p className="text-muted small mb-0 mt-2">
                   {balance >= 0 
-                    ? 'Your income exceeds your expenses. Keep it up!'
-                    : 'Your expenses exceed your income. Consider reviewing your spending.'
+                    ? 'Pemasukan Anda melebihi pengeluaran. Pertahankan!'
+                    : 'Pengeluaran Anda melebihi pemasukan. Pertimbangkan untuk meninjau pengeluaran Anda.'
                   }
                 </p>
               </div>

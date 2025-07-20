@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LoadingOverlay = ({ isLoading }) => {
   return (
     <div className={`loading-overlay ${isLoading ? 'show' : ''}`}>

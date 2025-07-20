@@ -6,18 +6,18 @@ const Breadcrumb = ({ customItems = null }) => {
   
   // Default breadcrumb mapping
   const breadcrumbMap = {
-    '/': { label: 'Dashboard', icon: 'bi-house-door' },
-    '/add-transaction': { label: 'Add Transaction', icon: 'bi-plus-circle' },
-    '/history': { label: 'Transaction History', icon: 'bi-clock-history' },
-    '/categories': { label: 'Categories', icon: 'bi-tags' },
-    '/change-password': { label: 'Change Password', icon: 'bi-key' },
-    '/activation-codes': { label: 'Activation Codes', icon: 'bi-key-fill' }
+    '/': { label: 'Dasbor', icon: 'bi-house-door' },
+    '/add-transaction': { label: 'Tambah Transaksi', icon: 'bi-plus-circle' },
+    '/history': { label: 'Riwayat Transaksi', icon: 'bi-clock-history' },
+    '/categories': { label: 'Kategori', icon: 'bi-tags' },
+    '/change-password': { label: 'Ubah Kata Sandi', icon: 'bi-key' },
+    '/activation-codes': { label: 'Kode Aktivasi', icon: 'bi-key-fill' }
   };
 
   // Use custom items if provided, otherwise generate from current path
   const items = customItems || (() => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
-    const breadcrumbItems = [{ label: 'Dashboard', path: '/', icon: 'bi-house-door' }];
+    const breadcrumbItems = [{ label: 'Dasbor', path: '/', icon: 'bi-house-door' }];
     
     if (location.pathname !== '/') {
       const currentPage = breadcrumbMap[location.pathname];

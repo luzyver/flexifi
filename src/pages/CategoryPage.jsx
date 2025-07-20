@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import PageHeader from '../components/PageHeader';
 
@@ -12,7 +12,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
   const handleAddCategory = async (e) => {
     e.preventDefault();
     if (!newCategoryName.trim()) {
-      showToast('Category name cannot be empty', 'error');
+      showToast('Nama kategori tidak boleh kosong', 'error');
       return;
     }
 
@@ -29,7 +29,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        showToast('Category added successfully!', 'success');
+        showToast('Kategori berhasil ditambahkan!', 'success');
         setNewCategoryName('');
         onCategoryAdded();
       } else {
@@ -39,11 +39,11 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
           localStorage.removeItem('sessionId');
           window.location.href = '/';
         } else {
-          showToast(data.error || 'Failed to add category', 'error');
+          showToast(data.error || 'Gagal menambahkan kategori', 'error');
         }
       }
     } catch (error) {
-      showToast('Error adding category: ' + error.message, 'error');
+      showToast('Error menambahkan kategori: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -63,8 +63,8 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
 
       {/* Page Header */}
       <PageHeader
-        title="Manage Categories"
-        subtitle="Organize your transaction categories for better financial tracking"
+        title="Kelola Kategori"
+        subtitle="Atur kategori transaksi Anda untuk pelacakan keuangan yang lebih baik"
         icon="bi-tags"
       />
 
@@ -75,7 +75,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             <div className="stats-icon income">
               <i className="bi bi-arrow-up-circle-fill"></i>
             </div>
-            <div className="stats-label">Income Categories</div>
+            <div className="stats-label">Kategori Pemasukan</div>
             <div className="stats-value text-success">
               {incomeCategories.length}
             </div>
@@ -87,7 +87,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             <div className="stats-icon expense">
               <i className="bi bi-arrow-down-circle-fill"></i>
             </div>
-            <div className="stats-label">Expense Categories</div>
+            <div className="stats-label">Kategori Pengeluaran</div>
             <div className="stats-value text-danger">
               {expenseCategories.length}
             </div>
@@ -99,7 +99,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             <div className="stats-icon balance">
               <i className="bi bi-tags"></i>
             </div>
-            <div className="stats-label">Total Categories</div>
+            <div className="stats-label">Total Kategori</div>
             <div className="stats-value text-primary">
               {categories.length}
             </div>
@@ -114,7 +114,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
                 <i className="bi bi-plus-circle me-2"></i>
-                <h6 className="mb-0 fw-semibold">Add New Category</h6>
+                <h6 className="mb-0 fw-semibold">Tambah Kategori Baru</h6>
               </div>
             </div>
             <div className="dashboard-card-body">
@@ -122,7 +122,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 <div className="modern-form-group">
                   <label htmlFor="newCategoryName" className="modern-form-label">
                     <i className="bi bi-tag"></i>
-                    Category Name
+                    Nama Kategori
                   </label>
                   <input
                     type="text"
@@ -130,7 +130,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                     id="newCategoryName"
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
-                    placeholder="Enter category name..."
+                    placeholder="Masukkan nama kategori..."
                     required
                     disabled={loading}
                   />
@@ -139,7 +139,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 <div className="modern-form-group">
                   <label htmlFor="newCategoryType" className="modern-form-label">
                     <i className="bi bi-arrow-up-down"></i>
-                    Category Type
+                    Tipe Kategori
                   </label>
                   <select
                     className="modern-form-select"
@@ -161,12 +161,12 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                   {loading ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Adding...
+                      Menambahkan...
                     </>
                   ) : (
                     <>
                       <i className="bi bi-plus-circle me-2"></i>
-                      Add Category
+                      Tambah Kategori
                     </>
                   )}
                 </button>
@@ -185,7 +185,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="d-flex align-items-center">
                       <i className="bi bi-arrow-up-circle-fill text-success me-2"></i>
-                      <h6 className="mb-0 fw-semibold">Income Categories</h6>
+                      <h6 className="mb-0 fw-semibold">Kategori Pemasukan</h6>
                     </div>
                     <span className="modern-badge success">
                       {incomeCategories.length}
@@ -196,8 +196,8 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                   {incomeCategories.length === 0 ? (
                     <div className="text-center py-4">
                       <i className="bi bi-arrow-up-circle display-4 text-muted mb-3"></i>
-                      <h6 className="text-muted mb-2">No income categories</h6>
-                      <p className="text-muted mb-0 small">Add some income categories to get started.</p>
+                      <h6 className="text-muted mb-2">Tidak ada kategori pemasukan</h6>
+                      <p className="text-muted mb-0 small">Tambahkan beberapa kategori pemasukan untuk memulai.</p>
                     </div>
                   ) : (
                     <div className="list-group list-group-flush">
@@ -231,7 +231,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="d-flex align-items-center">
                       <i className="bi bi-arrow-down-circle-fill text-danger me-2"></i>
-                      <h6 className="mb-0 fw-semibold">Expense Categories</h6>
+                      <h6 className="mb-0 fw-semibold">Kategori Pengeluaran</h6>
                     </div>
                     <span className="modern-badge danger">
                       {expenseCategories.length}
@@ -242,8 +242,8 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                   {expenseCategories.length === 0 ? (
                     <div className="text-center py-4">
                       <i className="bi bi-arrow-down-circle display-4 text-muted mb-3"></i>
-                      <h6 className="text-muted mb-2">No expense categories</h6>
-                      <p className="text-muted mb-0 small">Add some expense categories to get started.</p>
+                      <h6 className="text-muted mb-2">Tidak ada kategori pengeluaran</h6>
+                      <p className="text-muted mb-0 small">Tambahkan beberapa kategori pengeluaran untuk memulai.</p>
                     </div>
                   ) : (
                     <div className="list-group list-group-flush">
