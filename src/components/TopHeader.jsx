@@ -3,14 +3,12 @@ import { useTheme } from '../contexts/ThemeContext';
 import DateRangeFilter from './DateRangeFilter';
 import { useState } from 'react';
 
-const TopHeader = ({ 
-  onLogout, 
-  username, 
-  filterMonth, 
-  setFilterMonth, 
-  availableMonths, 
+const TopHeader = ({
+  onLogout,
+  username,
+  setFilterMonth,
   transactions,
-  onMobileMenuToggle 
+  onMobileMenuToggle
 }) => {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useTheme();

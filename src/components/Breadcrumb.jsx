@@ -16,7 +16,6 @@ const Breadcrumb = ({ customItems = null }) => {
 
   // Use custom items if provided, otherwise generate from current path
   const items = customItems || (() => {
-    const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbItems = [{ label: 'Dasbor', path: '/', icon: 'bi-house-door' }];
     
     if (location.pathname !== '/') {

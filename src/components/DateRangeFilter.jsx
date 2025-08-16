@@ -20,14 +20,6 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
     }
   };
 
-  const handleClearFilter = () => {
-    setSelectedDate('');
-    setSelectedMonth('');
-    setSelectedYear('');
-    setFilterType('singleDate');
-    onFilterChange(null);
-    setIsOpen(false);
-  };
 
   const getDateRange = () => {
     if (!transactions || transactions.length === 0) return { min: '', max: '' };
