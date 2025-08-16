@@ -1,5 +1,20 @@
 import { useState } from 'react';
 
+const MONTH_NAMES = [
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember'
+];
+
 const DateRangeFilter = ({ onFilterChange, transactions }) => {
   const [selectedDate, setSelectedDate] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -36,32 +51,26 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
 
   const { min, max } = getDateRange();
 
-  // Mendapatkan tahun dan bulan dari transaksi
+  // Mendapatkan tahun dan bulan unik dari transaksi
   const getYearsAndMonths = () => {
     if (!transactions || transactions.length === 0) return { years: [], months: [] };
-    
+
     const dates = transactions.map(t => new Date(t.date));
     const years = [...new Set(dates.map(date => date.getFullYear()))];
     years.sort((a, b) => b - a); // Urutkan tahun dari terbaru
-    
-    return { years };
+
+    const monthsSet = new Set(dates.map(date => date.getMonth()));
+    const months = [...monthsSet]
+      .sort((a, b) => a - b)
+      .map(monthIndex => ({
+        value: monthIndex.toString(),
+        label: MONTH_NAMES[monthIndex]
+      }));
+
+    return { years, months };
   };
 
-  const { years } = getYearsAndMonths();
-  const months = [
-    { value: '0', label: 'Januari' },
-    { value: '1', label: 'Februari' },
-    { value: '2', label: 'Maret' },
-    { value: '3', label: 'April' },
-    { value: '4', label: 'Mei' },
-    { value: '5', label: 'Juni' },
-    { value: '6', label: 'Juli' },
-    { value: '7', label: 'Agustus' },
-    { value: '8', label: 'September' },
-    { value: '9', label: 'Oktober' },
-    { value: '10', label: 'November' },
-    { value: '11', label: 'Desember' }
-  ];
+  const { years, months } = getYearsAndMonths();
 
   // Mendapatkan label untuk tombol filter
   const getFilterButtonLabel = () => {
