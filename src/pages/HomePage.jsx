@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import TransactionList from '../components/transactions/TransactionList';
+import CategoryPieChart from '../components/charts/CategoryPieChart';
+import MonthlyTrendChart from '../components/charts/MonthlyTrendChart';
 import { formatRupiah } from '../utils/formatRupiah';
 
 const HomePage = ({
@@ -91,6 +93,37 @@ const HomePage = ({
             <div className={`stats-change ${balanceChange >= 0 ? 'positive' : 'negative'}`}>
               <i className={`bi ${balanceChange >= 0 ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
               {balanceChange >= 0 ? '+' : ''}{balanceChange}% dari bulan lalu
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="row g-3 g-md-4 mb-4">
+        <div className="col-12 col-lg-6">
+          <div className="dashboard-card fade-in" style={{ animationDelay: '0.3s' }}>
+            <div className="dashboard-card-header">
+              <div className="d-flex align-items-center">
+                <i className="bi bi-pie-chart me-2"></i>
+                <h6 className="mb-0 fw-semibold">Distribusi Kategori</h6>
+              </div>
+            </div>
+            <div className="dashboard-card-body">
+              <CategoryPieChart transactions={transactions} />
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-6">
+          <div className="dashboard-card fade-in" style={{ animationDelay: '0.35s' }}>
+            <div className="dashboard-card-header">
+              <div className="d-flex align-items-center">
+                <i className="bi bi-graph-up-arrow me-2"></i>
+                <h6 className="mb-0 fw-semibold">Tren Bulanan</h6>
+              </div>
+            </div>
+            <div className="dashboard-card-body">
+              <MonthlyTrendChart transactions={transactions} />
             </div>
           </div>
         </div>
