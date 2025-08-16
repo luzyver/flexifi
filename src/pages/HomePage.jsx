@@ -45,9 +45,8 @@ const HomePage = ({
         </div>
       </div>
 
-      {/* Stats Overview - Modern Cards */}
-      <div className="row g-3 g-md-4 mb-4">
-        <div className="col-12 col-md-6 col-xl-4">
+      <div className="dashboard-grid">
+        <div className="stats-section">
           <div className="modern-stats-card income fade-in">
             <div className="stats-icon income">
               <i className="bi bi-arrow-up-circle-fill"></i>
@@ -61,9 +60,7 @@ const HomePage = ({
               +{incomeChange}% dari bulan lalu
             </div>
           </div>
-        </div>
-        
-        <div className="col-12 col-md-6 col-xl-4">
+
           <div className="modern-stats-card expense fade-in" style={{ animationDelay: '0.1s' }}>
             <div className="stats-icon expense">
               <i className="bi bi-arrow-down-circle-fill"></i>
@@ -77,9 +74,7 @@ const HomePage = ({
               {expenseChange}% dari bulan lalu
             </div>
           </div>
-        </div>
-        
-        <div className="col-12 col-xl-4">
+
           <div className="modern-stats-card balance fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="stats-icon balance">
               <i className="bi bi-wallet2"></i>
@@ -94,12 +89,8 @@ const HomePage = ({
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Financial Insights */}
-      <div className="row g-3 g-md-4 mb-4">
-        <div className="col-12 col-lg-8">
-          {/* Recent Transactions */}
+        <div className="insights-section">
           <div className="dashboard-card fade-in" style={{ animationDelay: '0.4s' }}>
             <div className="dashboard-card-header">
               <div className="d-flex justify-content-between align-items-center w-100">
@@ -136,10 +127,7 @@ const HomePage = ({
               )}
             </div>
           </div>
-        </div>
-        
-        <div className="col-12 col-lg-4">
-          {/* Quick Stats */}
+
           <div className="dashboard-card fade-in" style={{ animationDelay: '0.5s' }}>
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
@@ -160,7 +148,7 @@ const HomePage = ({
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
                     <div>
@@ -174,7 +162,7 @@ const HomePage = ({
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
                     <div>
@@ -191,8 +179,7 @@ const HomePage = ({
               </div>
             </div>
           </div>
-          
-          {/* Financial Health */}
+
           <div className="dashboard-card mt-3 fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="dashboard-card-header">
               <div className="d-flex align-items-center">
@@ -209,7 +196,7 @@ const HomePage = ({
                   {balance >= 0 ? 'Sehat' : 'Perlu Perhatian'}
                 </div>
                 <p className="text-muted small mb-0 mt-2">
-                  {balance >= 0 
+                  {balance >= 0
                     ? 'Pemasukan Anda melebihi pengeluaran. Pertahankan!'
                     : 'Pengeluaran Anda melebihi pemasukan. Pertimbangkan untuk meninjau pengeluaran Anda.'
                   }

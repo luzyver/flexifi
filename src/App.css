@@ -197,6 +197,36 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.stats-section {
+  grid-column: span 12;
+}
+
+.insights-section {
+  grid-column: span 12;
+}
+
+@media (min-width: 1024px) {
+  .stats-section {
+    grid-column: span 8;
+  }
+
+  .insights-section {
+    grid-column: span 4;
+  }
+}
+
 .modern-stats-card::before {
   content: '';
   position: absolute;
@@ -1126,19 +1156,6 @@ body.dark-mode .modern-form-select:focus {
   opacity: 0;
   transform: translateY(-20px);
   transition: all 0.4s ease;
-}
-
-/* Modern Dashboard Grid */
-.dashboard-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-@media (min-width: 768px) {
-  .dashboard-grid {
-    gap: 2rem;
-  }
 }
 
 /* Chart Container */
