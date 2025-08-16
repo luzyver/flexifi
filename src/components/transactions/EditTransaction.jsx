@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatRupiah, parseRupiahToNumber } from '../utils/formatRupiah';
+import { formatRupiah, parseRupiahToNumber } from '../../utils/formatRupiah';
 
 const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categories, onCancel }) => {
   const [type, setType] = useState(transaction.type);

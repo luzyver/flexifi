@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import EditTransaction from '../components/EditTransaction';
+import EditTransaction from '../components/transactions/EditTransaction';
 
 const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, categories }) => {
   const { id } = useParams();

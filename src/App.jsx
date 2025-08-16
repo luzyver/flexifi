@@ -12,12 +12,12 @@ import CategoryPage from './pages/CategoryPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ActivationCodePage from './pages/ActivationCodePage';
 import EditTransactionPage from './pages/EditTransactionPage';
-import Sidebar from './components/Sidebar';
-import TopHeader from './components/TopHeader';
-import ConfirmationDialog from './components/ConfirmationDialog';
-import LoadingOverlay from './components/LoadingOverlay';
-import ToastNotification from './components/ToastNotification';
-import Footer from './components/Footer';
+import Sidebar from './components/layout/Sidebar';
+import TopHeader from './components/layout/TopHeader';
+import ConfirmationDialog from './components/common/ConfirmationDialog';
+import LoadingOverlay from './components/common/LoadingOverlay';
+import ToastNotification from './components/common/ToastNotification';
+import Footer from './components/layout/Footer';
 
 const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transactions }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);

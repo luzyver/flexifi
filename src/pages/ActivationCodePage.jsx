@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoadingOverlay from '../components/LoadingOverlay';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
+import LoadingOverlay from '../components/common/LoadingOverlay';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
 
 const ActivationCodePage = ({ showToast, token }) => {
   const navigate = useNavigate();

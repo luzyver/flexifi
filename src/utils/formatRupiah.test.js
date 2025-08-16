@@ -23,8 +23,8 @@ test('parseRupiahToNumber parses formatted strings to numbers', () => {
   assert.strictEqual(parseRupiahToNumber('Rp 1.000'), 1000);
 });
 
-test('parseRupiahToNumber handles negative values by returning positive numbers', () => {
-  assert.strictEqual(parseRupiahToNumber('-Rp 500'), 500);
+test('parseRupiahToNumber preserves negative values', () => {
+  assert.strictEqual(parseRupiahToNumber('-Rp 500'), -500);
 });
 
 test('parseRupiahToNumber returns 0 for invalid input', () => {

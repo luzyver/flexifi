@@ -1,6 +1,6 @@
-import AddTransaction from '../components/AddTransaction';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
+import AddTransaction from '../components/transactions/AddTransaction';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
 
 const AddTransactionPage = ({ 
   onAddTransaction, 
