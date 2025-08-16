@@ -31,4 +31,3 @@ test('parseRupiahToNumber returns 0 for invalid input', () => {
   assert.strictEqual(parseRupiahToNumber('invalid'), 0);
   assert.strictEqual(parseRupiahToNumber(null), 0);
 });
-
