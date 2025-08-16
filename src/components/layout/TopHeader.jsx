@@ -13,48 +13,39 @@ const TopHeader = ({
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  
-  const handleLogoutClick = () => {
-    onLogout();
-  };
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const showFilters = location.pathname === '/' || location.pathname === '/history';
 
-  const toggleMobileFilters = () => {
-    setShowMobileFilters(!showMobileFilters);
+  const handleLogoutClick = () => {
+    onLogout();
+    setMenuOpen(false);
   };
 
   return (
-    <div className="top-header">
-      <div className="top-header-left">
-        {/* Mobile Menu Toggle */}
+    <header className="flex items-center justify-between px-4 py-3 bg-white border-b relative">
+      <div className="flex items-center space-x-2">
         <button
-          className="modern-btn modern-btn-outline modern-btn-sm d-md-none"
+          className="p-2 border rounded md:hidden"
           onClick={onMobileMenuToggle}
           aria-label="Toggle menu"
         >
           <i className="bi bi-list"></i>
         </button>
-
-        {/* Page Title */}
-        <div className="d-none d-md-block">
-          <h5 className="mb-0 fw-semibold text-primary">
-            {location.pathname === '/' && 'Dasbor'}
-            {location.pathname === '/add-transaction' && 'Tambah Transaksi'}
-            {location.pathname === '/history' && 'Riwayat Transaksi'}
-            {location.pathname === '/categories' && 'Kategori'}
-            {location.pathname === '/change-password' && 'Ubah Kata Sandi'}
-            {location.pathname === '/activation-codes' && 'Kode Aktivasi'}
-          </h5>
-        </div>
+        <h5 className="hidden text-lg font-semibold text-blue-600 md:block">
+          {location.pathname === '/' && 'Dasbor'}
+          {location.pathname === '/add-transaction' && 'Tambah Transaksi'}
+          {location.pathname === '/history' && 'Riwayat Transaksi'}
+          {location.pathname === '/categories' && 'Kategori'}
+          {location.pathname === '/change-password' && 'Ubah Kata Sandi'}
+          {location.pathname === '/activation-codes' && 'Kode Aktivasi'}
+        </h5>
       </div>
 
-      <div className="top-header-right">
-        {/* Filter Controls - Desktop */}
+      <div className="flex items-center space-x-3">
         {showFilters && (
-          <div className="header-filter-controls">
-
-            <DateRangeFilter 
+          <div className="hidden md:block">
+            <DateRangeFilter
               onFilterChange={(filter) => {
                 if (filter) {
                   if (filter.type === 'singleDate') {
@@ -73,96 +64,85 @@ const TopHeader = ({
           </div>
         )}
 
-        {/* Mobile Filter Toggle */}
         {showFilters && (
-          <button 
-            className="modern-btn modern-btn-outline modern-btn-sm mobile-filter-toggle"
-            onClick={toggleMobileFilters}
+          <button
+            className="p-2 border rounded md:hidden"
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
           >
             <i className="bi bi-funnel"></i>
           </button>
         )}
-        
-        {/* Mobile Filters Dropdown */}
-        {showFilters && showMobileFilters && (
-          <div className="mobile-filters-dropdown">
-            <div className="p-3">
-              <h6 className="mb-3">Filter Transaksi</h6>
-              
 
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Filter Tanggal</label>
-                <DateRangeFilter 
-                  onFilterChange={(filter) => {
-                    if (filter) {
-                      if (filter.type === 'singleDate') {
-                        setFilterMonth(`singleDate-${filter.selectedDate}`);
-                      } else if (filter.type === 'byYear') {
-                        setFilterMonth(`byYear-${filter.selectedYear}`);
-                      } else if (filter.type === 'byMonth') {
-                        setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
-                      }
-                    } else {
-                      setFilterMonth('');
-                    }
-                  }}
-                  transactions={transactions}
-                />
-              </div>
-              
-              <button 
-                className="btn btn-sm btn-outline-secondary w-100"
-                onClick={toggleMobileFilters}
-              >
-                Tutup
-              </button>
-            </div>
+        {showFilters && showMobileFilters && (
+          <div className="absolute left-0 right-0 z-10 p-4 mt-2 bg-white border md:hidden">
+            <DateRangeFilter
+              onFilterChange={(filter) => {
+                if (filter) {
+                  if (filter.type === 'singleDate') {
+                    setFilterMonth(`singleDate-${filter.selectedDate}`);
+                  } else if (filter.type === 'byYear') {
+                    setFilterMonth(`byYear-${filter.selectedYear}`);
+                  } else if (filter.type === 'byMonth') {
+                    setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
+                  }
+                } else {
+                  setFilterMonth('');
+                }
+              }}
+              transactions={transactions}
+            />
+            <button
+              className="w-full px-3 py-2 mt-2 text-sm border rounded"
+              onClick={() => setShowMobileFilters(false)}
+            >
+              Tutup
+            </button>
           </div>
         )}
-        
-        {/* Theme Toggle */}
+
         <button
-          className="theme-toggle-header"
+          className="p-2 border rounded"
           onClick={toggleDarkMode}
           aria-label="Toggle dark mode"
-          title={isDarkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
         >
           <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
         </button>
-        
-        {/* User Menu */}
-        <div className="dropdown">
-          <button 
-            className="modern-btn modern-btn-outline dropdown-toggle d-flex align-items-center" 
-            type="button"
-            id="userDropdown" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false"
+
+        <div className="relative">
+          <button
+            className="flex items-center p-2 border rounded"
+            onClick={() => setMenuOpen(!menuOpen)}
+            id="userMenu"
           >
-            <i className="bi bi-person-circle me-2"></i> 
-            <span className="d-none d-sm-inline">{username}</span>
+            <i className="bi bi-person-circle mr-2"></i>
+            <span className="hidden sm:inline">{username}</span>
           </button>
-          <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown">
-            <li>
-              <Link to="/change-password" className="dropdown-item d-flex align-items-center">
-                <i className="bi bi-key me-2"></i> 
-                Ubah Kata Sandi
-              </Link>
-            </li>
-            <li><hr className="dropdown-divider" /></li>
-            <li>
-              <button 
-                onClick={handleLogoutClick} 
-                className="dropdown-item d-flex align-items-center text-danger border-0 bg-transparent w-100"
-              >
-                <i className="bi bi-box-arrow-right me-2"></i> 
-                Keluar
-              </button>
-            </li>
-          </ul>
+          {menuOpen && (
+            <ul className="absolute right-0 w-48 mt-2 bg-white border rounded shadow">
+              <li>
+                <Link
+                  to="/change-password"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <i className="bi bi-key mr-2"></i>
+                  Ubah Kata Sandi
+                </Link>
+              </li>
+              <li className="border-t">
+                <button
+                  onClick={handleLogoutClick}
+                  className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                >
+                  <i className="bi bi-box-arrow-right mr-2"></i>
+                  Keluar
+                </button>
+              </li>
+            </ul>
+          )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
