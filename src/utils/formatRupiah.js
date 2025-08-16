@@ -26,10 +26,12 @@ export const formatRupiah = (amount) => {
 // Function to parse Rupiah string back to number
 export const parseRupiahToNumber = (rupiahString) => {
   if (!rupiahString) return 0;
-  
+
+  const trimmed = rupiahString.trim();
   // Remove currency symbol, dots, and other non-digit characters
-  const numericString = rupiahString.replace(/[^0-9]/g, '');
-  
+  // but retain a leading '-' for negative values
+  const numericString = trimmed.replace(/(?!^-)[^0-9]/g, '');
+
   // Convert to number
   return numericString ? parseInt(numericString, 10) : 0;
 };

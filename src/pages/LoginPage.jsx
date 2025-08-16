@@ -36,7 +36,7 @@ const LoginPage = ({ onLogin, showToast }) => {
       } else {
         showToast(data.error || 'Nama pengguna atau kata sandi tidak valid', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Kesalahan server. Silakan coba lagi nanti.', 'error');
     } finally {
       setIsSubmitting(false);

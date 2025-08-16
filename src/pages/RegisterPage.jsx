@@ -57,7 +57,7 @@ const RegisterPage = ({ showToast }) => {
       } else {
         showToast(data.error || 'Pendaftaran gagal. Silakan coba lagi.', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Kesalahan server. Silakan coba lagi nanti.', 'error');
     } finally {
       setIsSubmitting(false);

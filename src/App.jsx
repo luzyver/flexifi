@@ -19,7 +19,7 @@ import LoadingOverlay from './components/LoadingOverlay';
 import ToastNotification from './components/ToastNotification';
 import Footer from './components/Footer';
 
-const DashboardLayout = ({ children, onLogout, username, filterMonth, setFilterMonth, availableMonths, transactions }) => {
+const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transactions }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleMobileMenuToggle = () => {
@@ -37,12 +37,10 @@ const DashboardLayout = ({ children, onLogout, username, filterMonth, setFilterM
         isMobileOpen={isMobileSidebarOpen}
         onMobileClose={handleMobileSidebarClose}
       />
-      <TopHeader 
-        onLogout={onLogout} 
-        username={username} 
-        filterMonth={filterMonth} 
-        setFilterMonth={setFilterMonth} 
-        availableMonths={availableMonths}
+      <TopHeader
+        onLogout={onLogout}
+        username={username}
+        setFilterMonth={setFilterMonth}
         transactions={transactions}
         onMobileMenuToggle={handleMobileMenuToggle}
       />
@@ -79,7 +77,6 @@ function AppContent() {
   const [token, setToken] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [filterMonth, setFilterMonth] = useState('');
-  const [availableMonths, setAvailableMonths] = useState([]);
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
   const [isCategoryConfirmationDialogOpen, setCategoryConfirmationDialogOpen] = useState(false);
@@ -253,9 +250,9 @@ function AppContent() {
       const signal = abortController.signal;
   
       const performFetchTransactions = async () => {
-        
+        setIsLoading(true);
         try {
-          const res = await fetch(`${API_BASE_URL}/transactions/all`, { 
+          const res = await fetch(`${API_BASE_URL}/transactions/all`, {
             signal,
             headers: {
               Authorization: `Bearer ${token}`,
@@ -289,6 +286,7 @@ function AppContent() {
           }
         } finally {
           if (!signal.aborted) {
+            setIsLoading(false);
           }
         }
       };
@@ -301,18 +299,6 @@ function AppContent() {
     }
   }, [isAuthenticated, handleLogout, token]);
 
-  const getAvailableMonths = () => {
-    const months = new Set();
-    transactions.forEach(t => {
-      const date = new Date(t.date);
-      months.add(`${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`);
-    });
-    return Array.from(months).sort((a, b) => new Date(b) - new Date(a));
-  };
-
-  useEffect(() => {
-    setAvailableMonths(getAvailableMonths());
-  }, [transactions]);
 
   const addTransaction = async (transaction) => {
     try {
@@ -327,7 +313,7 @@ function AppContent() {
       const data = await res.json();
       if (res.ok && data.success) {
         setTransactions([data.data, ...transactions]);
-        showToast('Transaction added successfully!', 'success');
+        showToast('Transaksi berhasil ditambahkan!', 'success');
       } else {
         // Periksa apakah sesi telah diinvalidasi (login di device lain)
         if (data.sessionInvalidated) {
@@ -547,15 +533,13 @@ function AppContent() {
             </Routes>
           </div>
         ) : isLoading ? null : (
-          <DashboardLayout 
+          <DashboardLayout
             onLogout={() => {
               showToast('You have been logged out.', 'info');
               handleLogout();
-            }} 
+            }}
             username={username}
-            filterMonth={filterMonth}
             setFilterMonth={setFilterMonth}
-            availableMonths={availableMonths}
             transactions={transactions}
           >
             <Routes>

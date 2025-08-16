@@ -124,7 +124,7 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
       setSuggestions([]);
       setSuggestionsVisible(false);
       
-    } catch (error) {
+    } catch {
       // Error handling is done in the parent component
     } finally {
       setIsSubmitting(false);
