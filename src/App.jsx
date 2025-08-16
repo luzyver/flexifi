@@ -313,7 +313,7 @@ function AppContent() {
       const data = await res.json();
       if (res.ok && data.success) {
         setTransactions([data.data, ...transactions]);
-        showToast('Transaction added successfully!', 'success');
+        showToast('Transaksi berhasil ditambahkan!', 'success');
       } else {
         // Periksa apakah sesi telah diinvalidasi (login di device lain)
         if (data.sessionInvalidated) {
