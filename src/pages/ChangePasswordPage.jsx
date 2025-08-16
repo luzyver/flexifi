@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
-import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
+import PasswordStrengthMeter from '../components/common/PasswordStrengthMeter';
 
 const ChangePasswordPage = ({ showToast }) => {
   const [currentPassword, setCurrentPassword] = useState('');

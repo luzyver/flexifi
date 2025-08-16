@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
+import PasswordStrengthMeter from '../components/common/PasswordStrengthMeter';
 
 const RegisterPage = ({ showToast }) => {
   const { isDarkMode, toggleDarkMode } = useTheme();

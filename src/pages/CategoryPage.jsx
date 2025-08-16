@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
 
 const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded }) => {
   const [newCategoryName, setNewCategoryName] = useState('');

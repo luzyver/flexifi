@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import TransactionList from '../components/TransactionList';
+import TransactionList from '../components/transactions/TransactionList';
 import { formatRupiah } from '../utils/formatRupiah';
 
 const HomePage = ({

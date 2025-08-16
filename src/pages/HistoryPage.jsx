@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import TransactionList from '../components/TransactionList';
-import Breadcrumb from '../components/Breadcrumb';
-import PageHeader from '../components/PageHeader';
+import TransactionList from '../components/transactions/TransactionList';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
 import { formatRupiah } from '../utils/formatRupiah';
 
 const HistoryPage = ({ transactions, onDeleteTransaction }) => {
