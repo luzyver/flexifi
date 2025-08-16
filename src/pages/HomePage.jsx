@@ -99,156 +99,65 @@ const HomePage = ({
       </div>
 
       {/* Charts */}
-      <div className="row g-3 g-md-4 mb-4">
-        <div className="col-12 col-lg-6">
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-pie-chart me-2"></i>
-                <h6 className="mb-0 fw-semibold">Distribusi Kategori</h6>
-              </div>
-            </div>
-            <div className="dashboard-card-body">
-              <CategoryPieChart transactions={transactions} />
-            </div>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
+        <div className="bg-white rounded shadow p-4">
+          <h2 className="text-lg font-semibold mb-2">Distribusi Kategori</h2>
+          <CategoryPieChart transactions={transactions} />
         </div>
-
-        <div className="col-12 col-lg-6">
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.35s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-graph-up-arrow me-2"></i>
-                <h6 className="mb-0 fw-semibold">Tren Bulanan</h6>
-              </div>
-            </div>
-            <div className="dashboard-card-body">
-              <MonthlyTrendChart transactions={transactions} />
-            </div>
-          </div>
+        <div className="bg-white rounded shadow p-4">
+          <h2 className="text-lg font-semibold mb-2">Tren Bulanan</h2>
+          <MonthlyTrendChart transactions={transactions} />
         </div>
       </div>
 
-      {/* Financial Insights */}
-      <div className="row g-3 g-md-4 mb-4">
-        <div className="col-12 col-lg-8">
-          {/* Recent Transactions */}
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.4s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex justify-content-between align-items-center w-100">
-                <div className="d-flex align-items-center">
-                  <i className="bi bi-clock-history me-2"></i>
-                  <h6 className="mb-0 fw-semibold">Transaksi Terbaru</h6>
-                </div>
-                {transactions.length > 5 && (
-                  <Link to="/history" className="modern-btn modern-btn-outline modern-btn-sm">
-                    Lihat Semua
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="dashboard-card-body p-0">
-              {transactions.length > 0 ? (
-                <TransactionList
-                  transactions={transactions}
-                  onDeleteTransaction={onDeleteTransaction}
-                  limit={5}
-                />
-              ) : (
-                <div className="text-center py-5">
-                  <div className="mb-3">
-                    <i className="bi bi-wallet2 display-1 text-muted"></i>
-                  </div>
-                  <h6 className="text-muted mb-2">Belum ada transaksi</h6>
-                  <p className="text-muted small mb-3">Mulai lacak keuangan Anda hari ini</p>
-                  <Link to="/add-transaction" className="modern-btn modern-btn-primary">
-                    <i className="bi bi-plus-circle me-2"></i>
-                    Tambah Transaksi Pertama
-                  </Link>
-                </div>
+      {/* Latest Transactions and Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <div className="bg-white rounded shadow p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Transaksi Terbaru</h2>
+              {transactions.length > 5 && (
+                <Link to="/history" className="text-sm text-blue-600 hover:underline">
+                  Lihat Semua
+                </Link>
               )}
             </div>
+            {transactions.length > 0 ? (
+              <TransactionList
+                transactions={transactions}
+                onDeleteTransaction={onDeleteTransaction}
+                limit={5}
+              />
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-gray-500">Belum ada transaksi</p>
+                <Link
+                  to="/add-transaction"
+                  className="inline-block mt-3 text-blue-600 hover:underline"
+                >
+                  Tambah Transaksi Pertama
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-        
-        <div className="col-12 col-lg-4">
-          {/* Quick Stats */}
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.5s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-graph-up me-2"></i>
-                <h6 className="mb-0 fw-semibold">Statistik Cepat</h6>
-              </div>
-            </div>
-            <div className="dashboard-card-body">
-              <div className="row g-3">
-                <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
-                    <div>
-                      <div className="text-muted small">Total Transaksi</div>
-                      <div className="fw-bold">{transactions.length}</div>
-                    </div>
-                    <div className="text-primary">
-                      <i className="bi bi-list-check fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
-                    <div>
-                      <div className="text-muted small">Transaksi Pemasukan</div>
-                      <div className="fw-bold text-success">
-                        {transactions.filter(t => t.type === 'pemasukan').length}
-                      </div>
-                    </div>
-                    <div className="text-success">
-                      <i className="bi bi-arrow-up-circle fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
-                    <div>
-                      <div className="text-muted small">Transaksi Pengeluaran</div>
-                      <div className="fw-bold text-danger">
-                        {transactions.filter(t => t.type === 'pengeluaran').length}
-                      </div>
-                    </div>
-                    <div className="text-danger">
-                      <i className="bi bi-arrow-down-circle fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+        <div className="space-y-4">
+          <div className="bg-white rounded shadow p-4">
+            <p className="text-sm text-gray-500">Total Transaksi</p>
+            <p className="text-xl font-semibold">{transactions.length}</p>
           </div>
-          
-          {/* Financial Health */}
-          <div className="dashboard-card mt-3 fade-in" style={{ animationDelay: '0.6s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-heart-pulse me-2"></i>
-                <h6 className="mb-0 fw-semibold">Kesehatan Keuangan</h6>
-              </div>
-            </div>
-            <div className="dashboard-card-body">
-              <div className="text-center">
-                <div className={`display-6 fw-bold mb-2 ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
-                  {balance >= 0 ? '😊' : '😟'}
-                </div>
-                <div className={`fw-semibold ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
-                  {balance >= 0 ? 'Sehat' : 'Perlu Perhatian'}
-                </div>
-                <p className="text-muted small mb-0 mt-2">
-                  {balance >= 0 
-                    ? 'Pemasukan Anda melebihi pengeluaran. Pertahankan!'
-                    : 'Pengeluaran Anda melebihi pemasukan. Pertimbangkan untuk meninjau pengeluaran Anda.'
-                  }
-                </p>
-              </div>
-            </div>
+          <div className="bg-white rounded shadow p-4">
+            <p className="text-sm text-gray-500">Transaksi Pemasukan</p>
+            <p className="text-xl font-semibold text-green-600">
+              {transactions.filter(t => t.type === 'pemasukan').length}
+            </p>
+          </div>
+          <div className="bg-white rounded shadow p-4">
+            <p className="text-sm text-gray-500">Transaksi Pengeluaran</p>
+            <p className="text-xl font-semibold text-red-600">
+              {transactions.filter(t => t.type === 'pengeluaran').length}
+            </p>
           </div>
         </div>
       </div>
