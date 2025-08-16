@@ -31,7 +31,7 @@ const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transac
   };
 
   return (
-    <div className="app-layout">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar 
         username={username}
         isMobileOpen={isMobileSidebarOpen}
@@ -44,8 +44,8 @@ const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transac
         transactions={transactions}
         onMobileMenuToggle={handleMobileMenuToggle}
       />
-      <div className="main-content-wrapper">
-        <main className="main-content">
+      <div className="flex-1 ml-0 lg:ml-64 mt-16">
+        <main className="p-4 lg:p-6 max-w-7xl mx-auto">
           {children}
         </main>
       </div>
@@ -522,11 +522,11 @@ function AppContent() {
   const balance = totalIncome - totalExpense;
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <LoadingOverlay isLoading={isLoading} />
-      <div className="flex-grow-1 d-flex flex-column">
+      <div className="flex flex-col min-h-screen">
         {!isAuthenticated && !isLoading ? (
-          <div className="flex-grow-1">
+          <div className="flex-1">
             <Routes>
               <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
               <Route path="/register" element={<RegisterPage showToast={showToast} />} />
@@ -637,9 +637,6 @@ function AppContent() {
               }
               confirmText="Hapus"
               cancelText="Batal"
-              confirmIcon="bi-trash-fill"
-              confirmButtonClass="btn-danger"
-              headerClass="bg-danger"
               isOpen={isConfirmationDialogOpen}
               onConfirm={handleConfirmDelete}
               onCancel={handleCancelDelete}
@@ -655,9 +652,6 @@ function AppContent() {
               }
               confirmText="Hapus"
               cancelText="Batal"
-              confirmIcon="bi-trash-fill"
-              confirmButtonClass="btn-danger"
-              headerClass="bg-danger"
               isOpen={isCategoryConfirmationDialogOpen}
               onConfirm={handleConfirmDeleteCategory}
               onCancel={handleCancelDeleteCategory}

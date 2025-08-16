@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatRupiah, parseRupiahToNumber } from '../../utils/formatRupiah';
+import { ArrowUpDown, FileText, DollarSign, Tags, Calendar, XCircle, CheckCircle, Clock } from 'lucide-react';
 
 const AddTransaction = ({ onAddTransaction, showToast, transactions, categories }) => {
   const navigate = useNavigate();
@@ -134,163 +135,153 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
   const filteredCategoriesForType = categories.filter(cat => cat.type === type);
 
   return (
-    <form onSubmit={onSubmit} className="needs-validation" noValidate>
-      <div className="row g-4">
-        <div className="col-12">
-          <div className="modern-form-group">
-            <label htmlFor="type" className="modern-form-label">
-              <i className="bi bi-arrow-up-down"></i>
-              Jenis Transaksi
-            </label>
-            <select 
-              id="type" 
-              className="modern-form-select" 
-              value={type} 
-              onChange={handleTypeChange}
-              disabled={isSubmitting}
-            >
-              <option value="pengeluaran">
-                💸 Expense (Pengeluaran)
-              </option>
-              <option value="pemasukan">
-                💰 Income (Pemasukan)
-              </option>
-            </select>
-          </div>
-        </div>
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div>
+        <label htmlFor="type" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <ArrowUpDown className="w-4 h-4 mr-2" />
+          Jenis Transaksi
+        </label>
+        <select 
+          id="type" 
+          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          value={type} 
+          onChange={handleTypeChange}
+          disabled={isSubmitting}
+        >
+          <option value="pengeluaran">
+            💸 Expense (Pengeluaran)
+          </option>
+          <option value="pemasukan">
+            💰 Income (Pemasukan)
+          </option>
+        </select>
+      </div>
 
-        <div className="col-12">
-          <div className="modern-form-group position-relative" ref={descriptionInputRef}>
-            <label htmlFor="description" className="modern-form-label">
-              <i className="bi bi-card-text"></i>
-              Deskripsi
-            </label>
-            <input
-              id="description"
-              type="text"
-              className="modern-form-control"
-              value={description}
-              onChange={handleDescriptionChange}
-              placeholder="Masukkan deskripsi transaksi..."
-              autoComplete="off"
-              disabled={isSubmitting}
-              required
-            />
-            {isSuggestionsVisible && suggestions.length > 0 && (
-              <ul className="suggestions-list">
-                {suggestions.map((suggestion, index) => (
-                  <li 
-                    key={index} 
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="d-flex align-items-center"
-                  >
-                    <i className="bi bi-clock-history me-2 text-muted"></i>
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+      <div className="relative" ref={descriptionInputRef}>
+        <label htmlFor="description" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <FileText className="w-4 h-4 mr-2" />
+          Deskripsi
+        </label>
+        <input
+          id="description"
+          type="text"
+          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          value={description}
+          onChange={handleDescriptionChange}
+          placeholder="Masukkan deskripsi transaksi..."
+          autoComplete="off"
+          disabled={isSubmitting}
+          required
+        />
+        {isSuggestionsVisible && suggestions.length > 0 && (
+          <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            {suggestions.map((suggestion, index) => (
+              <li 
+                key={index} 
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+              >
+                <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-        <div className="col-md-6">
-          <div className="modern-form-group">
-            <label htmlFor="amount" className="modern-form-label">
-              <i className="bi bi-currency-dollar"></i>
-              Jumlah (IDR)
-            </label>
-            <div className="input-group w-100">
-              <span className="input-group-text">Rp</span>
-              <input
-                id="amount"
-                type="text"
-                className="modern-form-control"
-                value={formattedAmount}
-                onChange={(e) => handleAmountChange(e.target.value)}
-                placeholder="0"
-                disabled={isSubmitting}
-                required
-                inputMode="numeric"
-                pattern="[0-9]*"
-              />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="amount" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <DollarSign className="w-4 h-4 mr-2" />
+            Jumlah (IDR)
+          </label>
+          <div className="flex">
+            <div className="flex items-center px-3 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-xl">
+              <span className="text-gray-600 dark:text-gray-400 font-medium">Rp</span>
             </div>
-          </div>
-        </div>
-
-        <div className="col-md-6">
-          <div className="modern-form-group">
-            <label htmlFor="category" className="modern-form-label">
-              <i className="bi bi-tags-fill"></i>
-              Kategori
-            </label>
-            <select 
-              id="category" 
-              className="modern-form-select" 
-              value={category} 
-              onChange={(e) => setCategory(e.target.value)}
-              disabled={isSubmitting}
-              required
-            >
-              {filteredCategoriesForType.map((cat) => (
-                <option key={cat.category} value={cat.category}>
-                  {cat.category}
-                </option>
-              ))}
-              {filteredCategoriesForType.length === 0 && (
-                <option value="" disabled>Tidak ada kategori tersedia</option>
-              )}
-            </select>
-          </div>
-        </div>
-
-        <div className="col-12">
-          <div className="modern-form-group">
-            <label htmlFor="date" className="modern-form-label">
-              <i className="bi bi-calendar-event"></i>
-              Tanggal
-            </label>
             <input
-              id="date"
-              type="date"
-              className="modern-form-control"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              id="amount"
+              type="text"
+              className="flex-1 px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              value={formattedAmount}
+              onChange={(e) => handleAmountChange(e.target.value)}
+              placeholder="0"
               disabled={isSubmitting}
               required
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
           </div>
         </div>
 
-        <div className="col-12 mt-4">
-          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button 
-              type="button" 
-              className="modern-btn modern-btn-outline me-md-2"
-              onClick={() => navigate('/')}
-              disabled={isSubmitting}
-            >
-              <i className="bi bi-x-circle me-2"></i>
-              Batal
-            </button>
-            <button 
-              type="submit" 
-              className="modern-btn modern-btn-primary"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Menambahkan...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-check-circle-fill me-2"></i>
-                  Tambah Transaksi
-                </>
-              )}
-            </button>
-          </div>
+        <div>
+          <label htmlFor="category" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <Tags className="w-4 h-4 mr-2" />
+            Kategori
+          </label>
+          <select 
+            id="category" 
+            className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            value={category} 
+            onChange={(e) => setCategory(e.target.value)}
+            disabled={isSubmitting}
+            required
+          >
+            {filteredCategoriesForType.map((cat) => (
+              <option key={cat.category} value={cat.category}>
+                {cat.category}
+              </option>
+            ))}
+            {filteredCategoriesForType.length === 0 && (
+              <option value="" disabled>Tidak ada kategori tersedia</option>
+            )}
+          </select>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="date" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <Calendar className="w-4 h-4 mr-2" />
+          Tanggal
+        </label>
+        <input
+          id="date"
+          type="date"
+          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          disabled={isSubmitting}
+          required
+        />
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-4">
+        <button 
+          type="button" 
+          className="px-6 py-3 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          onClick={() => navigate('/')}
+          disabled={isSubmitting}
+        >
+          <XCircle className="w-5 h-5 mr-2" />
+          Batal
+        </button>
+        <button 
+          type="submit" 
+          className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Menambahkan...
+            </>
+          ) : (
+            <>
+              <CheckCircle className="w-5 h-5 mr-2" />
+              Tambah Transaksi
+            </>
+          )}
+        </button>
       </div>
     </form>
   );

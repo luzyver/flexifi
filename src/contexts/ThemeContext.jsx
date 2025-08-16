@@ -20,11 +20,9 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
     
     if (isDarkMode) {
-      document.documentElement.setAttribute('data-bs-theme', 'dark');
-      document.body.classList.add('dark-mode');
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.removeAttribute('data-bs-theme');
-      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
 

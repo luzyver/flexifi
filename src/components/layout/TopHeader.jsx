@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import DateRangeFilter from '../common/DateRangeFilter';
 import { useState } from 'react';
+import { Menu, Filter, Sun, Moon, User, Key, LogOut, ChevronDown } from 'lucide-react';
 
 const TopHeader = ({
   onLogout,
@@ -13,9 +14,11 @@ const TopHeader = ({
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
   const handleLogoutClick = () => {
     onLogout();
+    setShowUserMenu(false);
   };
 
   const showFilters = location.pathname === '/' || location.pathname === '/history';
@@ -24,144 +27,152 @@ const TopHeader = ({
     setShowMobileFilters(!showMobileFilters);
   };
 
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/': return 'Dasbor';
+      case '/add-transaction': return 'Tambah Transaksi';
+      case '/history': return 'Riwayat Transaksi';
+      case '/categories': return 'Kategori';
+      case '/change-password': return 'Ubah Kata Sandi';
+      case '/activation-codes': return 'Kode Aktivasi';
+      default: return '';
+    }
+  };
+
   return (
-    <div className="top-header">
-      <div className="top-header-left">
-        {/* Mobile Menu Toggle */}
-        <button
-          className="modern-btn modern-btn-outline modern-btn-sm d-md-none"
-          onClick={onMobileMenuToggle}
-          aria-label="Toggle menu"
-        >
-          <i className="bi bi-list"></i>
-        </button>
-
-        {/* Page Title */}
-        <div className="d-none d-md-block">
-          <h5 className="mb-0 fw-semibold text-primary">
-            {location.pathname === '/' && 'Dasbor'}
-            {location.pathname === '/add-transaction' && 'Tambah Transaksi'}
-            {location.pathname === '/history' && 'Riwayat Transaksi'}
-            {location.pathname === '/categories' && 'Kategori'}
-            {location.pathname === '/change-password' && 'Ubah Kata Sandi'}
-            {location.pathname === '/activation-codes' && 'Kode Aktivasi'}
-          </h5>
-        </div>
-      </div>
-
-      <div className="top-header-right">
-        {/* Filter Controls - Desktop */}
-        {showFilters && (
-          <div className="header-filter-controls">
-
-            <DateRangeFilter 
-              onFilterChange={(filter) => {
-                if (filter) {
-                  if (filter.type === 'singleDate') {
-                    setFilterMonth(`singleDate-${filter.selectedDate}`);
-                  } else if (filter.type === 'byYear') {
-                    setFilterMonth(`byYear-${filter.selectedYear}`);
-                  } else if (filter.type === 'byMonth') {
-                    setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
-                  }
-                } else {
-                  setFilterMonth('');
-                }
-              }}
-              transactions={transactions}
-            />
-          </div>
-        )}
-
-        {/* Mobile Filter Toggle */}
-        {showFilters && (
-          <button 
-            className="modern-btn modern-btn-outline modern-btn-sm mobile-filter-toggle"
-            onClick={toggleMobileFilters}
+    <div className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-40">
+      <div className="flex items-center justify-between h-full px-4 lg:px-6">
+        <div className="flex items-center space-x-4">
+          {/* Mobile Menu Toggle */}
+          <button
+            className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            onClick={onMobileMenuToggle}
+            aria-label="Toggle menu"
           >
-            <i className="bi bi-funnel"></i>
+            <Menu className="w-5 h-5" />
           </button>
-        )}
-        
-        {/* Mobile Filters Dropdown */}
-        {showFilters && showMobileFilters && (
-          <div className="mobile-filters-dropdown">
-            <div className="p-3">
-              <h6 className="mb-3">Filter Transaksi</h6>
-              
 
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Filter Tanggal</label>
-                <DateRangeFilter 
-                  onFilterChange={(filter) => {
-                    if (filter) {
-                      if (filter.type === 'singleDate') {
-                        setFilterMonth(`singleDate-${filter.selectedDate}`);
-                      } else if (filter.type === 'byYear') {
-                        setFilterMonth(`byYear-${filter.selectedYear}`);
-                      } else if (filter.type === 'byMonth') {
-                        setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
-                      }
-                    } else {
-                      setFilterMonth('');
+          {/* Page Title */}
+          <div className="hidden md:block">
+            <h1 className="text-xl font-semibold text-primary-600 dark:text-primary-400">
+              {getPageTitle()}
+            </h1>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-3">
+          {/* Filter Controls - Desktop */}
+          {showFilters && (
+            <div className="hidden lg:block">
+              <DateRangeFilter 
+                onFilterChange={(filter) => {
+                  if (filter) {
+                    if (filter.type === 'singleDate') {
+                      setFilterMonth(`singleDate-${filter.selectedDate}`);
+                    } else if (filter.type === 'byYear') {
+                      setFilterMonth(`byYear-${filter.selectedYear}`);
+                    } else if (filter.type === 'byMonth') {
+                      setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
                     }
-                  }}
-                  transactions={transactions}
-                />
-              </div>
-              
-              <button 
-                className="btn btn-sm btn-outline-secondary w-100"
-                onClick={toggleMobileFilters}
-              >
-                Tutup
-              </button>
+                  } else {
+                    setFilterMonth('');
+                  }
+                }}
+                transactions={transactions}
+              />
             </div>
-          </div>
-        )}
-        
-        {/* Theme Toggle */}
-        <button
-          className="theme-toggle-header"
-          onClick={toggleDarkMode}
-          aria-label="Toggle dark mode"
-          title={isDarkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
-        >
-          <i className={`bi ${isDarkMode ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
-        </button>
-        
-        {/* User Menu */}
-        <div className="dropdown">
-          <button 
-            className="modern-btn modern-btn-outline dropdown-toggle d-flex align-items-center" 
-            type="button"
-            id="userDropdown" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false"
+          )}
+
+          {/* Mobile Filter Toggle */}
+          {showFilters && (
+            <button 
+              className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={toggleMobileFilters}
+            >
+              <Filter className="w-5 h-5" />
+            </button>
+          )}
+          
+          {/* Theme Toggle */}
+          <button
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+            title={isDarkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
           >
-            <i className="bi bi-person-circle me-2"></i> 
-            <span className="d-none d-sm-inline">{username}</span>
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
-          <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown">
-            <li>
-              <Link to="/change-password" className="dropdown-item d-flex align-items-center">
-                <i className="bi bi-key me-2"></i> 
-                Ubah Kata Sandi
-              </Link>
-            </li>
-            <li><hr className="dropdown-divider" /></li>
-            <li>
-              <button 
-                onClick={handleLogoutClick} 
-                className="dropdown-item d-flex align-items-center text-danger border-0 bg-transparent w-100"
-              >
-                <i className="bi bi-box-arrow-right me-2"></i> 
-                Keluar
-              </button>
-            </li>
-          </ul>
+          
+          {/* User Menu */}
+          <div className="relative">
+            <button 
+              className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              <User className="w-5 h-5" />
+              <span className="hidden sm:inline font-medium">{username}</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                <Link 
+                  to="/change-password" 
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <Key className="w-4 h-4" />
+                  <span>Ubah Kata Sandi</span>
+                </Link>
+                <hr className="my-1 border-gray-200 dark:border-gray-700" />
+                <button 
+                  onClick={handleLogoutClick} 
+                  className="flex items-center space-x-2 w-full px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Keluar</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Mobile Filters Dropdown */}
+      {showFilters && showMobileFilters && (
+        <div className="absolute top-16 right-0 left-0 lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg z-40">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Transaksi</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter Tanggal</label>
+              <DateRangeFilter 
+                onFilterChange={(filter) => {
+                  if (filter) {
+                    if (filter.type === 'singleDate') {
+                      setFilterMonth(`singleDate-${filter.selectedDate}`);
+                    } else if (filter.type === 'byYear') {
+                      setFilterMonth(`byYear-${filter.selectedYear}`);
+                    } else if (filter.type === 'byMonth') {
+                      setFilterMonth(`byMonth-${filter.selectedMonth}-${filter.selectedYear}`);
+                    }
+                  } else {
+                    setFilterMonth('');
+                  }
+                }}
+                transactions={transactions}
+              />
+            </div>
+            
+            <button 
+              className="w-full px-4 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              onClick={toggleMobileFilters}
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

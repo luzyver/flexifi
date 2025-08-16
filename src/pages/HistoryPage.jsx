@@ -3,6 +3,7 @@ import TransactionList from '../components/transactions/TransactionList';
 import Breadcrumb from '../components/common/Breadcrumb';
 import PageHeader from '../components/common/PageHeader';
 import { formatRupiah } from '../utils/formatRupiah';
+import { ArrowUpCircle, ArrowDownCircle, Wallet, List, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 
 const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,153 +53,176 @@ const HistoryPage = ({ transactions, onDeleteTransaction }) => {
   const paginationNumbers = getPaginationNumbers(currentPage, totalPages);
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-12">
-          {/* Breadcrumb */}
-          <Breadcrumb />
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb />
 
-          {/* Page Header */}
-          <PageHeader
-            title="Riwayat Transaksi"
-            subtitle="Lihat dan kelola semua transaksi keuangan Anda"
-            icon="bi-clock-history"
-          />
+      {/* Page Header */}
+      <PageHeader
+        title="Riwayat Transaksi"
+        subtitle="Lihat dan kelola semua transaksi keuangan Anda"
+        icon="clock-history"
+      />
 
-          {/* Summary Cards */}
-          {transactions.length > 0 && (
-            <div className="row g-3 mb-4">
-              <div className="col-md-4">
-                <div className="modern-stats-card income fade-in">
-                  <div className="stats-icon income">
-                    <i className="bi bi-arrow-up-circle-fill"></i>
-                  </div>
-                  <div className="stats-label">Total Pemasukan</div>
-                  <div className="stats-value text-success">
-                    {formatRupiah(transactions.filter(t => t.type === 'pemasukan').reduce((sum, t) => sum + t.amount, 0))}
-                  </div>
-                  <div className="stats-change positive">
-                    <i className="bi bi-list-check"></i>
-                    {transactions.filter(t => t.type === 'pemasukan').length} transaksi
+      {/* Summary Cards */}
+      {transactions.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center">
+                    <ArrowUpCircle className="w-6 h-6 text-success-600 dark:text-success-400" />
                   </div>
                 </div>
-              </div>
-              
-              <div className="col-md-4">
-                <div className="modern-stats-card expense fade-in" style={{ animationDelay: '0.1s' }}>
-                  <div className="stats-icon expense">
-                    <i className="bi bi-arrow-down-circle-fill"></i>
-                  </div>
-                  <div className="stats-label">Total Pengeluaran</div>
-                  <div className="stats-value text-danger">
-                    {formatRupiah(transactions.filter(t => t.type === 'pengeluaran').reduce((sum, t) => sum + t.amount, 0))}
-                  </div>
-                  <div className="stats-change negative">
-                    <i className="bi bi-list-check"></i>
-                    {transactions.filter(t => t.type === 'pengeluaran').length} transaksi
-                  </div>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
+                  Total Pemasukan
                 </div>
-              </div>
-              
-              <div className="col-md-4">
-                <div className="modern-stats-card balance fade-in" style={{ animationDelay: '0.2s' }}>
-                  <div className="stats-icon balance">
-                    <i className="bi bi-wallet2"></i>
-                  </div>
-                  <div className="stats-label">Total Transaksi</div>
-                  <div className="stats-value text-primary">
-                    {transactions.length}
-                  </div>
-                  <div className="stats-change positive">
-                    <i className="bi bi-calendar-range"></i>
-                    Catatan sepanjang waktu
-                  </div>
+                <div className="text-2xl lg:text-3xl font-bold text-success-600 dark:text-success-400 mb-2">
+                  {formatRupiah(transactions.filter(t => t.type === 'pemasukan').reduce((sum, t) => sum + t.amount, 0))}
+                </div>
+                <div className="flex items-center text-sm text-success-600 dark:text-success-400">
+                  <List className="w-4 h-4 mr-1" />
+                  {transactions.filter(t => t.type === 'pemasukan').length} transaksi
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Transaction List Card */}
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex justify-content-between align-items-center w-100">
-                <div className="d-flex align-items-center">
-                  <i className="bi bi-list-ul me-2"></i>
-                  <h6 className="mb-0 fw-semibold">Semua Transaksi</h6>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-danger-100 dark:bg-danger-900/30 rounded-xl flex items-center justify-center">
+                    <ArrowDownCircle className="w-6 h-6 text-danger-600 dark:text-danger-400" />
+                  </div>
                 </div>
-                <div className="d-flex align-items-center gap-3">
-                  {currentTransactions.length > 0 && (
-                    <div className="d-none d-md-flex align-items-center gap-3 text-muted small">
-                      <span className="d-flex align-items-center">
-                        <i className="bi bi-arrow-up-circle text-success me-1"></i>
-                        {formatRupiah(currentPageIncome)}
-                      </span>
-                      <span className="d-flex align-items-center">
-                        <i className="bi bi-arrow-down-circle text-danger me-1"></i>
-                        {formatRupiah(currentPageExpense)}
-                      </span>
-                    </div>
-                  )}
-                  <span className="modern-badge light">
-                    {transactions.length} transaksi
-                  </span>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
+                  Total Pengeluaran
+                </div>
+                <div className="text-2xl lg:text-3xl font-bold text-danger-600 dark:text-danger-400 mb-2">
+                  {formatRupiah(transactions.filter(t => t.type === 'pengeluaran').reduce((sum, t) => sum + t.amount, 0))}
+                </div>
+                <div className="flex items-center text-sm text-danger-600 dark:text-danger-400">
+                  <List className="w-4 h-4 mr-1" />
+                  {transactions.filter(t => t.type === 'pengeluaran').length} transaksi
                 </div>
               </div>
             </div>
-            <div className="dashboard-card-body p-0">
-              <TransactionList 
-                transactions={currentTransactions} 
-                onDeleteTransaction={onDeleteTransaction} 
-              />
-            </div>
-            
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="dashboard-card-header border-top">
-                <nav aria-label="Transaction pagination" className="w-100">
-                  <ul className="pagination justify-content-center mb-0">
-                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                      <button 
-                        className="page-link border-0 bg-transparent" 
-                        onClick={() => paginate(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      >
-                        <i className="bi bi-chevron-left"></i>
-                        <span className="d-none d-sm-inline ms-1">Sebelumnya</span>
-                      </button>
-                    </li>
-                    {paginationNumbers.map((number, index) => (
-                      number === '...' ? (
-                        <li key={`ellipsis-${index}`} className="page-item disabled">
-                          <span className="page-link border-0 bg-transparent">...</span>
-                        </li>
-                      ) : (
-                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                          <button 
-                            onClick={() => paginate(number)} 
-                            className={`page-link border-0 ${currentPage === number ? 'bg-primary text-white' : 'bg-transparent'}`}
-                          >
-                            {number}
-                          </button>
-                        </li>
-                      )
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                      <button 
-                        className="page-link border-0 bg-transparent" 
-                        onClick={() => paginate(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                      >
-                        <span className="d-none d-sm-inline me-1">Berikutnya</span>
-                        <i className="bi bi-chevron-right"></i>
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                    <Wallet className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
+                  Total Transaksi
+                </div>
+                <div className="text-2xl lg:text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+                  {transactions.length}
+                </div>
+                <div className="flex items-center text-sm text-primary-600 dark:text-primary-400">
+                  <Calendar className="w-4 h-4 mr-1" />
+                  Catatan sepanjang waktu
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
+      )}
+
+      {/* Transaction List Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.3s' }}>
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <List className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Semua Transaksi</h3>
+            </div>
+            <div className="flex items-center space-x-4">
+              {currentTransactions.length > 0 && (
+                <div className="hidden md:flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="flex items-center">
+                    <ArrowUpCircle className="w-4 h-4 text-success-600 mr-1" />
+                    {formatRupiah(currentPageIncome)}
+                  </span>
+                  <span className="flex items-center">
+                    <ArrowDownCircle className="w-4 h-4 text-danger-600 mr-1" />
+                    {formatRupiah(currentPageExpense)}
+                  </span>
+                </div>
+              )}
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                {transactions.length} transaksi
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="p-0">
+          <TransactionList 
+            transactions={currentTransactions} 
+            onDeleteTransaction={onDeleteTransaction} 
+          />
+        </div>
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+            <nav aria-label="Transaction pagination" className="flex justify-center">
+              <div className="flex items-center space-x-2">
+                <button 
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    currentPage === 1 
+                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                      : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Sebelumnya</span>
+                </button>
+                
+                <div className="flex items-center space-x-1">
+                  {paginationNumbers.map((number, index) => (
+                    number === '...' ? (
+                      <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-400">...</span>
+                    ) : (
+                      <button 
+                        key={number}
+                        onClick={() => paginate(number)} 
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          currentPage === number 
+                            ? 'bg-primary-600 text-white' 
+                            : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {number}
+                      </button>
+                    )
+                  ))}
+                </div>
+                
+                <button 
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    currentPage === totalPages 
+                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                      : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <span className="hidden sm:inline mr-1">Berikutnya</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </nav>
+          </div>
+        )}
       </div>
     </div>
   );

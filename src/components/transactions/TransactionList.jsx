@@ -1,5 +1,6 @@
 import Transaction from './Transaction';
 import { useState, useEffect } from 'react';
+import { Inbox } from 'lucide-react';
 
 const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   const transactionsToDisplay = limit ? transactions.slice(0, limit) : transactions;
@@ -25,9 +26,9 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   };
 
   return (
-    <div className="transaction-list">
+    <div className="space-y-0">
       {transactionsToDisplay.length > 0 ? (
-        <div className="list-group list-group-flush">
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {transactionsToDisplay.map((transaction, index) => (
             <Transaction
               key={transaction._id}
@@ -40,10 +41,10 @@ const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-4 py-md-5">
-          <i className="bi bi-inbox display-1 text-muted mb-3"></i>
-          <h5 className="text-muted mb-2">Tidak ada transaksi ditemukan</h5>
-          <p className="text-muted mb-0 small">Tidak ada transaksi yang sesuai dengan kriteria filter Anda saat ini.</p>
+        <div className="text-center py-12">
+          <Inbox className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Tidak ada transaksi ditemukan</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Tidak ada transaksi yang sesuai dengan kriteria filter Anda saat ini.</p>
         </div>
       )}
     </div>

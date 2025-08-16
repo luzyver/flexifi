@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { CheckCircle, XCircle, Info, X } from 'lucide-react';
 
 const ToastNotification = ({ message, type, duration = 3000 }) => {
   const [visible, setVisible] = useState(false);
@@ -31,28 +32,35 @@ const ToastNotification = ({ message, type, duration = 3000 }) => {
     return null;
   }
 
-  const toastClass = {
-    success: 'text-bg-success',
-    error: 'text-bg-danger',
-    info: 'text-bg-info',
-  }[type] || 'text-bg-info';
+  const toastStyles = {
+    success: 'bg-success-600 text-white',
+    error: 'bg-danger-600 text-white',
+    info: 'bg-info-600 text-white',
+    warning: 'bg-warning-600 text-white',
+  }[type] || 'bg-info-600 text-white';
 
-  const iconClass = {
-    success: 'bi bi-check-circle-fill',
-    error: 'bi bi-x-circle-fill',
-    info: 'bi bi-info-circle-fill',
-  }[type] || 'bi bi-info-circle-fill';
+  const Icon = {
+    success: CheckCircle,
+    error: XCircle,
+    info: Info,
+    warning: Info,
+  }[type] || Info;
 
   return (
-    <div className="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
-      <div className={`toast align-items-center ${toastClass} border-0 ${visible ? 'show' : ''}`} role="alert" aria-live="assertive" aria-atomic="true">
-        <div className="d-flex">
-          <div className="toast-body d-flex align-items-center">
-            <i className={`${iconClass} me-2 fs-5`}></i>
-            {displayMessage}
-          </div>
-          <button type="button" className="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onClick={() => setVisible(false)}></button>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4">
+      <div className={`flex items-center p-4 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-300 max-w-md ${toastStyles} ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+      }`}>
+        <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
+        <div className="flex-1 text-sm font-medium">
+          {displayMessage}
         </div>
+        <button 
+          onClick={() => setVisible(false)}
+          className="ml-3 p-1 hover:bg-white/20 rounded-full transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

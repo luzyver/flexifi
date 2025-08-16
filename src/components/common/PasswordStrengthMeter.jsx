@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CheckCircle, Circle } from 'lucide-react';
 
 const PasswordStrengthMeter = ({ password }) => {
   const [strength, setStrength] = useState(0);
@@ -36,65 +37,69 @@ const PasswordStrengthMeter = ({ password }) => {
   // Don't render anything if password is empty
   if (!password) return null;
   
-  // Determine color based on strength
-  const getColor = () => {
-    const colors = ['', 'var(--danger-color)', 'var(--warning-color)', 'var(--success-color)', 'var(--success-color)'];
-    return colors[strength];
+  // Determine color classes based on strength
+  const getColorClasses = () => {
+    const colors = ['', 'bg-red-500', 'bg-yellow-500', 'bg-green-500', 'bg-green-600'];
+    const textColors = ['', 'text-red-500', 'text-yellow-500', 'text-green-500', 'text-green-600'];
+    return { bg: colors[strength], text: textColors[strength] };
   };
   
+  const colors = getColorClasses();
+  
   return (
-    <div className="password-strength-meter mt-2">
-      <div className="d-flex align-items-center">
-        <div className="progress flex-grow-1" style={{ height: '6px' }}>
+    <div className="mt-2">
+      <div className="flex items-center">
+        <div className="flex-1 flex space-x-1 h-1.5">
           {[...Array(4)].map((_, index) => (
             <div 
               key={index}
-              className="progress-bar" 
-              role="progressbar"
-              style={{
-                width: '25%',
-                backgroundColor: index < strength ? getColor() : 'var(--border-color)',
-                transition: 'background-color 0.3s ease'
-              }}
-              aria-valuenow={strength >= index + 1 ? 25 : 0}
-              aria-valuemin="0" 
-              aria-valuemax="25"
-            ></div>
+              className={`flex-1 rounded-full transition-colors duration-300 ${
+                index < strength ? colors.bg : 'bg-gray-200 dark:bg-gray-600'
+              }`}
+            />
           ))}
         </div>
         {label && (
-          <span className="ms-2 small" style={{ color: getColor(), fontWeight: 500 }}>
+          <span className={`ml-2 text-sm font-medium ${colors.text}`}>
             {label}
           </span>
         )}
       </div>
       
       {/* Password requirements */}
-      <div className="password-requirements mt-2">
-        <div className="row g-2">
-          <div className="col-6">
-            <div className="d-flex align-items-center">
-              <i className={`bi ${password.length >= 6 ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-1 small`}></i>
-              <small className="text-muted">Min. 6 karakter</small>
-            </div>
+      <div className="mt-2">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center">
+            {password.length >= 6 ? (
+              <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+            ) : (
+              <Circle className="w-3 h-3 text-gray-400 mr-1" />
+            )}
+            <span className="text-xs text-gray-600 dark:text-gray-400">Min. 6 karakter</span>
           </div>
-          <div className="col-6">
-            <div className="d-flex align-items-center">
-              <i className={`bi ${/[A-Z]/.test(password) ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-1 small`}></i>
-              <small className="text-muted">Huruf besar</small>
-            </div>
+          <div className="flex items-center">
+            {/[A-Z]/.test(password) ? (
+              <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+            ) : (
+              <Circle className="w-3 h-3 text-gray-400 mr-1" />
+            )}
+            <span className="text-xs text-gray-600 dark:text-gray-400">Huruf besar</span>
           </div>
-          <div className="col-6">
-            <div className="d-flex align-items-center">
-              <i className={`bi ${/[0-9]/.test(password) ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-1 small`}></i>
-              <small className="text-muted">Angka</small>
-            </div>
+          <div className="flex items-center">
+            {/[0-9]/.test(password) ? (
+              <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+            ) : (
+              <Circle className="w-3 h-3 text-gray-400 mr-1" />
+            )}
+            <span className="text-xs text-gray-600 dark:text-gray-400">Angka</span>
           </div>
-          <div className="col-6">
-            <div className="d-flex align-items-center">
-              <i className={`bi ${/[^A-Za-z0-9]/.test(password) ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-1 small`}></i>
-              <small className="text-muted">Karakter khusus</small>
-            </div>
+          <div className="flex items-center">
+            {/[^A-Za-z0-9]/.test(password) ? (
+              <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+            ) : (
+              <Circle className="w-3 h-3 text-gray-400 mr-1" />
+            )}
+            <span className="text-xs text-gray-600 dark:text-gray-400">Karakter khusus</span>
           </div>
         </div>
       </div>

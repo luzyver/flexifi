@@ -1,6 +1,7 @@
 import { formatRupiah } from '../../utils/formatRupiah';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
+import { ArrowUpCircle, ArrowDownCircle, Tag, Calendar, Edit, Trash2 } from 'lucide-react';
 
 const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setActiveTransactionId }) => {
   const navigate = useNavigate();
@@ -8,8 +9,6 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
   const optionsRef = useRef(null);
   const isIncome = transaction.type === 'pemasukan';
   const sign = isIncome ? '+' : '-';
-  const amountClass = isIncome ? 'text-success' : 'text-danger';
-  const iconClass = isIncome ? 'bi-arrow-up-circle-fill' : 'bi-arrow-down-circle-fill';
 
   const formattedTransactionDate = new Date(transaction.date).toLocaleDateString('id-ID', {
     year: 'numeric',
@@ -69,50 +68,49 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
 
   return (
     <div 
-      className={`modern-transaction-item ${isIncome ? 'income' : 'expense'} slide-in position-relative cursor-pointer ${showOptions ? 'active-transaction' : ''}`}
+      className={`relative p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 ${
+        showOptions ? 'bg-gray-50 dark:bg-gray-700 ring-2 ring-primary-500' : ''
+      } ${isIncome ? 'border-l-4 border-success-500' : 'border-l-4 border-danger-500'}`}
       style={{ 
         animationDelay: `${index * 0.1}s`,
-        transition: 'all 0.2s ease',
-        transform: showOptions ? 'translateX(5px)' : 'none',
-        boxShadow: showOptions ? '0 0 0 2px var(--primary-color)' : 'none',
-        position: 'relative',
-        zIndex: showOptions ? 1 : 'auto'
       }}
       onClick={(e) => {
         e.stopPropagation();
         handleTransactionClick(e);
       }}
     >
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="d-flex align-items-center flex-grow-1">
-          <div className={`transaction-icon ${isIncome ? 'income' : 'expense'}`}>
-            <i className={`bi ${iconClass}`}></i>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center flex-1 min-w-0">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 ${
+            isIncome 
+              ? 'bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400' 
+              : 'bg-danger-100 dark:bg-danger-900/30 text-danger-600 dark:text-danger-400'
+          }`}>
+            {isIncome ? <ArrowUpCircle className="w-5 h-5" /> : <ArrowDownCircle className="w-5 h-5" />}
           </div>
           
-          <div className="flex-grow-1 min-w-0">
-            <div className="transaction-description text-truncate mb-1">
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-gray-900 dark:text-white truncate mb-1">
               {transaction.description}
             </div>
-            <div className="transaction-meta">
-              <div className="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
-                <span className="modern-badge light">
-                  <i className="bi bi-tag-fill me-1"></i>
-                  {transaction.category}
-                </span>
-                <span className="text-muted small">
-                  <i className="bi bi-calendar3 me-1"></i>
-                  {formattedTransactionDate}
-                </span>
-              </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                <Tag className="w-3 h-3 mr-1" />
+                {transaction.category}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                <Calendar className="w-3 h-3 mr-1" />
+                {formattedTransactionDate}
+              </span>
             </div>
           </div>
         </div>
         
-        <div className="d-flex align-items-center ms-3">
-          <div className={`transaction-amount ${amountClass} text-end`}>
-            <div className="fw-bold">
-              {sign}{formatRupiah(Math.abs(transaction.amount))}
-            </div>
+        <div className="flex items-center ml-4">
+          <div className={`text-right font-semibold text-lg ${
+            isIncome ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'
+          }`}>
+            {sign}{formatRupiah(Math.abs(transaction.amount))}
           </div>
         </div>
         
@@ -121,7 +119,7 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
           <>
             {/* Mobile overlay */}
             <div 
-              className="mobile-popup-overlay d-md-none"
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowOptions(false);
@@ -130,20 +128,9 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               onMouseDown={(e) => {
                 e.stopPropagation();
               }}
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                zIndex: 1050,
-                animation: 'fadeIn 0.2s ease-in-out',
-                backdropFilter: 'blur(2px)'
-              }}
             />
             <div 
-              className="transaction-options-popup" 
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 min-w-48 animate-fade-in"
               ref={optionsRef}
               onClick={(e) => {
                 e.stopPropagation();
@@ -151,57 +138,39 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
               onMouseDown={(e) => {
                 e.stopPropagation();
               }}
-              style={{ 
-                zIndex: 1060, 
-                minWidth: '180px',
-                border: '1px solid rgba(0,0,0,0.1)',
-                animation: 'fadeIn 0.2s ease-in-out',
-                display: 'block',
-                visibility: 'visible',
-                opacity: 1,
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                backgroundColor: 'var(--card-bg)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                borderRadius: '8px',
-                padding: '8px'
-              }}
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Menutup popup opsi sebelum navigasi
-                  setShowOptions(false);
-                  setActiveTransactionId(null);
-                  navigate(`/edit-transaction/${transaction._id}`);
-                }}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                }}
-                className="d-flex align-items-center gap-2 btn btn-sm w-100 text-start mb-1"
-              >
-                <i className="bi bi-pencil text-primary"></i>
-                <span>Edit Transaksi</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Menutup popup opsi sebelum menampilkan dialog konfirmasi
-                  setShowOptions(false);
-                  setActiveTransactionId(null);
-                  // Memanggil fungsi onDeleteTransaction yang akan menampilkan dialog konfirmasi
-                  onDeleteTransaction(transaction._id);
-                }}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                }}
-                className="d-flex align-items-center gap-2 btn btn-sm w-100 text-start"
-              >
-                <i className="bi bi-trash text-danger"></i>
-                <span>Hapus Transaksi</span>
-              </button>
+              <div className="p-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowOptions(false);
+                    setActiveTransactionId(null);
+                    navigate(`/edit-transaction/${transaction._id}`);
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className="flex items-center space-x-2 w-full px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors mb-1"
+                >
+                  <Edit className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                  <span>Edit Transaksi</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowOptions(false);
+                    setActiveTransactionId(null);
+                    onDeleteTransaction(transaction._id);
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className="flex items-center space-x-2 w-full px-3 py-2 text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                >
+                  <Trash2 className="w-4 h-4 text-danger-600 dark:text-danger-400" />
+                  <span>Hapus Transaksi</span>
+                </button>
+              </div>
             </div>
           </>
         )}

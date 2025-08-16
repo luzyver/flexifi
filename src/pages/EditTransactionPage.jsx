@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Loader2, AlertCircle, Edit3 } from 'lucide-react';
 import EditTransaction from '../components/transactions/EditTransaction';
+import Breadcrumb from '../components/common/Breadcrumb';
+import PageHeader from '../components/common/PageHeader';
 
 const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, categories }) => {
   const { id } = useParams();
@@ -50,13 +53,17 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
 
   if (loading) {
     return (
-      <div className="container py-4">
-        <div className="card modern-card">
-          <div className="card-body text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-            <p className="mt-3">Memuat data transaksi...</p>
+      <div className="max-w-4xl mx-auto space-y-6 py-6">
+        <Breadcrumb />
+        <PageHeader
+          title="Edit Transaksi"
+          subtitle="Memuat data transaksi..."
+          icon="edit"
+        />
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 p-8">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
+            <p className="text-gray-600 dark:text-gray-400">Memuat data transaksi...</p>
           </div>
         </div>
       </div>
@@ -65,18 +72,24 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
 
   if (error || !transaction) {
     return (
-      <div className="container py-4">
-        <div className="card modern-card">
-          <div className="card-body text-center py-5">
-            <div className="alert alert-danger">
-              <i className="bi bi-exclamation-triangle-fill me-2"></i>
-              {error || 'Transaksi tidak ditemukan'}
-            </div>
+      <div className="max-w-4xl mx-auto space-y-6 py-6">
+        <Breadcrumb />
+        <PageHeader
+          title="Edit Transaksi"
+          subtitle="Terjadi kesalahan"
+          icon="alert-triangle"
+        />
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 p-8">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <AlertCircle className="w-12 h-12 text-red-500" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Transaksi Tidak Ditemukan</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-center">{error || 'Transaksi tidak ditemukan atau tidak dapat diakses'}</p>
             <button 
-              className="modern-btn modern-btn-primary mt-3" 
+              className="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center space-x-2"
               onClick={() => navigate(-1)}
             >
-              Kembali
+              <ArrowLeft className="w-4 h-4" />
+              <span>Kembali</span>
             </button>
           </div>
         </div>
@@ -85,13 +98,21 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
   }
 
   return (
-    <div className="container py-4">
-      <div className="card modern-card">
-        <div className="card-header d-flex align-items-center">
-          <i className="bi bi-pencil-square fs-4 me-2"></i>
-          <h5 className="mb-0">Edit Transaksi</h5>
+    <div className="max-w-4xl mx-auto space-y-6 py-6">
+      <Breadcrumb />
+      <PageHeader
+        title="Edit Transaksi"
+        subtitle="Perbarui detail transaksi Anda"
+        icon="edit-3"
+      />
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <Edit3 className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Detail Transaksi</h3>
+          </div>
         </div>
-        <div className="card-body">
+        <div className="p-6">
           <EditTransaction 
             transaction={transaction}
             onUpdateTransaction={onUpdateTransaction}

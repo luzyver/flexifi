@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ArrowLeft, Save, Calendar, DollarSign, FileText, Tag, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
 import { formatRupiah, parseRupiahToNumber } from '../../utils/formatRupiah';
 
 const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categories, onCancel }) => {
@@ -74,144 +75,130 @@ const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categori
   const filteredCategoriesForType = categories.filter(cat => cat.type === type);
 
   return (
-    <form onSubmit={onSubmit} className="needs-validation" noValidate>
-      <div className="row g-4">
-        <div className="col-12">
-          <div className="modern-form-group">
-            <label htmlFor="edit-type" className="modern-form-label">
-              <i className="bi bi-arrow-up-down"></i>
-              Jenis Transaksi
-            </label>
-            <select 
-              id="edit-type" 
-              className="modern-form-select" 
-              value={type} 
-              onChange={handleTypeChange}
-              disabled={isSubmitting}
-            >
-              <option value="pengeluaran">
-                💸 Expense (Pengeluaran)
-              </option>
-              <option value="pemasukan">
-                💰 Income (Pemasukan)
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div className="col-12">
-          <div className="modern-form-group">
-            <label htmlFor="edit-description" className="modern-form-label">
-              <i className="bi bi-card-text"></i>
-              Deskripsi
-            </label>
-            <input
-              id="edit-description"
-              type="text"
-              className="modern-form-control"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Masukkan deskripsi transaksi..."
-              autoComplete="off"
-              disabled={isSubmitting}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="col-md-6">
-          <div className="modern-form-group">
-            <label htmlFor="edit-amount" className="modern-form-label">
-              <i className="bi bi-currency-dollar"></i>
-              Jumlah (IDR)
-            </label>
-            <div className="input-group w-100">
-              <span className="input-group-text">Rp</span>
-              <input
-                id="edit-amount"
-                type="text"
-                className="modern-form-control"
-                value={formattedAmount}
-                onChange={(e) => handleAmountChange(e.target.value)}
-                placeholder="0"
-                disabled={isSubmitting}
-                required
-                inputMode="numeric"
-                pattern="[0-9]*"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-6">
-          <div className="modern-form-group">
-            <label htmlFor="edit-category" className="modern-form-label">
-              <i className="bi bi-tags-fill"></i>
-              Kategori
-            </label>
-            <select 
-              id="edit-category" 
-              className="modern-form-select" 
-              value={category} 
-              onChange={(e) => setCategory(e.target.value)}
-              disabled={isSubmitting || filteredCategoriesForType.length === 0}
-              required
-            >
-              {filteredCategoriesForType.length > 0 ? (
-                filteredCategoriesForType.map((cat) => (
-                  <option key={cat._id} value={cat.category}>
-                    {cat.category}
-                  </option>
-                ))
-              ) : (
-                <option value="">No categories available</option>
-              )}
-            </select>
-          </div>
-        </div>
-
-        <div className="col-12">
-          <div className="modern-form-group">
-            <label htmlFor="edit-date" className="modern-form-label">
-              <i className="bi bi-calendar-date"></i>
-              Tanggal
-            </label>
-            <input
-              id="edit-date"
-              type="date"
-              className="modern-form-control"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              disabled={isSubmitting}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="col-12 d-flex justify-content-end gap-2 mt-4">
-          <button 
-            type="button" 
-            className="modern-btn modern-btn-outline" 
-            onClick={onCancel}
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis Transaksi</label>
+        <div className="relative">
+          <select
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
+            value={type}
+            onChange={handleTypeChange}
             disabled={isSubmitting}
           >
-            Batal
-          </button>
-          <button 
-            type="submit" 
-            className="modern-btn modern-btn-primary" 
+            <option value="pengeluaran">💸 Expense (Pengeluaran)</option>
+            <option value="pemasukan">💰 Income (Pemasukan)</option>
+          </select>
+          {type === 'pemasukan' ? (
+            <TrendingUp className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500" />
+          ) : type === 'pengeluaran' ? (
+            <TrendingDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-red-500" />
+          ) : (
+            <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Deskripsi</label>
+        <div className="relative">
+          <input
+            type="text"
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Masukkan deskripsi transaksi..."
+            autoComplete="off"
             disabled={isSubmitting}
+            required
+          />
+          <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Jumlah (IDR)</label>
+        <div className="relative">
+          <input
+            type="text"
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
+            value={formattedAmount}
+            onChange={(e) => handleAmountChange(e.target.value)}
+            placeholder="0"
+            disabled={isSubmitting}
+            required
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
+          <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori</label>
+        <div className="relative">
+          <select
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            disabled={isSubmitting || filteredCategoriesForType.length === 0}
+            required
           >
-            {isSubmitting ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Menyimpan...
-              </>
+            {filteredCategoriesForType.length > 0 ? (
+              filteredCategoriesForType.map((cat) => (
+                <option key={cat._id} value={cat.category}>
+                  {cat.category}
+                </option>
+              ))
             ) : (
-              'Simpan Perubahan'
+              <option value="">No categories available</option>
             )}
-          </button>
+          </select>
+          <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal</label>
+        <div className="relative">
+          <input
+            type="date"
+            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            disabled={isSubmitting}
+            required
+          />
+          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        </div>
+      </div>
+
+      <div className="flex gap-3 justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
+        <button
+          type="button"
+          className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2.5 px-5 rounded-lg transition-colors duration-300 flex items-center space-x-2"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Batal</span>
+        </button>
+        <button
+          type="submit"
+          className="bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2.5 px-5 rounded-lg transition-colors duration-300 flex items-center space-x-2"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Menyimpan...</span>
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4" />
+              <span>Simpan Perubahan</span>
+            </>
+          )}
+        </button>
       </div>
     </form>
   );

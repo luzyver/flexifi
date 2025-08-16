@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Shield, Key } from 'lucide-react';
 import Breadcrumb from '../components/common/Breadcrumb';
 import PageHeader from '../components/common/PageHeader';
 import PasswordStrengthMeter from '../components/common/PasswordStrengthMeter';
@@ -84,40 +85,40 @@ const ChangePasswordPage = ({ showToast }) => {
                      newPassword === confirmNewPassword && newPassword.length >= 6;
 
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-12 col-lg-8 col-xl-6">
-          {/* Breadcrumb */}
-          <Breadcrumb />
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb />
 
-          {/* Page Header */}
-          <PageHeader
-            title="Ubah Kata Sandi"
-            subtitle="Perbarui keamanan akun Anda"
-            icon="bi-shield-lock"
-          />
+      {/* Page Header */}
+      <PageHeader
+        title="Ubah Kata Sandi"
+        subtitle="Perbarui keamanan akun Anda untuk perlindungan yang lebih baik"
+        icon="shield"
+      />
 
-          {/* Change Password Form */}
-          <div className="card fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="card-header">
-              <h6 className="mb-0 fw-semibold">
-                <i className="bi bi-key me-2"></i>
-                Pembaruan Kata Sandi
-              </h6>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit} className="needs-validation" noValidate>
+      {/* Change Password Form */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <Key className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pembaruan Kata Sandi</h3>
+          </div>
+        </div>
+        <div className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Current Password */}
-                <div className="mb-3">
-                  <label htmlFor="currentPassword" className="form-label">
-                    <i className="bi bi-lock me-2"></i>
+                <div>
+                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Kata Sandi Saat Ini
                   </label>
-                  <div className="input-group">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="w-5 h-5 text-gray-400" />
+                    </div>
                     <input
                       type={showCurrentPassword ? "text" : "password"}
                       id="currentPassword"
-                      className="form-control form-control-lg"
+                      className="w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="Masukkan kata sandi saat ini"
@@ -127,26 +128,31 @@ const ChangePasswordPage = ({ showToast }) => {
                     />
                     <button
                       type="button"
-                      className="btn btn-outline-secondary"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                       disabled={isSubmitting}
                     >
-                      <i className={`bi ${showCurrentPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      {showCurrentPassword ? 
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+                      }
                     </button>
                   </div>
                 </div>
 
                 {/* New Password */}
-                <div className="mb-3">
-                  <label htmlFor="newPassword" className="form-label">
-                    <i className="bi bi-shield-lock me-2"></i>
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Kata Sandi Baru
                   </label>
-                  <div className="input-group">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Shield className="w-5 h-5 text-gray-400" />
+                    </div>
                     <input
                       type={showNewPassword ? "text" : "password"}
                       id="newPassword"
-                      className="form-control form-control-lg"
+                      className="w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Masukkan kata sandi baru"
@@ -157,28 +163,37 @@ const ChangePasswordPage = ({ showToast }) => {
                     />
                     <button
                       type="button"
-                      className="btn btn-outline-secondary"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       disabled={isSubmitting}
                     >
-                      <i className={`bi ${showNewPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      {showNewPassword ? 
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+                      }
                     </button>
                   </div>
-                  <PasswordStrengthMeter password={newPassword} />
+                  <div className="mt-2">
+                    <PasswordStrengthMeter password={newPassword} />
+                  </div>
                 </div>
 
                 {/* Confirm New Password */}
-                <div className="mb-4">
-                  <label htmlFor="confirmNewPassword" className="form-label">
-                    <i className="bi bi-shield-check me-2"></i>
+                <div>
+                  <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Konfirmasi Kata Sandi Baru
                   </label>
-                  <div className="input-group">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Shield className="w-5 h-5 text-gray-400" />
+                    </div>
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmNewPassword"
-                      className={`form-control form-control-lg ${
-                        confirmNewPassword && newPassword !== confirmNewPassword ? 'is-invalid' : ''
+                      className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                        confirmNewPassword && newPassword !== confirmNewPassword 
+                          ? 'border-red-500 dark:border-red-400' 
+                          : 'border-gray-300 dark:border-gray-600'
                       }`}
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
@@ -189,47 +204,47 @@ const ChangePasswordPage = ({ showToast }) => {
                     />
                     <button
                       type="button"
-                      className="btn btn-outline-secondary"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       disabled={isSubmitting}
                     >
-                      <i className={`bi ${showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      {showConfirmPassword ? 
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
+                      }
                     </button>
                   </div>
                   {confirmNewPassword && newPassword !== confirmNewPassword && (
-                    <div className="invalid-feedback">
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                       Kata sandi tidak cocok
-                    </div>
+                    </p>
                   )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <button 
-                    type="button" 
-                    className="btn btn-outline-secondary btn-lg me-md-2"
-                    onClick={() => navigate('/')}
-                    disabled={isSubmitting}
-                  >
-                    <i className="bi bi-arrow-left me-2"></i>
-                    Batal
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="btn btn-primary btn-lg"
-                    disabled={isSubmitting || !isFormValid}
+                {/* Submit Button */}
+                <div className="space-y-3">
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+                    disabled={!isFormValid || isSubmitting}
                   >
                     {isSubmitting ? (
                       <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Memperbarui...
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Sedang Memperbarui...</span>
                       </>
                     ) : (
-                      <>
-                        <i className="bi bi-check-circle-fill me-2"></i>
-                        Perbarui Kata Sandi
-                      </>
+                      'Ubah Kata Sandi'
                     )}
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => navigate('/')}
+                    disabled={isSubmitting}
+                  >
+                    Batal
                   </button>
                 </div>
               </form>
@@ -237,43 +252,33 @@ const ChangePasswordPage = ({ showToast }) => {
           </div>
 
           {/* Security Tips */}
-          <div className="card mt-4 fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="card-body">
-              <h6 className="card-title fw-semibold mb-3">
-                <i className="bi bi-shield-check me-2 text-success"></i>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                <Shield className="w-5 h-5 text-success mr-2" />
                 Tips Keamanan
-              </h6>
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Gunakan minimal 6 karakter</small>
-                  </div>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-start">
+                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Gunakan minimal 6 karakter</p>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Sertakan huruf dan angka</small>
-                  </div>
+                <div className="flex items-start">
+                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Sertakan huruf dan angka</p>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Jangan gunakan kembali kata sandi lama</small>
-                  </div>
+                <div className="flex items-start">
+                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Jangan gunakan kembali kata sandi lama</p>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <i className="bi bi-check-circle text-success me-2 mt-1 flex-shrink-0"></i>
-                    <small className="text-muted">Jaga kerahasiaan dan keamanannya</small>
-                  </div>
+                <div className="flex items-start">
+                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Jaga kerahasiaan dan keamanannya</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 

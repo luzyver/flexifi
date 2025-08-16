@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Calendar, ChevronDown } from 'lucide-react';
 
 const MONTH_NAMES = [
   'Januari',
@@ -87,27 +88,33 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
   };
 
   return (
-    <div className="dropdown position-relative w-100">
-      <div className="input-group" style={{ minWidth: '200px' }}>
-        <span className="input-group-text bg-light border-0">
-          <i className="bi bi-calendar3"></i>
-        </span>
+    <div className="relative w-full min-w-48">
+      <div className="flex">
+        <div className="flex items-center px-3 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
+          <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+        </div>
         <button
-          className="form-select text-start"
+          className="flex-1 px-3 py-2 text-left bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-r-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
-          style={{ textAlign: 'left' }}
         >
-          {getFilterButtonLabel()}
+          <div className="flex items-center justify-between">
+            <span className="text-gray-900 dark:text-white truncate">{getFilterButtonLabel()}</span>
+            <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          </div>
         </button>
       </div>
       
       {isOpen && (
-        <div className="dropdown-menu show p-3" style={{ minWidth: '280px', width: '100%' }}>
-          <div className="mb-3">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 p-4 min-w-72">
+          <div className="space-y-4">
             <button 
-              className={`btn btn-outline-secondary btn-sm w-100 mb-3 ${!selectedYear && !selectedMonth ? 'active' : ''}`}
+              className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                !selectedYear && !selectedMonth 
+                  ? 'bg-primary-600 text-white' 
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
               onClick={() => {
                 setSelectedYear('');
                 setSelectedMonth('');
@@ -119,60 +126,60 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
               Semua Transaksi
             </button>
             
-            <label className="form-label small fw-semibold">Filter Kustom</label>
-            <div className="mb-2 border rounded p-2">
-              <select 
-                className="form-select form-select-sm mb-2"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                <option value="singleDate">Berdasarkan Tanggal</option>
-                <option value="byMonth">Berdasarkan Bulan</option>
-                <option value="byYear">Berdasarkan Tahun</option>
-              </select>
-              
-              {filterType === 'singleDate' && (
-                <input
-                  type="date"
-                  className="form-control form-control-sm"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  min={min}
-                  max={max}
-                />
-              )}
-              
-              {(filterType === 'byMonth' || filterType === 'byYear') && (
-                <select
-                  className="form-select form-select-sm mb-2"
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(e.target.value)}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter Kustom</label>
+              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
+                <select 
+                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
                 >
-                  <option value="">Pilih Tahun</option>
-                  {years.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
+                  <option value="singleDate">Berdasarkan Tanggal</option>
+                  <option value="byMonth">Berdasarkan Bulan</option>
+                  <option value="byYear">Berdasarkan Tahun</option>
                 </select>
-              )}
-              
-              {filterType === 'byMonth' && (
-                <select
-                  className="form-select form-select-sm"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
-                >
-                  <option value="">Pilih Bulan</option>
-                  {months.map(month => (
-                    <option key={month.value} value={month.value}>{month.label}</option>
-                  ))}
-                </select>
-              )}
+                
+                {filterType === 'singleDate' && (
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    min={min}
+                    max={max}
+                  />
+                )}
+                
+                {(filterType === 'byMonth' || filterType === 'byYear') && (
+                  <select
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                  >
+                    <option value="">Pilih Tahun</option>
+                    {years.map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                )}
+                
+                {filterType === 'byMonth' && (
+                  <select
+                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                  >
+                    <option value="">Pilih Bulan</option>
+                    {months.map(month => (
+                      <option key={month.value} value={month.value}>{month.label}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </div>
-          </div>
-          
-          <div className="d-flex gap-2">
+            
             <button
-              className="btn btn-primary btn-sm flex-fill"
+              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               onClick={handleApplyFilter}
               disabled={
                 (filterType === 'singleDate' && !selectedDate) ||

@@ -1,6 +1,7 @@
 import AddTransaction from '../components/transactions/AddTransaction';
 import Breadcrumb from '../components/common/Breadcrumb';
 import PageHeader from '../components/common/PageHeader';
+import { Wallet, Lightbulb, CheckCircle, Tags, Calculator, Clock } from 'lucide-react';
 
 const AddTransactionPage = ({ 
   onAddTransaction, 
@@ -9,28 +10,28 @@ const AddTransactionPage = ({
   categories 
 }) => {
   return (
-    <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-12 col-lg-8 col-xl-6">
-          {/* Breadcrumb */}
-          <Breadcrumb />
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <Breadcrumb />
 
-          {/* Page Header */}
-          <PageHeader
-            title="Tambah Transaksi Baru"
-            subtitle="Catat transaksi pemasukan atau pengeluaran Anda"
-            icon="bi-plus-circle"
-          />
+      {/* Page Header */}
+      <PageHeader
+        title="Tambah Transaksi Baru"
+        subtitle="Catat transaksi pemasukan atau pengeluaran Anda"
+        icon="plus-circle"
+      />
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           {/* Add Transaction Form */}
-          <div className="dashboard-card fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-wallet2 me-2"></i>
-                <h6 className="mb-0 fw-semibold">Detail Transaksi</h6>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <Wallet className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Detail Transaksi</h3>
               </div>
             </div>
-            <div className="dashboard-card-body">
+            <div className="p-6">
               <AddTransaction 
                 onAddTransaction={onAddTransaction}
                 showToast={showToast}
@@ -39,59 +40,56 @@ const AddTransactionPage = ({
               />
             </div>
           </div>
+        </div>
 
+        <div className="lg:col-span-1">
           {/* Quick Tips */}
-          <div className="dashboard-card mt-4 fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="dashboard-card-header">
-              <div className="d-flex align-items-center">
-                <i className="bi bi-lightbulb me-2"></i>
-                <h6 className="mb-0 fw-semibold">Tips Pro</h6>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <Lightbulb className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tips Pro</h3>
               </div>
             </div>
-            <div className="dashboard-card-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <div className="stats-icon income me-3">
-                      <i className="bi bi-check-circle"></i>
-                    </div>
-                    <div>
-                      <h6 className="fw-semibold mb-1">Buat Deskripsi Jelas</h6>
-                      <p className="text-muted small mb-0">Gunakan nama yang jelas dan deskriptif untuk pelacakan dan kategorisasi yang mudah.</p>
-                    </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="w-10 h-10 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Buat Deskripsi Jelas</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Gunakan nama yang jelas dan deskriptif untuk pelacakan dan kategorisasi yang mudah.</p>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <div className="stats-icon balance me-3">
-                      <i className="bi bi-tags"></i>
-                    </div>
-                    <div>
-                      <h6 className="fw-semibold mb-1">Pilih Kategori</h6>
-                      <p className="text-muted small mb-0">Pilih kategori yang tepat untuk wawasan dan laporan keuangan yang lebih baik.</p>
-                    </div>
+                
+                <div className="flex items-start">
+                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+                    <Tags className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Pilih Kategori</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Pilih kategori yang tepat untuk wawasan dan laporan keuangan yang lebih baik.</p>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <div className="stats-icon expense me-3">
-                      <i className="bi bi-calculator"></i>
-                    </div>
-                    <div>
-                      <h6 className="fw-semibold mb-1">Periksa Ulang</h6>
-                      <p className="text-muted small mb-0">Verifikasi jumlah dan tanggal sebelum menyimpan untuk menjaga catatan yang akurat.</p>
-                    </div>
+                
+                <div className="flex items-start">
+                  <div className="w-10 h-10 bg-warning-100 dark:bg-warning-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+                    <Calculator className="w-5 h-5 text-warning-600 dark:text-warning-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Periksa Ulang</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Verifikasi jumlah dan tanggal sebelum menyimpan untuk menjaga catatan yang akurat.</p>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="d-flex align-items-start">
-                    <div className="stats-icon income me-3">
-                      <i className="bi bi-clock"></i>
-                    </div>
-                    <div>
-                      <h6 className="fw-semibold mb-1">Tetap Konsisten</h6>
-                      <p className="text-muted small mb-0">Catat transaksi secara teratur untuk gambaran keuangan yang paling akurat.</p>
-                    </div>
+                
+                <div className="flex items-start">
+                  <div className="w-10 h-10 bg-info-100 dark:bg-info-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+                    <Clock className="w-5 h-5 text-info-600 dark:text-info-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Tetap Konsisten</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Catat transaksi secara teratur untuk gambaran keuangan yang paling akurat.</p>
                   </div>
                 </div>
               </div>

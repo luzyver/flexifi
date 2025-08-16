@@ -1,75 +1,70 @@
+import { AlertTriangle, Trash2, X } from 'lucide-react';
+
 /**
  * Dialog konfirmasi yang dapat dikustomisasi untuk berbagai tindakan
- * @param {Object} props - Props komponen
- * @param {string} props.title - Judul dialog
- * @param {string} props.message - Pesan konfirmasi
- * @param {string} props.confirmText - Teks tombol konfirmasi
- * @param {string} props.cancelText - Teks tombol batal
- * @param {string} props.confirmIcon - Kelas ikon Bootstrap untuk tombol konfirmasi
- * @param {string} props.confirmButtonClass - Kelas tombol Bootstrap untuk tombol konfirmasi
- * @param {string} props.headerClass - Kelas untuk header dialog
- * @param {Function} props.onConfirm - Fungsi yang dipanggil saat pengguna mengkonfirmasi
- * @param {Function} props.onCancel - Fungsi yang dipanggil saat pengguna membatalkan
- * @param {boolean} props.isOpen - Status dialog terbuka atau tertutup
- * @returns {JSX.Element}
  */
 const ConfirmationDialog = ({ 
   title = "Konfirmasi Tindakan",
   message, 
   confirmText = "Hapus", 
   cancelText = "Batal", 
-  confirmIcon = "bi-trash-fill",
-  confirmButtonClass = "btn-danger",
-  headerClass = "bg-danger",
   onConfirm, 
   onCancel, 
   isOpen 
 }) => {
+  if (!isOpen) return null;
+
   return (
-    <div 
-      className={`modal fade ${isOpen ? 'show d-block' : ''}`} 
-      tabIndex="-1" 
-      role="dialog" 
-      style={{ 
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        transition: 'background-color 0.3s ease'
-      }}
-    >
-      <div 
-        className="modal-dialog modal-dialog-centered" 
-        role="document"
-        style={{
-          transform: isOpen ? 'translateY(0)' : 'translateY(-20px)',
-          opacity: isOpen ? 1 : 0,
-          transition: 'transform 0.3s ease, opacity 0.3s ease'
-        }}
-      >
-        <div className="modal-content shadow-lg rounded-3 border-0">
-          <div className={`modal-header ${headerClass} text-white rounded-top-3`}>
-            <h5 className="modal-title"><i className="bi bi-exclamation-triangle-fill me-2"></i> {title}</h5>
-            <button type="button" className="btn-close btn-close-white" aria-label="Close" onClick={onCancel}></button>
-          </div>
-          <div className="modal-body p-4">
-            {message && message.includes('\n') ? (
-              <div className="text-start">
-                {message.split('\n').map((line, index) => (
-                  <p key={index} className={index === 0 ? 'lead mb-3' : 'mb-2'}>
-                    {line}
-                  </p>
-                ))}
-              </div>
-            ) : (
-              <p className="lead text-center">{message}</p>
-            )}
-          </div>
-          <div className="modal-footer justify-content-center border-top-0 pb-4">
-            <button type="button" className="btn btn-secondary me-2" onClick={onCancel}>
-              {cancelText}
-            </button>
-            <button type="button" className={`btn ${confirmButtonClass}`} onClick={onConfirm}>
-              {confirmIcon && <i className={`bi ${confirmIcon} me-1`}></i>} {confirmText}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full transform transition-all duration-300 scale-100">
+        {/* Header */}
+        <div className="bg-danger-600 text-white p-6 rounded-t-2xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertTriangle className="w-6 h-6 mr-2" />
+              <h3 className="text-lg font-semibold">{title}</h3>
+            </div>
+            <button 
+              onClick={onCancel}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <X className="w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        {/* Body */}
+        <div className="p-6">
+          {message && message.includes('\n') ? (
+            <div className="text-left">
+              {message.split('\n').map((line, index) => (
+                <p key={index} className={`${index === 0 ? 'text-lg mb-4' : 'mb-2'} text-gray-700 dark:text-gray-300`}>
+                  {line}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p className="text-lg text-center text-gray-700 dark:text-gray-300">{message}</p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-center space-x-3 p-6 pt-0">
+          <button 
+            type="button" 
+            className="px-6 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+            onClick={onCancel}
+          >
+            {cancelText}
+          </button>
+          <button 
+            type="button" 
+            className="px-6 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors font-medium flex items-center"
+            onClick={onConfirm}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {confirmText}
+          </button>
         </div>
       </div>
     </div>
