@@ -79,13 +79,19 @@ function AppContent() {
   const [filterMonth, setFilterMonth] = useState('');
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
+  const [isDeletingTransaction, setIsDeletingTransaction] = useState(false);
   const [isCategoryConfirmationDialogOpen, setCategoryConfirmationDialogOpen] = useState(false);
   const [categoryToDeleteId, setCategoryToDeleteId] = useState(null);
   const [categoryDeleteSuccessCallback, setCategoryDeleteSuccessCallback] = useState(null);
+  const [isDeletingCategory, setIsDeletingCategory] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [toastType, setToastType] = useState('info');
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Hanya untuk overlay global saat autentikasi awal
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [hasInitAuth, setHasInitAuth] = useState(false);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
 
   const showToast = useCallback((message, type = 'info') => {
     setToastMessage(message);
@@ -97,6 +103,7 @@ function AppContent() {
 
   const fetchCategories = useCallback(async () => {
     try {
+      setIsCategoriesLoading(true);
       const token = localStorage.getItem('token');
       if (!token) {
         return;
@@ -120,6 +127,8 @@ function AppContent() {
       }
     } catch (error) {
       showToast('Error fetching categories: ' + error.message, 'error');
+    } finally {
+      setIsCategoriesLoading(false);
     }
   }, [API_BASE_URL, showToast]);
 
@@ -180,8 +189,10 @@ function AppContent() {
       if (storedToken) {
         setToken(storedToken);
         try {
-          // Set loading state saat memulai proses autentikasi
-          setIsLoading(true);
+          // Overlay hanya saat autentikasi awal
+          if (!hasInitAuth) {
+            setIsAuthLoading(true);
+          }
           
           const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
             method: 'POST',
@@ -217,11 +228,18 @@ function AppContent() {
           console.error('Token refresh error:', error);
           handleLogout();
         } finally {
-          setIsLoading(false);
+          // Matikan overlay hanya sekali setelah autentikasi awal
+          if (!hasInitAuth) {
+            setIsAuthLoading(false);
+            setHasInitAuth(true);
+          }
         }
       } else {
         setIsAuthenticated(false);
-        setIsLoading(false);
+        if (!hasInitAuth) {
+          setIsAuthLoading(false);
+          setHasInitAuth(true);
+        }
       }
     };
 
@@ -377,7 +395,7 @@ function AppContent() {
   };
 
   const handleConfirmDelete = async () => {
-    setConfirmationDialogOpen(false);
+    setIsDeletingTransaction(true);
     try {
       const res = await fetch(`${API_BASE_URL}/transactions/${transactionToDeleteId}`, {
         method: 'DELETE',
@@ -387,9 +405,9 @@ function AppContent() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
-        showToast('Transaksi berhasil dihapus!', 'success');
-      } else {
+      setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
+      showToast('Transaksi berhasil dihapus!', 'success');
+    } else {
         // Periksa apakah sesi telah diinvalidasi (login di device lain)
         if (data.sessionInvalidated) {
           showToast('Akun Anda telah login di perangkat lain', 'warning');
@@ -401,6 +419,8 @@ function AppContent() {
     } catch (err) {
       showToast('Error menghapus transaksi: ' + err.message, 'error');
     } finally {
+      setIsDeletingTransaction(false);
+      setConfirmationDialogOpen(false);
       setTransactionToDeleteId(null);
       setTransactionToDelete(null);
     }
@@ -428,7 +448,7 @@ function AppContent() {
   };
 
   const handleConfirmDeleteCategory = async () => {
-    setCategoryConfirmationDialogOpen(false);
+    setIsDeletingCategory(true);
     try {
       const res = await fetch(`${API_BASE_URL}/categories/${categoryToDeleteId}`, {
         method: 'DELETE',
@@ -454,6 +474,8 @@ function AppContent() {
     } catch (err) {
       showToast('Error menghapus kategori: ' + err.message, 'error');
     } finally {
+      setIsDeletingCategory(false);
+      setCategoryConfirmationDialogOpen(false);
       setCategoryToDeleteId(null);
       setCategoryToDelete(null);
       setCategoryDeleteSuccessCallback(null);
@@ -523,16 +545,16 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <LoadingOverlay isLoading={isLoading} />
+      <LoadingOverlay isLoading={isAuthLoading} />
       <div className="flex flex-col min-h-screen">
-        {!isAuthenticated && !isLoading ? (
+        {!isAuthenticated && !isAuthLoading ? (
           <div className="flex-1">
             <Routes>
               <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
               <Route path="/register" element={<RegisterPage showToast={showToast} />} />
             </Routes>
           </div>
-        ) : isLoading ? null : (
+        ) : isAuthLoading ? null : (
           <DashboardLayout
             onLogout={() => {
               showToast('You have been logged out.', 'info');
@@ -553,6 +575,7 @@ function AppContent() {
                     transactions={filteredTransactions}
                     onDeleteTransaction={handleDeleteClick}
                     username={username}
+                    isLoading={isLoading}
                   />
                 }
               />
@@ -573,6 +596,7 @@ function AppContent() {
                   <HistoryPage
                     transactions={filteredTransactions}
                     onDeleteTransaction={handleDeleteClick}
+                    isLoading={isLoading}
                   />
                 }
               />
@@ -585,6 +609,7 @@ function AppContent() {
                     onDeleteCategory={handleDeleteCategoryClick}
                     categories={categories}
                     onCategoryAdded={fetchCategories}
+                    isLoading={isCategoriesLoading}
                   />
                 }
               />
@@ -638,6 +663,8 @@ function AppContent() {
               confirmText="Hapus"
               cancelText="Batal"
               isOpen={isConfirmationDialogOpen}
+              isProcessing={isDeletingTransaction}
+              processingText="Menghapus..."
               onConfirm={handleConfirmDelete}
               onCancel={handleCancelDelete}
             />
@@ -653,6 +680,8 @@ function AppContent() {
               confirmText="Hapus"
               cancelText="Batal"
               isOpen={isCategoryConfirmationDialogOpen}
+              isProcessing={isDeletingCategory}
+              processingText="Menghapus..."
               onConfirm={handleConfirmDeleteCategory}
               onCancel={handleCancelDeleteCategory}
             />
@@ -660,7 +689,7 @@ function AppContent() {
         )}
         <ToastNotification message={toastMessage} type={toastType} />
       </div>
-      {isAuthenticated && !isLoading && <Footer />}
+      {isAuthenticated && !isAuthLoading && <Footer />}
     </div>
   );
 }

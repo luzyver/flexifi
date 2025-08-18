@@ -10,7 +10,9 @@ const ConfirmationDialog = ({
   cancelText = "Batal", 
   onConfirm, 
   onCancel, 
-  isOpen 
+  isOpen,
+  isProcessing = false,
+  processingText = "Memproses..."
 }) => {
   if (!isOpen) return null;
 
@@ -54,16 +56,27 @@ const ConfirmationDialog = ({
             type="button" 
             className="px-6 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
             onClick={onCancel}
+            disabled={isProcessing}
           >
             {cancelText}
           </button>
           <button 
             type="button" 
-            className="px-6 py-2 bg-danger-600 hover:bg-danger-700 text-white rounded-lg transition-colors font-medium flex items-center"
+            className={`px-6 py-2 text-white rounded-lg transition-colors font-medium flex items-center ${isProcessing ? 'bg-danger-600/70 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700'}`}
             onClick={onConfirm}
+            disabled={isProcessing}
           >
-            <Trash2 className="w-4 h-4 mr-2" />
-            {confirmText}
+            {isProcessing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                {processingText}
+              </>
+            ) : (
+              <>
+                <Trash2 className="w-4 h-4 mr-2" />
+                {confirmText}
+              </>
+            )}
           </button>
         </div>
       </div>

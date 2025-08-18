@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { TrendingUp, TrendingDown, Wallet, ArrowUpCircle, ArrowDownCircle, PieChart, BarChart3, Clock, Plus, Heart } from 'lucide-react';
 import TransactionList from '../components/transactions/TransactionList';
+import Skeleton from '../components/common/Skeleton';
 import CategoryPieChart from '../components/charts/CategoryPieChart';
 import MonthlyTrendChart from '../components/charts/MonthlyTrendChart';
 import { formatRupiah } from '../utils/formatRupiah';
@@ -12,6 +13,7 @@ const HomePage = ({
   transactions,
   onDeleteTransaction,
   username,
+  isLoading,
 }) => {
   // Calculate percentage changes (mock data for demo)
   const incomeChange = 12.5;
@@ -59,13 +61,22 @@ const HomePage = ({
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                 Total Pemasukan
               </div>
-              <div className="text-2xl lg:text-3xl font-bold text-success-600 dark:text-success-400 mb-2">
-                {formatRupiah(income)}
-              </div>
-              <div className="flex items-center text-sm text-success-600 dark:text-success-400">
-                <TrendingUp className="w-4 h-4 mr-1" />
-                +{incomeChange}% dari bulan lalu
-              </div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-7 w-40 mb-2 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </>
+              ) : (
+                <>
+                  <div className="text-2xl lg:text-3xl font-bold text-success-600 dark:text-success-400 mb-2">
+                    {formatRupiah(income)}
+                  </div>
+                  <div className="flex items-center text-sm text-success-600 dark:text-success-400">
+                    <TrendingUp className="w-4 h-4 mr-1" />
+                    +{incomeChange}% dari bulan lalu
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -81,13 +92,22 @@ const HomePage = ({
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                 Total Pengeluaran
               </div>
-              <div className="text-2xl lg:text-3xl font-bold text-danger-600 dark:text-danger-400 mb-2">
-                {formatRupiah(expense)}
-              </div>
-              <div className="flex items-center text-sm text-danger-600 dark:text-danger-400">
-                <TrendingDown className="w-4 h-4 mr-1" />
-                {expenseChange}% dari bulan lalu
-              </div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-7 w-40 mb-2 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </>
+              ) : (
+                <>
+                  <div className="text-2xl lg:text-3xl font-bold text-danger-600 dark:text-danger-400 mb-2">
+                    {formatRupiah(expense)}
+                  </div>
+                  <div className="flex items-center text-sm text-danger-600 dark:text-danger-400">
+                    <TrendingDown className="w-4 h-4 mr-1" />
+                    {expenseChange}% dari bulan lalu
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -103,13 +123,22 @@ const HomePage = ({
               <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
                 Saldo Saat Ini
               </div>
-              <div className={`text-2xl lg:text-3xl font-bold mb-2 ${balance >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
-                {formatRupiah(balance)}
-              </div>
-              <div className={`flex items-center text-sm ${balanceChange >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
-                {balanceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-                {balanceChange >= 0 ? '+' : ''}{balanceChange}% dari bulan lalu
-              </div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-7 w-40 mb-2 rounded" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </>
+              ) : (
+                <>
+                  <div className={`text-2xl lg:text-3xl font-bold mb-2 ${balance >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
+                    {formatRupiah(balance)}
+                  </div>
+                  <div className={`flex items-center text-sm ${balanceChange >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
+                    {balanceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+                    {balanceChange >= 0 ? '+' : ''}{balanceChange}% dari bulan lalu
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -125,7 +154,11 @@ const HomePage = ({
             </div>
           </div>
           <div className="p-6">
-            <CategoryPieChart transactions={transactions} />
+            {isLoading ? (
+              <Skeleton className="h-64 w-full rounded-xl" />
+            ) : (
+              <CategoryPieChart transactions={transactions} />
+            )}
           </div>
         </div>
 
@@ -137,7 +170,11 @@ const HomePage = ({
             </div>
           </div>
           <div className="p-6">
-            <MonthlyTrendChart transactions={transactions} />
+            {isLoading ? (
+              <Skeleton className="h-64 w-full rounded-xl" />
+            ) : (
+              <MonthlyTrendChart transactions={transactions} />
+            )}
           </div>
         </div>
       </div>
@@ -164,7 +201,24 @@ const HomePage = ({
               </div>
             </div>
             <div className="p-0">
-              {transactions.length > 0 ? (
+              {isLoading ? (
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-10 w-10 rounded-lg" />
+                          <div>
+                            <Skeleton className="h-4 w-40 mb-2 rounded" />
+                            <Skeleton className="h-3 w-24 rounded" />
+                          </div>
+                        </div>
+                        <Skeleton className="h-4 w-24 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : transactions.length > 0 ? (
                 <TransactionList
                   transactions={transactions}
                   onDeleteTransaction={onDeleteTransaction}

@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import Skeleton from '../components/common/Skeleton';
 import Breadcrumb from '../components/common/Breadcrumb';
 import PageHeader from '../components/common/PageHeader';
 import { ArrowUpCircle, ArrowDownCircle, Tags, Plus, Tag, ArrowUpDown, Trash2 } from 'lucide-react';
 
-const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded }) => {
+const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded, isLoading }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryType, setNewCategoryType] = useState('pengeluaran');
   const [loading, setLoading] = useState(false);
@@ -83,7 +84,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 Kategori Pemasukan
               </div>
               <div className="text-2xl lg:text-3xl font-bold text-success-600 dark:text-success-400">
-                {incomeCategories.length}
+                {isLoading ? <Skeleton className="h-8 w-12 rounded" /> : incomeCategories.length}
               </div>
             </div>
           </div>
@@ -101,7 +102,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 Kategori Pengeluaran
               </div>
               <div className="text-2xl lg:text-3xl font-bold text-danger-600 dark:text-danger-400">
-                {expenseCategories.length}
+                {isLoading ? <Skeleton className="h-8 w-12 rounded" /> : expenseCategories.length}
               </div>
             </div>
           </div>
@@ -119,10 +120,10 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 Total Kategori
               </div>
               <div className="text-2xl lg:text-3xl font-bold text-primary-600 dark:text-primary-400">
-                {categories.length}
+                {isLoading ? <Skeleton className="h-8 w-12 rounded" /> : categories.length}
               </div>
-            </div>
-          </div>
+        </div>
+      </div>
         </div>
       </div>
 
@@ -175,7 +176,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                 <button 
                   type="submit" 
                   className="w-full px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                  disabled={loading || !newCategoryName.trim()}
+                  disabled={loading || isLoading || !newCategoryName.trim()}
                 >
                   {loading ? (
                     <>
@@ -210,7 +211,19 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
               </div>
             </div>
             <div className="p-0">
-              {incomeCategories.length === 0 ? (
+              {isLoading ? (
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-4">
+                      <div className="flex items-center">
+                        <Skeleton className="w-8 h-8 rounded-lg mr-3" />
+                        <Skeleton className="h-4 w-40 rounded" />
+                      </div>
+                      <Skeleton className="h-8 w-8 rounded" />
+                    </div>
+                  ))}
+                </div>
+              ) : incomeCategories.length === 0 ? (
                 <div className="text-center py-12">
                   <ArrowUpCircle className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Tidak ada kategori pemasukan</h3>
@@ -254,7 +267,19 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
               </div>
             </div>
             <div className="p-0">
-              {expenseCategories.length === 0 ? (
+              {isLoading ? (
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-4">
+                      <div className="flex items-center">
+                        <Skeleton className="w-8 h-8 rounded-lg mr-3" />
+                        <Skeleton className="h-4 w-40 rounded" />
+                      </div>
+                      <Skeleton className="h-8 w-8 rounded" />
+                    </div>
+                  ))}
+                </div>
+              ) : expenseCategories.length === 0 ? (
                 <div className="text-center py-12">
                   <ArrowDownCircle className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Tidak ada kategori pengeluaran</h3>
