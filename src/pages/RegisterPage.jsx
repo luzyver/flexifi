@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import PasswordStrengthMeter from '../components/common/PasswordStrengthMeter';
-import { UserPlus, Gauge, TrendingUp, Users, User, Lock, Shield, Key, Eye, EyeOff, ArrowRight, Sun, Moon, CheckCircle } from 'lucide-react';
+import { UserPlus, User, Lock, Shield, Key, Eye, EyeOff, ArrowRight, Sun, Moon, CheckCircle } from 'lucide-react';
 
 const RegisterPage = ({ showToast }) => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -70,7 +70,7 @@ const RegisterPage = ({ showToast }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
       {/* Background Shapes */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-200 dark:bg-primary-900/30 rounded-full blur-3xl opacity-70"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-success-200 dark:bg-success-900/30 rounded-full blur-3xl opacity-70"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-info-200 dark:bg-info-900/30 rounded-full blur-3xl opacity-50"></div>
@@ -78,7 +78,7 @@ const RegisterPage = ({ showToast }) => {
 
       {/* Theme Toggle */}
       <button
-        className="absolute top-6 right-6 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-10"
+        className="absolute top-6 right-6 p-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-20 pointer-events-auto"
         onClick={toggleDarkMode}
         aria-label="Toggle theme"
       >
@@ -86,60 +86,18 @@ const RegisterPage = ({ showToast }) => {
       </button>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex">
-        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-12 xl:px-16">
-          <div className="max-w-lg">
-            <div className="flex items-center mb-8">
-              <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mr-4">
-                <UserPlus className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bergabung dengan FlexiFi</h1>
-                <p className="text-gray-600 dark:text-gray-400">Mulai perjalanan keuangan Anda hari ini</p>
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-6 lg:p-8">
+        <div className={`w-full max-w-md transform transition-all duration-700 ${animateForm ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-gray-700/20">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center">
+                <UserPlus className="w-7 h-7 text-white" />
               </div>
             </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Gauge className="w-6 h-6 text-success-600 dark:text-success-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Pengaturan Cepat</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Mulai dalam hitungan menit dengan proses pendaftaran sederhana kami</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-info-100 dark:bg-info-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-6 h-6 text-info-600 dark:text-info-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Analitik Cerdas</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Dapatkan wawasan tentang pola pengeluaran dan tabungan Anda</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-warning-100 dark:bg-warning-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-warning-600 dark:text-warning-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Dipercaya oleh Pengguna</h3>
-                  <p className="text-gray-600 dark:text-gray-400">Bergabunglah dengan ribuan pengguna yang mengelola keuangan mereka</p>
-                </div>
-              </div>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Daftar ke FlexiFi</h2>
+              <p className="text-gray-600 dark:text-gray-400">Mulai perjalanan keuangan Anda hari ini</p>
             </div>
-          </div>
-        </div>
-
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
-          <div className={`w-full max-w-md transform transition-all duration-700 ${animateForm ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 dark:border-gray-700/20">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Buat Akun</h2>
-                <p className="text-gray-600 dark:text-gray-400">Bergabung dengan FlexiFi dan kendalikan keuangan Anda</p>
-              </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
@@ -332,7 +290,7 @@ const RegisterPage = ({ showToast }) => {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
