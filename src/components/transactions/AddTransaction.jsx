@@ -209,7 +209,6 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
               disabled={isSubmitting}
               required
               inputMode="numeric"
-              pattern="[0-9]*"
             />
           </div>
         </div>
