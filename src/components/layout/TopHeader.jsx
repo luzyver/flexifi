@@ -15,7 +15,7 @@ const TopHeader = ({
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  
+
   const handleLogoutClick = () => {
     onLogout();
     setShowUserMenu(false);
@@ -64,7 +64,7 @@ const TopHeader = ({
           {/* Filter Controls - Desktop */}
           {showFilters && (
             <div className="hidden lg:block">
-              <DateRangeFilter 
+              <DateRangeFilter
                 onFilterChange={(filter) => {
                   if (filter) {
                     if (filter.type === 'singleDate') {
@@ -85,14 +85,14 @@ const TopHeader = ({
 
           {/* Mobile Filter Toggle */}
           {showFilters && (
-            <button 
+            <button
               className="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               onClick={toggleMobileFilters}
             >
               <Filter className="w-5 h-5" />
             </button>
           )}
-          
+
           {/* Theme Toggle */}
           <button
             className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -102,10 +102,10 @@ const TopHeader = ({
           >
             {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
-          
+
           {/* User Menu */}
           <div className="relative">
-            <button 
+            <button
               className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               onClick={() => setShowUserMenu(!showUserMenu)}
             >
@@ -113,11 +113,11 @@ const TopHeader = ({
               <span className="hidden sm:inline font-medium">{username}</span>
               <ChevronDown className="w-4 h-4" />
             </button>
-            
+
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
-                <Link 
-                  to="/change-password" 
+                <Link
+                  to="/change-password"
                   className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   onClick={() => setShowUserMenu(false)}
                 >
@@ -125,8 +125,8 @@ const TopHeader = ({
                   <span>Ubah Kata Sandi</span>
                 </Link>
                 <hr className="my-1 border-gray-200 dark:border-gray-700" />
-                <button 
-                  onClick={handleLogoutClick} 
+                <button
+                  onClick={handleLogoutClick}
                   className="flex items-center space-x-2 w-full px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
@@ -143,10 +143,10 @@ const TopHeader = ({
         <div className="absolute top-16 right-0 left-0 lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-lg z-40">
           <div className="p-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filter Transaksi</h3>
-            
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter Tanggal</label>
-              <DateRangeFilter 
+              <DateRangeFilter
                 onFilterChange={(filter) => {
                   if (filter) {
                     if (filter.type === 'singleDate') {
@@ -163,8 +163,8 @@ const TopHeader = ({
                 transactions={transactions}
               />
             </div>
-            
-            <button 
+
+            <button
               className="w-full px-4 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               onClick={toggleMobileFilters}
             >

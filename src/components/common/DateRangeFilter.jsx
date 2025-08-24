@@ -36,14 +36,13 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
     }
   };
 
-
   const getDateRange = () => {
     if (!transactions || transactions.length === 0) return { min: '', max: '' };
-    
+
     const dates = transactions.map(t => new Date(t.date));
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
-    
+
     return {
       min: minDate.toISOString().split('T')[0],
       max: maxDate.toISOString().split('T')[0]
@@ -105,14 +104,14 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
           </div>
         </button>
       </div>
-      
+
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 p-4 min-w-72">
           <div className="space-y-4">
-            <button 
+            <button
               className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                !selectedYear && !selectedMonth 
-                  ? 'bg-primary-600 text-white' 
+                !selectedYear && !selectedMonth
+                  ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
               onClick={() => {
@@ -125,11 +124,11 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
             >
               Semua Transaksi
             </button>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter Kustom</label>
               <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
-                <select 
+                <select
                   className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
@@ -138,7 +137,7 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
                   <option value="byMonth">Berdasarkan Bulan</option>
                   <option value="byYear">Berdasarkan Tahun</option>
                 </select>
-                
+
                 {filterType === 'singleDate' && (
                   <input
                     type="date"
@@ -149,7 +148,7 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
                     max={max}
                   />
                 )}
-                
+
                 {(filterType === 'byMonth' || filterType === 'byYear') && (
                   <select
                     className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -162,7 +161,7 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
                     ))}
                   </select>
                 )}
-                
+
                 {filterType === 'byMonth' && (
                   <select
                     className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -177,7 +176,7 @@ const DateRangeFilter = ({ onFilterChange, transactions }) => {
                 )}
               </div>
             </div>
-            
+
             <button
               className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
               onClick={handleApplyFilter}

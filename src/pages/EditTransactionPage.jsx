@@ -15,7 +15,7 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
   useEffect(() => {
     // First try to find the transaction in the existing transactions array
     const existingTransaction = transactions.find(t => t._id === id);
-    
+
     if (existingTransaction) {
       setTransaction(existingTransaction);
       setLoading(false);
@@ -84,7 +84,7 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
             <AlertCircle className="w-12 h-12 text-red-500" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Transaksi Tidak Ditemukan</h3>
             <p className="text-gray-600 dark:text-gray-400 text-center">{error || 'Transaksi tidak ditemukan atau tidak dapat diakses'}</p>
-            <button 
+            <button
               className="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center space-x-2"
               onClick={() => navigate(-1)}
             >
@@ -113,7 +113,7 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
           </div>
         </div>
         <div className="p-6">
-          <EditTransaction 
+          <EditTransaction
             transaction={transaction}
             onUpdateTransaction={onUpdateTransaction}
             showToast={showToast}

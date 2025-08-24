@@ -16,7 +16,7 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
     day: 'numeric',
     timeZone: 'UTC'
   });
-  
+
   // We'll use local state only for controlling popup visibility
   // and only sync with parent when we need to close other popups
   useEffect(() => {
@@ -32,28 +32,28 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
       // Only process if options are shown
       if (showOptions) {
         // Check if click was outside the popup and not on the transaction item itself
-        if (optionsRef.current && !optionsRef.current.contains(event.target) && 
+        if (optionsRef.current && !optionsRef.current.contains(event.target) &&
             !event.target.closest('.modern-transaction-item')) {
           setShowOptions(false);
           setActiveTransactionId(null);
         }
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [setActiveTransactionId, showOptions]);
-  
+
   const handleTransactionClick = (e) => {
     // Prevent event bubbling and default behavior
     e.stopPropagation();
     e.preventDefault();
-    
+
     // Toggle options visibility
     const newOptionsState = !showOptions;
-    
+
     if (newOptionsState) {
       // Opening the popup - set this transaction as active
       setActiveTransactionId(transaction._id);
@@ -61,17 +61,17 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
       // Closing the popup - clear active transaction
       setActiveTransactionId(null);
     }
-    
+
     // Update local state
     setShowOptions(newOptionsState);
   };
 
   return (
-    <div 
+    <div
       className={`relative p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200 ${
         showOptions ? 'bg-gray-50 dark:bg-gray-700 ring-2 ring-primary-500' : ''
       } ${isIncome ? 'border-l-4 border-success-500' : 'border-l-4 border-danger-500'}`}
-      style={{ 
+      style={{
         animationDelay: `${index * 0.1}s`,
       }}
       onClick={(e) => {
@@ -82,13 +82,13 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
       <div className="flex justify-between items-center">
         <div className="flex items-center flex-1 min-w-0">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 ${
-            isIncome 
-              ? 'bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400' 
+            isIncome
+              ? 'bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400'
               : 'bg-danger-100 dark:bg-danger-900/30 text-danger-600 dark:text-danger-400'
           }`}>
             {isIncome ? <ArrowUpCircle className="w-5 h-5" /> : <ArrowDownCircle className="w-5 h-5" />}
           </div>
-          
+
           <div className="flex-1 min-w-0">
             <div className="font-medium text-gray-900 dark:text-white truncate mb-1">
               {transaction.description}
@@ -105,7 +105,7 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center ml-4">
           <div className={`text-right font-semibold text-lg ${
             isIncome ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'
@@ -113,12 +113,12 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
             {sign}{formatRupiah(Math.abs(transaction.amount))}
           </div>
         </div>
-        
+
         {/* Options popup */}
         {showOptions && (
           <>
             {/* Mobile overlay */}
-            <div 
+            <div
               className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
               onClick={(e) => {
                 e.stopPropagation();
@@ -129,7 +129,7 @@ const Transaction = ({ transaction, onDeleteTransaction, index, isActive, setAct
                 e.stopPropagation();
               }}
             />
-            <div 
+            <div
               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 min-w-48 animate-fade-in"
               ref={optionsRef}
               onClick={(e) => {

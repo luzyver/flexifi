@@ -3,13 +3,13 @@ import { AlertTriangle, Trash2, X } from 'lucide-react';
 /**
  * Dialog konfirmasi yang dapat dikustomisasi untuk berbagai tindakan
  */
-const ConfirmationDialog = ({ 
+const ConfirmationDialog = ({
   title = "Konfirmasi Tindakan",
-  message, 
-  confirmText = "Hapus", 
-  cancelText = "Batal", 
-  onConfirm, 
-  onCancel, 
+  message,
+  confirmText = "Hapus",
+  cancelText = "Batal",
+  onConfirm,
+  onCancel,
   isOpen,
   isProcessing = false,
   processingText = "Memproses..."
@@ -26,7 +26,7 @@ const ConfirmationDialog = ({
               <AlertTriangle className="w-6 h-6 mr-2" />
               <h3 className="text-lg font-semibold">{title}</h3>
             </div>
-            <button 
+            <button
               onClick={onCancel}
               className="text-white hover:text-gray-200 transition-colors"
             >
@@ -52,16 +52,16 @@ const ConfirmationDialog = ({
 
         {/* Footer */}
         <div className="flex justify-center space-x-3 p-6 pt-0">
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="px-6 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
             onClick={onCancel}
             disabled={isProcessing}
           >
             {cancelText}
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={`px-6 py-2 text-white rounded-lg transition-colors font-medium flex items-center ${isProcessing ? 'bg-danger-600/70 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700'}`}
             onClick={onConfirm}
             disabled={isProcessing}

@@ -33,9 +33,9 @@ const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
       }`}>
         {/* Brand */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <NavLink 
-            to="/" 
-            className="flex items-center space-x-3 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors" 
+          <NavLink
+            to="/"
+            className="flex items-center space-x-3 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
             onClick={handleLinkClick}
           >
             <Wallet className="w-8 h-8" />

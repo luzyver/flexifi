@@ -19,7 +19,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
   const currentPageIncome = currentTransactions
     .filter(t => t.type === 'pemasukan')
     .reduce((sum, t) => sum + t.amount, 0);
-  
+
   const currentPageExpense = currentTransactions
     .filter(t => t.type === 'pengeluaran')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -99,7 +99,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -121,7 +121,7 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
@@ -192,22 +192,22 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
               ))}
             </div>
           ) : (
-            <TransactionList 
-              transactions={currentTransactions} 
-              onDeleteTransaction={onDeleteTransaction} 
+            <TransactionList
+              transactions={currentTransactions}
+              onDeleteTransaction={onDeleteTransaction}
             />
           )}
         </div>
-        
+
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
           <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
             <nav aria-label="Transaction pagination" className="flex justify-center">
               <div className="flex items-center space-x-2">
-                <button 
+                <button
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    currentPage === 1 
-                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                    currentPage === 1
+                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
                       : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                   onClick={() => paginate(currentPage - 1)}
@@ -216,18 +216,18 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
                   <ChevronLeft className="w-4 h-4 mr-1" />
                   <span className="hidden sm:inline">Sebelumnya</span>
                 </button>
-                
+
                 <div className="flex items-center space-x-1">
                   {paginationNumbers.map((number, index) => (
                     number === '...' ? (
                       <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-400">...</span>
                     ) : (
-                      <button 
+                      <button
                         key={number}
-                        onClick={() => paginate(number)} 
+                        onClick={() => paginate(number)}
                         className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                          currentPage === number 
-                            ? 'bg-primary-600 text-white' 
+                          currentPage === number
+                            ? 'bg-primary-600 text-white'
                             : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -236,11 +236,11 @@ const HistoryPage = ({ transactions, onDeleteTransaction, isLoading }) => {
                     )
                   ))}
                 </div>
-                
-                <button 
+
+                <button
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    currentPage === totalPages 
-                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                    currentPage === totalPages
+                      ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
                       : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                   onClick={() => paginate(currentPage + 1)}

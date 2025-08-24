@@ -124,16 +124,16 @@ const LoginPage = ({ onLogin, showToast }) => {
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
                     >
-                      {showPassword ? 
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                      {showPassword ?
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
                         <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                       }
                     </button>
                   </div>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
                   disabled={isSubmitting || !username || !password}
                 >
@@ -161,8 +161,8 @@ const LoginPage = ({ onLogin, showToast }) => {
                 </div>
               </div>
 
-              <Link 
-                to="/register" 
+              <Link
+                to="/register"
                 className="mt-4 w-full inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-colors"
               >
                 Buat Akun

@@ -81,7 +81,7 @@ const ChangePasswordPage = ({ showToast }) => {
     }
   };
 
-  const isFormValid = currentPassword && newPassword && confirmNewPassword && 
+  const isFormValid = currentPassword && newPassword && confirmNewPassword &&
                      newPassword === confirmNewPassword && newPassword.length >= 6;
 
   return (
@@ -132,8 +132,8 @@ const ChangePasswordPage = ({ showToast }) => {
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                       disabled={isSubmitting}
                     >
-                      {showCurrentPassword ? 
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                      {showCurrentPassword ?
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
                         <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                       }
                     </button>
@@ -167,8 +167,8 @@ const ChangePasswordPage = ({ showToast }) => {
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       disabled={isSubmitting}
                     >
-                      {showNewPassword ? 
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                      {showNewPassword ?
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
                         <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                       }
                     </button>
@@ -191,8 +191,8 @@ const ChangePasswordPage = ({ showToast }) => {
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmNewPassword"
                       className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                        confirmNewPassword && newPassword !== confirmNewPassword 
-                          ? 'border-red-500 dark:border-red-400' 
+                        confirmNewPassword && newPassword !== confirmNewPassword
+                          ? 'border-red-500 dark:border-red-400'
                           : 'border-gray-300 dark:border-gray-600'
                       }`}
                       value={confirmNewPassword}
@@ -208,8 +208,8 @@ const ChangePasswordPage = ({ showToast }) => {
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       disabled={isSubmitting}
                     >
-                      {showConfirmPassword ? 
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> : 
+                      {showConfirmPassword ?
+                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
                         <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
                       }
                     </button>
@@ -237,7 +237,7 @@ const ChangePasswordPage = ({ showToast }) => {
                       'Ubah Kata Sandi'
                     )}
                   </button>
-                  
+
                   <button
                     type="button"
                     className="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"

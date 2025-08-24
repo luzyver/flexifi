@@ -5,12 +5,12 @@ import { Inbox } from 'lucide-react';
 const TransactionList = ({ transactions, onDeleteTransaction, limit }) => {
   const transactionsToDisplay = limit ? transactions.slice(0, limit) : transactions;
   const [activeTransactionId, setActiveTransactionId] = useState(null);
-  
+
   // Debug activeTransactionId changes
   useEffect(() => {
     // Monitor active transaction ID changes
   }, [activeTransactionId]);
-  
+
   // Custom function to set active transaction ID with debugging
   const handleSetActiveTransactionId = (id) => {
     // If we're setting to null (closing) or setting to a new ID (opening a different popup)

@@ -3,10 +3,10 @@ export const formatRupiah = (amount) => {
   if (amount === null || amount === undefined || isNaN(amount)) {
     return 'Rp 0';
   }
-  
+
   // Convert to number if it's a string
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-  
+
   // Handle NaN after conversion
   if (isNaN(numAmount)) {
     return 'Rp 0';

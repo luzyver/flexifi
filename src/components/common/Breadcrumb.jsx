@@ -4,7 +4,7 @@ import { Home, Plus, Clock, Tags, Key, ChevronRight } from 'lucide-react';
 
 const Breadcrumb = ({ customItems = null }) => {
   const location = useLocation();
-  
+
   // Default breadcrumb mapping
   const breadcrumbMap = {
     '/': { label: 'Dasbor', icon: Home },
@@ -18,7 +18,7 @@ const Breadcrumb = ({ customItems = null }) => {
   // Use custom items if provided, otherwise generate from current path
   const items = customItems || (() => {
     const breadcrumbItems = [{ label: 'Dasbor', path: '/', icon: Home }];
-    
+
     if (location.pathname !== '/') {
       const currentPage = breadcrumbMap[location.pathname];
       if (currentPage) {
@@ -32,7 +32,7 @@ const Breadcrumb = ({ customItems = null }) => {
     } else {
       breadcrumbItems[0].active = true;
     }
-    
+
     return breadcrumbItems;
   })();
 
@@ -50,8 +50,8 @@ const Breadcrumb = ({ customItems = null }) => {
                 {item.label}
               </span>
             ) : (
-              <Link 
-                to={item.path} 
+              <Link
+                to={item.path}
                 className="flex items-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <item.icon className="w-4 h-4 mr-1" />

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react';
 
-const PageHeader = ({ 
-  title, 
-  subtitle, 
-  icon = "plus-circle", 
+const PageHeader = ({
+  title,
+  subtitle,
+  icon = "plus-circle",
   actions = null,
   className = ""
 }) => {

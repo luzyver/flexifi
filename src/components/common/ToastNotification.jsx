@@ -55,7 +55,7 @@ const ToastNotification = ({ message, type, duration = 3000 }) => {
         <div className="flex-1 text-sm font-medium">
           {displayMessage}
         </div>
-        <button 
+        <button
           onClick={() => setVisible(false)}
           className="ml-3 p-1 hover:bg-white/20 rounded-full transition-colors"
         >

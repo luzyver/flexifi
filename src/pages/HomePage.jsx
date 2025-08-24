@@ -36,11 +36,11 @@ const HomePage = ({
           <div className="hidden md:block mt-4 md:mt-0">
             <div className="text-right">
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {new Date().toLocaleDateString('id-ID', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                {new Date().toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
                 })}
               </div>
             </div>
@@ -80,7 +80,7 @@ const HomePage = ({
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -111,7 +111,7 @@ const HomePage = ({
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in md:col-span-2 xl:col-span-1" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -191,8 +191,8 @@ const HomePage = ({
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Transaksi Terbaru</h3>
                 </div>
                 {transactions.length > 5 && (
-                  <Link 
-                    to="/history" 
+                  <Link
+                    to="/history"
                     className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     Lihat Semua
@@ -231,8 +231,8 @@ const HomePage = ({
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Belum ada transaksi</h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">Mulai lacak keuangan Anda hari ini</p>
-                  <Link 
-                    to="/add-transaction" 
+                  <Link
+                    to="/add-transaction"
                     className="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
                   >
                     <Plus className="w-5 h-5 mr-2" />
@@ -243,7 +243,7 @@ const HomePage = ({
             </div>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           {/* Quick Stats */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.5s' }}>
@@ -264,7 +264,7 @@ const HomePage = ({
                     <BarChart3 className="w-6 h-6" />
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                   <div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Transaksi Pemasukan</div>
@@ -276,7 +276,7 @@ const HomePage = ({
                     <ArrowUpCircle className="w-6 h-6" />
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
                   <div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">Transaksi Pengeluaran</div>
@@ -291,7 +291,7 @@ const HomePage = ({
               </div>
             </div>
           </div>
-          
+
           {/* Financial Health */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.6s' }}>
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
@@ -309,7 +309,7 @@ const HomePage = ({
                   {balance >= 0 ? 'Sehat' : 'Perlu Perhatian'}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {balance >= 0 
+                  {balance >= 0
                     ? 'Pemasukan Anda melebihi pengeluaran. Pertahankan!'
                     : 'Pengeluaran Anda melebihi pemasukan. Pertimbangkan untuk meninjau pengeluaran Anda.'
                   }

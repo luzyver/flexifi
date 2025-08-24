@@ -32,7 +32,7 @@ const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transac
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar 
+      <Sidebar
         username={username}
         isMobileOpen={isMobileSidebarOpen}
         onMobileClose={handleMobileSidebarClose}
@@ -193,7 +193,7 @@ function AppContent() {
           if (!hasInitAuth) {
             setIsAuthLoading(true);
           }
-          
+
           const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
             method: 'POST',
             headers: {
@@ -203,7 +203,7 @@ function AppContent() {
             credentials: 'include'
           });
           const data = await res.json();
-          
+
           if (res.ok) {
             setIsAuthenticated(true);
             setUsername(data.username);
@@ -244,7 +244,7 @@ function AppContent() {
     };
 
     loadTokenAndAuthenticate();
-    
+
     // Setup interval untuk refresh token secara berkala
     // Refresh setiap 10 menit untuk mencegah token expired (yang 15 menit)
     const tokenRefreshInterval = setInterval(() => {
@@ -252,7 +252,7 @@ function AppContent() {
         loadTokenAndAuthenticate();
       }
     }, 10 * 60 * 1000); // 10 menit
-    
+
     return () => clearInterval(tokenRefreshInterval);
   }, [handleLogout]);
 
@@ -266,7 +266,7 @@ function AppContent() {
     if (isAuthenticated) {
       const abortController = new AbortController();
       const signal = abortController.signal;
-  
+
       const performFetchTransactions = async () => {
         setIsLoading(true);
         try {
@@ -276,11 +276,11 @@ function AppContent() {
               Authorization: `Bearer ${token}`,
             },
           });
-          
+
           if (signal.aborted) {
             return;
           }
-  
+
           const data = await res.json();
           if (res.ok && data.success) {
             setTransactions(data.data);
@@ -308,15 +308,14 @@ function AppContent() {
           }
         }
       };
-  
+
       performFetchTransactions();
-  
+
       return () => {
         abortController.abort();
       };
     }
   }, [isAuthenticated, handleLogout, token]);
-
 
   const addTransaction = async (transaction) => {
     try {
@@ -360,7 +359,7 @@ function AppContent() {
       setConfirmationDialogOpen(true);
     }
   };
-  
+
   const updateTransaction = async (id, updatedTransaction) => {
     try {
       const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
@@ -373,7 +372,7 @@ function AppContent() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setTransactions(transactions.map(transaction => 
+        setTransactions(transactions.map(transaction =>
           transaction._id === id ? data.data : transaction
         ));
         showToast('Transaction updated successfully!', 'success');
@@ -492,7 +491,7 @@ function AppContent() {
   const filteredTransactions = filterMonth
     ? transactions.filter(t => {
         const transactionDate = new Date(t.date);
-        
+
         // Filter by single date
         if (filterMonth.startsWith('singleDate-')) {
           const selectedDate = filterMonth.replace('singleDate-', '');
@@ -501,19 +500,19 @@ function AppContent() {
           const selectedDateOnly = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate());
           return transactionDateOnly.getTime() === selectedDateOnly.getTime();
         }
-        
+
         // Filter by year only
         if (filterMonth.startsWith('year-') || filterMonth.startsWith('byYear-')) {
-          const filterYear = parseInt(filterMonth.startsWith('year-') 
-            ? filterMonth.replace('year-', '') 
+          const filterYear = parseInt(filterMonth.startsWith('year-')
+            ? filterMonth.replace('year-', '')
             : filterMonth.replace('byYear-', ''));
           return transactionDate.getFullYear() === filterYear;
         }
-        
+
         // Filter by month and year
-        if ((filterMonth.includes('-') && !filterMonth.startsWith('year-') && !filterMonth.startsWith('singleDate-')) || 
+        if ((filterMonth.includes('-') && !filterMonth.startsWith('year-') && !filterMonth.startsWith('singleDate-')) ||
             filterMonth.startsWith('byMonth-')) {
-          
+
           // Handle new byMonth format
           if (filterMonth.startsWith('byMonth-')) {
             const parts = filterMonth.replace('byMonth-', '').split('-');
@@ -524,7 +523,7 @@ function AppContent() {
               transactionDate.getMonth() === filterMonthIndex
             );
           }
-          
+
           // Handle original format
           const filterDateParts = filterMonth.split('-');
           const filterYear = parseInt(filterDateParts[0]);
@@ -534,7 +533,7 @@ function AppContent() {
             transactionDate.getMonth() === filterMonthIndex
           );
         }
-        
+
         return true;
       })
     : transactions;
@@ -652,7 +651,7 @@ function AppContent() {
             <ConfirmationDialog
               title="Konfirmasi Hapus Transaksi"
               message={
-                transactionToDelete ? 
+                transactionToDelete ?
                 `Apakah Anda yakin ingin menghapus transaksi berikut?\n\n` +
                 `Nama: ${transactionToDelete.description}\n` +
                 `Jumlah: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(transactionToDelete.amount)}\n` +
@@ -671,9 +670,9 @@ function AppContent() {
             <ConfirmationDialog
               title="Konfirmasi Hapus Kategori"
               message={
-                categoryToDelete ? 
+                categoryToDelete ?
                 `Apakah Anda yakin ingin menghapus kategori berikut?\n\n` +
-                `Nama: ${categoryToDelete.name}\n` +
+                `Nama: ${categoryToDelete.category}\n` +
                 `Tipe: ${categoryToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
                 : 'Apakah Anda yakin ingin menghapus kategori ini?'
               }

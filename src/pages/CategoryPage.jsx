@@ -89,7 +89,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -107,7 +107,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200 dark:border-gray-700 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 animate-fade-in md:col-span-3 lg:col-span-1" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -155,7 +155,7 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                     disabled={loading}
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="newCategoryType" className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     <ArrowUpDown className="w-4 h-4 mr-2" />
@@ -172,9 +172,9 @@ const CategoryPage = ({ showToast, onDeleteCategory, categories, onCategoryAdded
                     <option value="pemasukan">💰 Income (Pemasukan)</option>
                   </select>
                 </div>
-                
-                <button 
-                  type="submit" 
+
+                <button
+                  type="submit"
                   className="w-full px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={loading || isLoading || !newCategoryName.trim()}
                 >

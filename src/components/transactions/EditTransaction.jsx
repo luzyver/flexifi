@@ -27,7 +27,7 @@ const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categori
     // Simpan nilai numerik asli
     const numericValue = parseRupiahToNumber(value);
     setAmount(numericValue.toString());
-    
+
     // Format untuk tampilan
     if (numericValue === 0) {
       setFormattedAmount('');
@@ -38,7 +38,7 @@ const EditTransaction = ({ transaction, onUpdateTransaction, showToast, categori
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!description || !amount || !category || !date) {
       showToast('Harap isi semua kolom', 'error');
       return;
