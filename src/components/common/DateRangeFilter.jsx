@@ -1,198 +1,156 @@
-import { useState } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { useState, useMemo, memo } from 'react';
+import { Calendar, ChevronDown, X } from 'lucide-react';
 
-const MONTH_NAMES = [
-  'Januari',
-  'Februari',
-  'Maret',
-  'April',
-  'Mei',
-  'Juni',
-  'Juli',
-  'Agustus',
-  'September',
-  'Oktober',
-  'November',
-  'Desember'
-];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-const DateRangeFilter = ({ onFilterChange, transactions }) => {
-  const [selectedDate, setSelectedDate] = useState('');
+const DateRangeFilter = memo(function DateRangeFilter({ onFilterChange, transactions }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [filterType, setFilterType] = useState('singleDate');
+  const [filterType, setFilterType] = useState('all');
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
 
-  const handleApplyFilter = () => {
-    if (filterType === 'singleDate' && selectedDate) {
-      onFilterChange({ selectedDate, type: 'singleDate' });
-      setIsOpen(false);
-    } else if (filterType === 'byYear' && selectedYear) {
-      onFilterChange({ selectedYear, type: 'byYear' });
-      setIsOpen(false);
-    } else if (filterType === 'byMonth' && selectedMonth && selectedYear) {
-      onFilterChange({ selectedMonth, selectedYear, type: 'byMonth' });
-      setIsOpen(false);
-    }
-  };
+  const { years, dateRange } = useMemo(() => {
+    if (!transactions?.length) return { years: [], dateRange: { min: '', max: '' } };
 
-  const getDateRange = () => {
-    if (!transactions || transactions.length === 0) return { min: '', max: '' };
-
-    const dates = transactions.map(t => new Date(t.date));
-    const minDate = new Date(Math.min(...dates));
-    const maxDate = new Date(Math.max(...dates));
+    const dates = transactions.map((t) => new Date(t.date));
+    const yearsSet = new Set(dates.map((d) => d.getFullYear()));
 
     return {
-      min: minDate.toISOString().split('T')[0],
-      max: maxDate.toISOString().split('T')[0]
+      years: [...yearsSet].sort((a, b) => b - a),
+      dateRange: {
+        min: new Date(Math.min(...dates)).toISOString().split('T')[0],
+        max: new Date(Math.max(...dates)).toISOString().split('T')[0],
+      },
     };
-  };
+  }, [transactions]);
 
-  const { min, max } = getDateRange();
-
-  // Mendapatkan tahun dan bulan unik dari transaksi
-  const getYearsAndMonths = () => {
-    if (!transactions || transactions.length === 0) return { years: [], months: [] };
-
-    const dates = transactions.map(t => new Date(t.date));
-    const years = [...new Set(dates.map(date => date.getFullYear()))];
-    years.sort((a, b) => b - a); // Urutkan tahun dari terbaru
-
-    const monthsSet = new Set(dates.map(date => date.getMonth()));
-    const months = [...monthsSet]
-      .sort((a, b) => a - b)
-      .map(monthIndex => ({
-        value: monthIndex.toString(),
-        label: MONTH_NAMES[monthIndex]
-      }));
-
-    return { years, months };
-  };
-
-  const { years, months } = getYearsAndMonths();
-
-  // Mendapatkan label untuk tombol filter
-  const getFilterButtonLabel = () => {
-    if (filterType === 'byYear' && selectedYear) {
-      return `Tahun ${selectedYear}`;
-    } else if (filterType === 'byMonth' && selectedMonth && selectedYear) {
-      const monthName = months.find(m => m.value === selectedMonth)?.label;
-      return `${monthName} ${selectedYear}`;
-    } else if (filterType === 'singleDate' && selectedDate) {
-      return selectedDate;
-    } else {
-      return 'Semua Transaksi';
+  const getLabel = () => {
+    if (filterType === 'all') return 'Semua Transaksi';
+    if (filterType === 'date' && selectedDate) return selectedDate;
+    if (filterType === 'month' && selectedMonth && selectedYear) {
+      return `${MONTHS[parseInt(selectedMonth)]} ${selectedYear}`;
     }
+    if (filterType === 'year' && selectedYear) return `Tahun ${selectedYear}`;
+    return 'Pilih Filter';
+  };
+
+  const handleApply = () => {
+    if (filterType === 'all') {
+      onFilterChange(null);
+    } else if (filterType === 'date' && selectedDate) {
+      onFilterChange({ type: 'singleDate', selectedDate });
+    } else if (filterType === 'month' && selectedMonth && selectedYear) {
+      onFilterChange({ type: 'byMonth', selectedMonth, selectedYear });
+    } else if (filterType === 'year' && selectedYear) {
+      onFilterChange({ type: 'byYear', selectedYear });
+    }
+    setIsOpen(false);
+  };
+
+  const handleReset = () => {
+    setFilterType('all');
+    setSelectedDate('');
+    setSelectedMonth('');
+    setSelectedYear('');
+    onFilterChange(null);
+    setIsOpen(false);
   };
 
   return (
-    <div className="relative w-full min-w-48">
-      <div className="flex">
-        <div className="flex items-center px-3 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-lg">
-          <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-        </div>
-        <button
-          className="flex-1 px-3 py-2 text-left bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-r-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-expanded={isOpen}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-gray-900 dark:text-white truncate">{getFilterButtonLabel()}</span>
-            <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-          </div>
-        </button>
-      </div>
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors"
+      >
+        <Calendar className="w-4 h-4 text-slate-500" />
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{getLabel()}</span>
+        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 p-4 min-w-72">
-          <div className="space-y-4">
-            <button
-              className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                !selectedYear && !selectedMonth
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-              onClick={() => {
-                setSelectedYear('');
-                setSelectedMonth('');
-                setFilterType('singleDate');
-                onFilterChange(null);
-                setIsOpen(false);
-              }}
-            >
-              Semua Transaksi
-            </button>
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50 animate-fade-in">
+            <div className="space-y-4">
+              {/* Filter Type */}
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: 'all', label: 'Semua' },
+                  { value: 'date', label: 'Tanggal' },
+                  { value: 'month', label: 'Bulan' },
+                  { value: 'year', label: 'Tahun' },
+                ].map(({ value, label }) => (
+                  <button
+                    key={value}
+                    onClick={() => setFilterType(value)}
+                    className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      filterType === value
+                        ? 'bg-indigo-500 text-white'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter Kustom</label>
-              <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
+              {/* Date Input */}
+              {filterType === 'date' && (
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  min={dateRange.min}
+                  max={dateRange.max}
+                  className="input-modern"
+                />
+              )}
+
+              {/* Year Select */}
+              {(filterType === 'month' || filterType === 'year') && (
                 <select
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="input-modern"
                 >
-                  <option value="singleDate">Berdasarkan Tanggal</option>
-                  <option value="byMonth">Berdasarkan Bulan</option>
-                  <option value="byYear">Berdasarkan Tahun</option>
+                  <option value="">Pilih Tahun</option>
+                  {years.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
                 </select>
+              )}
 
-                {filterType === 'singleDate' && (
-                  <input
-                    type="date"
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    min={min}
-                    max={max}
-                  />
-                )}
+              {/* Month Select */}
+              {filterType === 'month' && (
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="input-modern"
+                >
+                  <option value="">Pilih Bulan</option>
+                  {MONTHS.map((m, i) => (
+                    <option key={i} value={i}>{m}</option>
+                  ))}
+                </select>
+              )}
 
-                {(filterType === 'byMonth' || filterType === 'byYear') && (
-                  <select
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                  >
-                    <option value="">Pilih Tahun</option>
-                    {years.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                )}
-
-                {filterType === 'byMonth' && (
-                  <select
-                    className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                  >
-                    <option value="">Pilih Bulan</option>
-                    {months.map(month => (
-                      <option key={month.value} value={month.value}>{month.label}</option>
-                    ))}
-                  </select>
-                )}
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <button onClick={handleReset} className="btn-secondary flex-1 py-2 text-sm">
+                  <X className="w-4 h-4 mr-1 inline" />
+                  Reset
+                </button>
+                <button onClick={handleApply} className="btn-primary flex-1 py-2 text-sm">
+                  Terapkan
+                </button>
               </div>
             </div>
-
-            <button
-              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-              onClick={handleApplyFilter}
-              disabled={
-                (filterType === 'singleDate' && !selectedDate) ||
-                (filterType === 'byYear' && !selectedYear) ||
-                (filterType === 'byMonth' && (!selectedMonth || !selectedYear))
-              }
-            >
-              Terapkan
-            </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
-};
+});
 
 export default DateRangeFilter;

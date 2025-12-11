@@ -1,63 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { useAuth, useTransactions, useCategories, useToast, useConfirmDialog, useTransactionFilter } from './hooks';
 
-import HomePage from './pages/HomePage';
-import AddTransactionPage from './pages/AddTransactionPage';
-import HistoryPage from './pages/HistoryPage';
+// Eager loaded pages (critical path)
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import CategoryPage from './pages/CategoryPage';
-import ChangePasswordPage from './pages/ChangePasswordPage';
-import ActivationCodePage from './pages/ActivationCodePage';
-import EditTransactionPage from './pages/EditTransactionPage';
-import Sidebar from './components/layout/Sidebar';
-import TopHeader from './components/layout/TopHeader';
+import HomePage from './pages/HomePage';
+
+// Lazy loaded pages
+const AddTransactionPage = lazy(() => import('./pages/AddTransactionPage'));
+const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
+const ActivationCodePage = lazy(() => import('./pages/ActivationCodePage'));
+const EditTransactionPage = lazy(() => import('./pages/EditTransactionPage'));
+
+// Components
+import DashboardLayout from './components/layout/DashboardLayout';
 import ConfirmationDialog from './components/common/ConfirmationDialog';
 import LoadingOverlay from './components/common/LoadingOverlay';
 import ToastNotification from './components/common/ToastNotification';
-import Footer from './components/layout/Footer';
+import { formatRupiah } from './utils/formatRupiah';
 
-const DashboardLayout = ({ children, onLogout, username, setFilterMonth, transactions }) => {
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-  const handleMobileMenuToggle = () => {
-    setIsMobileSidebarOpen(!isMobileSidebarOpen);
-  };
-
-  const handleMobileSidebarClose = () => {
-    setIsMobileSidebarOpen(false);
-  };
-
-  return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar
-        username={username}
-        isMobileOpen={isMobileSidebarOpen}
-        onMobileClose={handleMobileSidebarClose}
-      />
-      <TopHeader
-        onLogout={onLogout}
-        username={username}
-        setFilterMonth={setFilterMonth}
-        transactions={transactions}
-        onMobileMenuToggle={handleMobileMenuToggle}
-      />
-      <div className="flex-1 ml-0 lg:ml-64 mt-16">
-        <main className="p-4 lg:p-6 max-w-7xl mx-auto">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
-};
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-if (!API_BASE_URL) {
-  console.error("VITE_API_BASE_URL is not defined in the environment. Please check your .env files.");
-}
+// Page loading fallback
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="w-8 h-8 border-3 border-gray-200 dark:border-gray-700 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+  </div>
+);
 
 function App() {
   return (
@@ -72,623 +43,247 @@ function App() {
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState(null);
-  const [token, setToken] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [filterMonth, setFilterMonth] = useState('');
-  const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-  const [transactionToDeleteId, setTransactionToDeleteId] = useState(null);
-  const [isDeletingTransaction, setIsDeletingTransaction] = useState(false);
-  const [isCategoryConfirmationDialogOpen, setCategoryConfirmationDialogOpen] = useState(false);
-  const [categoryToDeleteId, setCategoryToDeleteId] = useState(null);
-  const [categoryDeleteSuccessCallback, setCategoryDeleteSuccessCallback] = useState(null);
-  const [isDeletingCategory, setIsDeletingCategory] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [toastType, setToastType] = useState('info');
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  // Hanya untuk overlay global saat autentikasi awal
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [hasInitAuth, setHasInitAuth] = useState(false);
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
+  
+  // Toast
+  const { message: toastMessage, type: toastType, showToast } = useToast();
+  
+  // Auth
+  const {
+    isAuthenticated,
+    username,
+    token,
+    isAuthLoading,
+    handleLogin,
+    handleLogout,
+    handleSessionInvalidated,
+  } = useAuth(showToast);
 
-  const showToast = useCallback((message, type = 'info') => {
-    setToastMessage(message);
-    setToastType(type);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
-  }, []);
+  // Transactions
+  const {
+    transactions,
+    isLoading,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+    clearTransactions,
+  } = useTransactions(isAuthenticated, token, showToast, handleSessionInvalidated);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      setIsCategoriesLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        return;
-      }
-      const res = await fetch(`${API_BASE_URL}/categories`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setCategories(data.data);
-      } else {
-        // Periksa apakah sesi telah diinvalidasi (login di device lain)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          handleLogout();
-        } else {
-          showToast(data.error || 'Failed to fetch categories', 'error');
-        }
-      }
-    } catch (error) {
-      showToast('Error fetching categories: ' + error.message, 'error');
-    } finally {
-      setIsCategoriesLoading(false);
-    }
-  }, [API_BASE_URL, showToast]);
+  // Categories
+  const {
+    categories,
+    isLoading: isCategoriesLoading,
+    fetchCategories,
+    deleteCategory,
+  } = useCategories(isAuthenticated, showToast, handleSessionInvalidated);
 
+  // Filter
+  const {
+    filterMonth,
+    setFilterMonth,
+    filteredTransactions,
+    income: totalIncome,
+    expense: totalExpense,
+    balance,
+  } = useTransactionFilter(transactions);
+
+  // Confirmation dialogs
+  const transactionDialog = useConfirmDialog();
+  const categoryDialog = useConfirmDialog();
+
+  // Clear transactions on logout
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchCategories();
-    }
-  }, [isAuthenticated, fetchCategories]);
+    if (!isAuthenticated) clearTransactions();
+  }, [isAuthenticated, clearTransactions]);
 
-  const handleLogin = (loggedInUsername, authToken, sessionId) => {
-    setIsLoading(true);
-    setIsAuthenticated(true);
-    setUsername(loggedInUsername);
-    setToken(authToken);
-    // Simpan token dan sessionId di localStorage agar tetap tersimpan saat tab ditutup
-    localStorage.setItem('token', authToken);
-    if (sessionId) {
-      localStorage.setItem('sessionId', sessionId);
-    }
-    setIsLoading(false);
-  };
-
-  const handleLogout = useCallback(async () => {
-    const currentToken = localStorage.getItem('token');
-    if (currentToken) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${currentToken}`,
-          },
-          // Tambahkan credentials untuk memastikan cookie dikirim dan diterima
-          credentials: 'include'
-        });
-        if (!res.ok) {
-          console.error('Server-side logout failed with status:', res.status);
-        }
-      } catch (error) {
-        console.error('Network error during logout:', error);
-      }
-    } else {
-      console.warn('No token found in local storage for logout. Proceeding with client-side logout.');
-    }
-
-    Cookies.remove('token');
-    localStorage.removeItem('token');
-    localStorage.removeItem('sessionId');
-    setIsAuthenticated(false);
-    setUsername(null);
-    setToken(null);
-    setTransactions([]);
-    navigate('/');
-  }, [navigate]);
-
-  useEffect(() => {
-    const loadTokenAndAuthenticate = async () => {
-      const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        setToken(storedToken);
-        try {
-          // Overlay hanya saat autentikasi awal
-          if (!hasInitAuth) {
-            setIsAuthLoading(true);
-          }
-
-          const res = await fetch(`${API_BASE_URL}/auth/refresh_token`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-            // Tambahkan credentials untuk memastikan cookie dikirim
-            credentials: 'include'
-          });
-          const data = await res.json();
-
-          if (res.ok) {
-            setIsAuthenticated(true);
-            setUsername(data.username);
-            setToken(data.token);
-            localStorage.setItem('token', data.token);
-            // Simpan sessionId jika ada
-            if (data.sessionId) {
-              localStorage.setItem('sessionId', data.sessionId);
-            }
-          } else {
-            // Periksa apakah sesi telah diinvalidasi (login di device lain)
-            if (data.sessionInvalidated) {
-              showToast('Akun Anda telah login di perangkat lain', 'warning');
-            } else {
-              // Jangan tampilkan toast error saat pertama kali load
-              // karena ini bisa mengganggu UX
-              console.error('Token refresh failed');
-            }
-            handleLogout();
-          }
-        } catch (error) {
-          console.error('Token refresh error:', error);
-          handleLogout();
-        } finally {
-          // Matikan overlay hanya sekali setelah autentikasi awal
-          if (!hasInitAuth) {
-            setIsAuthLoading(false);
-            setHasInitAuth(true);
-          }
-        }
-      } else {
-        setIsAuthenticated(false);
-        if (!hasInitAuth) {
-          setIsAuthLoading(false);
-          setHasInitAuth(true);
-        }
-      }
-    };
-
-    loadTokenAndAuthenticate();
-
-    // Setup interval untuk refresh token secara berkala
-    // Refresh setiap 10 menit untuk mencegah token expired (yang 15 menit)
-    const tokenRefreshInterval = setInterval(() => {
-      if (localStorage.getItem('token')) {
-        loadTokenAndAuthenticate();
-      }
-    }, 10 * 60 * 1000); // 10 menit
-
-    return () => clearInterval(tokenRefreshInterval);
-  }, [handleLogout]);
-
+  // Redirect unauthenticated users
   useEffect(() => {
     if (!isAuthenticated && location.pathname !== '/' && location.pathname !== '/register') {
       navigate('/');
     }
   }, [isAuthenticated, location.pathname, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const abortController = new AbortController();
-      const signal = abortController.signal;
+  // Get transaction/category details for dialog
+  const getTransactionDetails = (id) => transactions.find(t => t._id === id);
+  const getCategoryDetails = (id) => categories.find(c => c._id === id);
 
-      const performFetchTransactions = async () => {
-        setIsLoading(true);
-        try {
-          const res = await fetch(`${API_BASE_URL}/transactions/all`, {
-            signal,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (signal.aborted) {
-            return;
-          }
-
-          const data = await res.json();
-          if (res.ok && data.success) {
-            setTransactions(data.data);
-          } else {
-            // Periksa apakah sesi telah diinvalidasi (login di device lain)
-            if (data.sessionInvalidated) {
-              showToast('Akun Anda telah login di perangkat lain', 'warning');
-              handleLogout();
-            } else {
-              showToast(data.error || `Failed to fetch transactions (Status: ${res.status}).`, 'error');
-              if (res.status === 401 || res.status === 403) {
-                handleLogout();
-              }
-            }
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') {
-            // Fetch request was cancelled by AbortController, no need to show error
-          } else {
-            showToast('Network error or server unreachable: ' + err.message, 'error');
-          }
-        } finally {
-          if (!signal.aborted) {
-            setIsLoading(false);
-          }
-        }
-      };
-
-      performFetchTransactions();
-
-      return () => {
-        abortController.abort();
-      };
-    }
-  }, [isAuthenticated, handleLogout, token]);
-
-  const addTransaction = async (transaction) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/transactions/all`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(transaction),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setTransactions([data.data, ...transactions]);
-        showToast('Transaksi berhasil ditambahkan!', 'success');
-      } else {
-        // Periksa apakah sesi telah diinvalidasi (login di device lain)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          handleLogout();
-        } else {
-          showToast(data.error || `Failed to add transaction (Status: ${res.status}).`, 'error');
-        }
-      }
-    } catch (err) {
-      showToast('Error adding transaction: ' + err.message, 'error');
-    }
+  const handleDeleteTransactionClick = (id) => {
+    const transaction = getTransactionDetails(id);
+    if (transaction) transactionDialog.openDialog(transaction);
   };
-
-  // State untuk menyimpan detail transaksi yang akan dihapus
-  const [transactionToDelete, setTransactionToDelete] = useState(null);
-
-  const handleDeleteClick = (id) => {
-    // Cari transaksi yang akan dihapus untuk mendapatkan detailnya
-    const transaction = transactions.find(t => t._id === id);
-    if (transaction) {
-      // Simpan ID dan detail transaksi yang akan dihapus
-      setTransactionToDeleteId(id);
-      setTransactionToDelete(transaction);
-      // Buka dialog konfirmasi
-      setConfirmationDialogOpen(true);
-    }
-  };
-
-  const updateTransaction = async (id, updatedTransaction) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedTransaction),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setTransactions(transactions.map(transaction =>
-          transaction._id === id ? data.data : transaction
-        ));
-        showToast('Transaction updated successfully!', 'success');
-        return true;
-      } else {
-        // Periksa apakah sesi telah diinvalidasi (login di device lain)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          handleLogout();
-        } else {
-          showToast(data.error || `Failed to update transaction (Status: ${res.status}).`, 'error');
-        }
-        return false;
-      }
-    } catch (err) {
-      showToast('Error updating transaction: ' + err.message, 'error');
-      return false;
-    }
-  };
-
-  const handleConfirmDelete = async () => {
-    setIsDeletingTransaction(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/transactions/${transactionToDeleteId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-      setTransactions(transactions.filter((transaction) => transaction._id !== transactionToDeleteId));
-      showToast('Transaksi berhasil dihapus!', 'success');
-    } else {
-        // Periksa apakah sesi telah diinvalidasi (login di device lain)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          handleLogout();
-        } else {
-          showToast(data.error || `Gagal menghapus transaksi (Status: ${res.status}).`, 'error');
-        }
-      }
-    } catch (err) {
-      showToast('Error menghapus transaksi: ' + err.message, 'error');
-    } finally {
-      setIsDeletingTransaction(false);
-      setConfirmationDialogOpen(false);
-      setTransactionToDeleteId(null);
-      setTransactionToDelete(null);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setConfirmationDialogOpen(false);
-    setTransactionToDeleteId(null);
-    setTransactionToDelete(null);
-  };
-
-  // State untuk menyimpan detail kategori yang akan dihapus
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   const handleDeleteCategoryClick = (id, onSuccess) => {
-    // Cari kategori yang akan dihapus untuk mendapatkan detailnya
-    const category = categories.find(c => c._id === id);
-    if (category) {
-      // Simpan ID dan detail kategori yang akan dihapus
-      setCategoryToDeleteId(id);
-      setCategoryToDelete(category);
-      setCategoryConfirmationDialogOpen(true);
-      setCategoryDeleteSuccessCallback(() => onSuccess);
-    }
+    const category = getCategoryDetails(id);
+    if (category) categoryDialog.openDialog(category, onSuccess);
   };
 
-  const handleConfirmDeleteCategory = async () => {
-    setIsDeletingCategory(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/categories/${categoryToDeleteId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        showToast('Kategori berhasil dihapus!', 'success');
-        if (categoryDeleteSuccessCallback) {
-          categoryDeleteSuccessCallback();
-        }
-      } else {
-        // Periksa apakah sesi telah diinvalidasi (login di device lain)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          handleLogout();
-        } else {
-          showToast(data.error || `Gagal menghapus kategori (Status: ${res.status}).`, 'error');
-        }
-      }
-    } catch (err) {
-      showToast('Error menghapus kategori: ' + err.message, 'error');
-    } finally {
-      setIsDeletingCategory(false);
-      setCategoryConfirmationDialogOpen(false);
-      setCategoryToDeleteId(null);
-      setCategoryToDelete(null);
-      setCategoryDeleteSuccessCallback(null);
-    }
+  const onLogout = () => {
+    showToast('You have been logged out.', 'info');
+    handleLogout();
   };
 
-  const handleCancelDeleteCategory = () => {
-    setCategoryConfirmationDialogOpen(false);
-    setCategoryToDeleteId(null);
-    setCategoryToDelete(null);
-    setCategoryDeleteSuccessCallback(null);
-  };
+  // Loading state
+  if (isAuthLoading) {
+    return <LoadingOverlay isLoading={true} />;
+  }
 
-  const filteredTransactions = filterMonth
-    ? transactions.filter(t => {
-        const transactionDate = new Date(t.date);
-
-        // Filter by single date
-        if (filterMonth.startsWith('singleDate-')) {
-          const selectedDate = filterMonth.replace('singleDate-', '');
-          const selectedDateObj = new Date(selectedDate);
-          const transactionDateOnly = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), transactionDate.getDate());
-          const selectedDateOnly = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate());
-          return transactionDateOnly.getTime() === selectedDateOnly.getTime();
-        }
-
-        // Filter by year only
-        if (filterMonth.startsWith('year-') || filterMonth.startsWith('byYear-')) {
-          const filterYear = parseInt(filterMonth.startsWith('year-')
-            ? filterMonth.replace('year-', '')
-            : filterMonth.replace('byYear-', ''));
-          return transactionDate.getFullYear() === filterYear;
-        }
-
-        // Filter by month and year
-        if ((filterMonth.includes('-') && !filterMonth.startsWith('year-') && !filterMonth.startsWith('singleDate-')) ||
-            filterMonth.startsWith('byMonth-')) {
-
-          // Handle new byMonth format
-          if (filterMonth.startsWith('byMonth-')) {
-            const parts = filterMonth.replace('byMonth-', '').split('-');
-            const filterYear = parseInt(parts[1]);
-            const filterMonthIndex = parseInt(parts[0]);
-            return (
-              transactionDate.getFullYear() === filterYear &&
-              transactionDate.getMonth() === filterMonthIndex
-            );
-          }
-
-          // Handle original format
-          const filterDateParts = filterMonth.split('-');
-          const filterYear = parseInt(filterDateParts[0]);
-          const filterMonthIndex = parseInt(filterDateParts[1]) - 1;
-          return (
-            transactionDate.getFullYear() === filterYear &&
-            transactionDate.getMonth() === filterMonthIndex
-          );
-        }
-
-        return true;
-      })
-    : transactions;
-
-  const totalIncome = filteredTransactions.filter((t) => t.type === 'pemasukan').reduce((acc, t) => acc + t.amount, 0);
-  const totalExpense = filteredTransactions.filter((t) => t.type === 'pengeluaran').reduce((acc, t) => acc + t.amount, 0);
-  const balance = totalIncome - totalExpense;
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <LoadingOverlay isLoading={isAuthLoading} />
-      <div className="flex flex-col min-h-screen">
-        {!isAuthenticated && !isAuthLoading ? (
-          <div className="flex-1">
-            <Routes>
-              <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
-              <Route path="/register" element={<RegisterPage showToast={showToast} />} />
-            </Routes>
-          </div>
-        ) : isAuthLoading ? null : (
-          <DashboardLayout
-            onLogout={() => {
-              showToast('You have been logged out.', 'info');
-              handleLogout();
-            }}
-            username={username}
-            setFilterMonth={setFilterMonth}
-            transactions={transactions}
-          >
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <HomePage
-                    income={totalIncome}
-                    expense={totalExpense}
-                    balance={balance}
-                    transactions={filteredTransactions}
-                    onDeleteTransaction={handleDeleteClick}
-                    username={username}
-                    isLoading={isLoading}
-                  />
-                }
-              />
-              <Route
-                path="/add-transaction"
-                element={
-                  <AddTransactionPage
-                    onAddTransaction={addTransaction}
-                    showToast={showToast}
-                    transactions={transactions}
-                    categories={categories}
-                  />
-                }
-              />
-              <Route
-                path="/history"
-                element={
-                  <HistoryPage
-                    transactions={filteredTransactions}
-                    onDeleteTransaction={handleDeleteClick}
-                    isLoading={isLoading}
-                  />
-                }
-              />
-
-              <Route
-                path="/categories"
-                element={
-                  <CategoryPage
-                    showToast={showToast}
-                    onDeleteCategory={handleDeleteCategoryClick}
-                    categories={categories}
-                    onCategoryAdded={fetchCategories}
-                    isLoading={isCategoriesLoading}
-                  />
-                }
-              />
-              <Route
-                path="/edit-transaction/:id"
-                element={
-                  <EditTransactionPage
-                    onUpdateTransaction={updateTransaction}
-                    showToast={showToast}
-                    transactions={transactions}
-                    categories={categories}
-                  />
-                }
-              />
-              <Route
-                path="/change-password"
-                element={
-                  <ChangePasswordPage
-                    showToast={showToast}
-                  />
-                }
-              />
-              <Route
-                path="/activation-codes"
-                element={
-                  username === 'rezz' ? (
-                    <ActivationCodePage
-                      showToast={showToast}
-                      token={token}
-                    />
-                  ) : (
-                    <div className="main-content">
-                      <h1>Unauthorized Access</h1>
-                      <p>You do not have permission to access this page.</p>
-                    </div>
-                  )
-                }
-              />
-            </Routes>
-            <ConfirmationDialog
-              title="Konfirmasi Hapus Transaksi"
-              message={
-                transactionToDelete ?
-                `Apakah Anda yakin ingin menghapus transaksi berikut?\n\n` +
-                `Nama: ${transactionToDelete.description}\n` +
-                `Jumlah: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(transactionToDelete.amount)}\n` +
-                `Tanggal: ${new Date(transactionToDelete.date).toLocaleDateString('id-ID')}\n` +
-                `Tipe: ${transactionToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
-                : 'Apakah Anda yakin ingin menghapus transaksi ini?'
-              }
-              confirmText="Hapus"
-              cancelText="Batal"
-              isOpen={isConfirmationDialogOpen}
-              isProcessing={isDeletingTransaction}
-              processingText="Menghapus..."
-              onConfirm={handleConfirmDelete}
-              onCancel={handleCancelDelete}
-            />
-            <ConfirmationDialog
-              title="Konfirmasi Hapus Kategori"
-              message={
-                categoryToDelete ?
-                `Apakah Anda yakin ingin menghapus kategori berikut?\n\n` +
-                `Nama: ${categoryToDelete.category}\n` +
-                `Tipe: ${categoryToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
-                : 'Apakah Anda yakin ingin menghapus kategori ini?'
-              }
-              confirmText="Hapus"
-              cancelText="Batal"
-              isOpen={isCategoryConfirmationDialogOpen}
-              isProcessing={isDeletingCategory}
-              processingText="Menghapus..."
-              onConfirm={handleConfirmDeleteCategory}
-              onCancel={handleCancelDeleteCategory}
-            />
-          </DashboardLayout>
-        )}
+  // Unauthenticated routes
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Routes>
+          <Route path="/" element={<LoginPage onLogin={handleLogin} showToast={showToast} />} />
+          <Route path="/register" element={<RegisterPage showToast={showToast} />} />
+        </Routes>
         <ToastNotification message={toastMessage} type={toastType} />
       </div>
-      {isAuthenticated && !isAuthLoading && <Footer />}
+    );
+  }
+
+  // Authenticated routes
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <DashboardLayout
+        onLogout={onLogout}
+        username={username}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                income={totalIncome}
+                expense={totalExpense}
+                balance={balance}
+                transactions={filteredTransactions}
+                allTransactions={transactions}
+                onDeleteTransaction={handleDeleteTransactionClick}
+                username={username}
+                isLoading={isLoading}
+                setFilterMonth={setFilterMonth}
+              />
+            }
+          />
+          <Route
+            path="/add-transaction"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <AddTransactionPage
+                  onAddTransaction={addTransaction}
+                  showToast={showToast}
+                  transactions={transactions}
+                  categories={categories}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <HistoryPage
+                  transactions={filteredTransactions}
+                  allTransactions={transactions}
+                  onDeleteTransaction={handleDeleteTransactionClick}
+                  isLoading={isLoading}
+                  setFilterMonth={setFilterMonth}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/categories"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <CategoryPage
+                  showToast={showToast}
+                  onDeleteCategory={handleDeleteCategoryClick}
+                  categories={categories}
+                  onCategoryAdded={fetchCategories}
+                  isLoading={isCategoriesLoading}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/edit-transaction/:id"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <EditTransactionPage
+                  onUpdateTransaction={updateTransaction}
+                  showToast={showToast}
+                  transactions={transactions}
+                  categories={categories}
+                />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/change-password"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <ChangePasswordPage showToast={showToast} />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/activation-codes"
+            element={
+              username === 'rezz' ? (
+                <Suspense fallback={<PageLoader />}>
+                  <ActivationCodePage showToast={showToast} token={token} />
+                </Suspense>
+              ) : (
+                <div className="p-6">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Unauthorized Access</h1>
+                  <p className="text-gray-600 dark:text-gray-400">You do not have permission to access this page.</p>
+                </div>
+              )
+            }
+          />
+        </Routes>
+
+        {/* Transaction Delete Dialog */}
+        <ConfirmationDialog
+          title="Konfirmasi Hapus Transaksi"
+          message={
+            transactionDialog.itemToDelete
+              ? `Apakah Anda yakin ingin menghapus transaksi berikut?\n\n` +
+                `Nama: ${transactionDialog.itemToDelete.description}\n` +
+                `Jumlah: ${formatRupiah(transactionDialog.itemToDelete.amount)}\n` +
+                `Tanggal: ${new Date(transactionDialog.itemToDelete.date).toLocaleDateString('id-ID')}\n` +
+                `Tipe: ${transactionDialog.itemToDelete.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'}`
+              : 'Apakah Anda yakin ingin menghapus transaksi ini?'
+          }
+          confirmText="Hapus"
+          cancelText="Batal"
+          isOpen={transactionDialog.isOpen}
+          isProcessing={transactionDialog.isProcessing}
+          processingText="Menghapus..."
+          onConfirm={() => transactionDialog.handleConfirm(deleteTransaction)}
+          onCancel={transactionDialog.closeDialog}
+        />
+
+        {/* Category Delete Dialog */}
+        <ConfirmationDialog
+          title="Konfirmasi Hapus Kategori"
+          message={
+            categoryDialog.itemToDelete
+              ? `Apakah Anda yakin ingin menghapus kategori berikut?\n\n` +
+                `Nama: ${categoryDialog.itemToDelete.category}\n` +
+                `Tipe: ${categoryDialog.itemToDelete.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`
+              : 'Apakah Anda yakin ingin menghapus kategori ini?'
+          }
+          confirmText="Hapus"
+          cancelText="Batal"
+          isOpen={categoryDialog.isOpen}
+          isProcessing={categoryDialog.isProcessing}
+          processingText="Menghapus..."
+          onConfirm={() => categoryDialog.handleConfirm(deleteCategory)}
+          onCancel={categoryDialog.closeDialog}
+        />
+      </DashboardLayout>
+
+      <ToastNotification message={toastMessage} type={toastType} />
     </div>
   );
 }

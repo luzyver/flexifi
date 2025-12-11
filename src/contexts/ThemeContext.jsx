@@ -10,11 +10,27 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+/**
+ * Safely parse dark mode from localStorage
+ */
+const getInitialDarkMode = () => {
+  try {
     const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
-  });
+    if (saved === null) return false;
+    // Handle both JSON boolean and plain string
+    if (saved === 'true' || saved === 'false') {
+      return saved === 'true';
+    }
+    return JSON.parse(saved);
+  } catch {
+    // Clear invalid value and return default
+    localStorage.removeItem('darkMode');
+    return false;
+  }
+};
+
+export const ThemeProvider = ({ children }) => {
+  const [isDarkMode, setIsDarkMode] = useState(getInitialDarkMode);
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));

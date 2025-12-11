@@ -1,7 +1,21 @@
-import { useEffect, useState } from 'react';
-import { CheckCircle, XCircle, Info, X } from 'lucide-react';
+import { memo, useEffect, useState } from 'react';
+import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
 
-const ToastNotification = ({ message, type, duration = 3000 }) => {
+const ICONS = {
+  success: CheckCircle,
+  error: XCircle,
+  warning: AlertCircle,
+  info: Info,
+};
+
+const STYLES = {
+  success: 'bg-emerald-500 text-white',
+  error: 'bg-rose-500 text-white',
+  warning: 'bg-amber-500 text-white',
+  info: 'bg-indigo-500 text-white',
+};
+
+const ToastNotification = memo(function ToastNotification({ message, type = 'info', duration = 3000 }) {
   const [visible, setVisible] = useState(false);
   const [displayMessage, setDisplayMessage] = useState('');
 
@@ -9,9 +23,7 @@ const ToastNotification = ({ message, type, duration = 3000 }) => {
     if (message) {
       setDisplayMessage(message);
       setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-      }, duration);
+      const timer = setTimeout(() => setVisible(false), duration);
       return () => clearTimeout(timer);
     } else {
       setVisible(false);
@@ -19,51 +31,34 @@ const ToastNotification = ({ message, type, duration = 3000 }) => {
   }, [message, duration]);
 
   useEffect(() => {
-    let unmountTimer;
     if (!visible && displayMessage) {
-      unmountTimer = setTimeout(() => {
-        setDisplayMessage('');
-      }, 500);
+      const timer = setTimeout(() => setDisplayMessage(''), 300);
+      return () => clearTimeout(timer);
     }
-    return () => clearTimeout(unmountTimer);
   }, [visible, displayMessage]);
 
-  if (!displayMessage && !visible) {
-    return null;
-  }
+  if (!displayMessage) return null;
 
-  const toastStyles = {
-    success: 'bg-success-600 text-white',
-    error: 'bg-danger-600 text-white',
-    info: 'bg-info-600 text-white',
-    warning: 'bg-warning-600 text-white',
-  }[type] || 'bg-info-600 text-white';
-
-  const Icon = {
-    success: CheckCircle,
-    error: XCircle,
-    info: Info,
-    warning: Info,
-  }[type] || Info;
+  const Icon = ICONS[type] || Info;
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4">
-      <div className={`flex items-center p-4 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-300 max-w-md ${toastStyles} ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
-      }`}>
-        <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
-        <div className="flex-1 text-sm font-medium">
-          {displayMessage}
-        </div>
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] px-4 w-full max-w-md">
+      <div
+        className={`flex items-center gap-3 p-4 rounded-xl shadow-2xl backdrop-blur-sm transition-all duration-300 ${STYLES[type]} ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+        }`}
+      >
+        <Icon className="w-5 h-5 flex-shrink-0" />
+        <p className="flex-1 font-medium text-sm">{displayMessage}</p>
         <button
           onClick={() => setVisible(false)}
-          className="ml-3 p-1 hover:bg-white/20 rounded-full transition-colors"
+          className="p-1 rounded-lg hover:bg-white/20 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
     </div>
   );
-};
+});
 
 export default ToastNotification;

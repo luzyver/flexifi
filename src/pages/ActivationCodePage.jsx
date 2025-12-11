@@ -1,274 +1,195 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback, memo } from 'react';
 import LoadingOverlay from '../components/common/LoadingOverlay';
-import Breadcrumb from '../components/common/Breadcrumb';
-import PageHeader from '../components/common/PageHeader';
-import { Key, Plus, List, Calendar, User, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Key, Plus, CheckCircle, XCircle, AlertCircle, Calendar, User } from 'lucide-react';
 
-const ActivationCodePage = ({ showToast, token }) => {
-  const navigate = useNavigate();
-  const [activationCodes, setActivationCodes] = useState([]);
+const ActivationCodePage = memo(function ActivationCodePage({ showToast, token }) {
+  const [codes, setCodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const fetchActivationCodes = useCallback(async () => {
+  const fetchCodes = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-
       if (res.ok && data.success) {
-        setActivationCodes(data.data);
+        setCodes(data.data);
       } else {
-        // Check if session was invalidated (logged in on another device)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          // Remove token and sessionId from localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('sessionId');
-          // Redirect to home page
-          navigate('/');
-        } else {
-          showToast(data.error || 'Gagal mengambil kode aktivasi', 'error');
-        }
+        showToast(data.error || 'Gagal mengambil data', 'error');
       }
     } catch (error) {
-      showToast('Error mengambil kode aktivasi: ' + error.message, 'error');
+      showToast('Error: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
-  }, [token, showToast, navigate]);
+  }, [token, showToast]);
 
   useEffect(() => {
-    fetchActivationCodes();
-  }, [fetchActivationCodes]);
+    fetchCodes();
+  }, [fetchCodes]);
 
-  const handleGenerateCode = async () => {
+  const handleGenerate = async () => {
+    setIsGenerating(true);
     try {
-      setIsGenerating(true);
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes/generate`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-
       if (res.ok && data.success) {
-        showToast('Kode aktivasi berhasil dibuat', 'success');
-        fetchActivationCodes();
+        showToast('Kode berhasil dibuat', 'success');
+        fetchCodes();
       } else {
-        // Check if session was invalidated (logged in on another device)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          // Remove token and sessionId from localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('sessionId');
-          // Redirect to home page
-          navigate('/');
-        } else {
-          showToast(data.error || 'Gagal membuat kode aktivasi', 'error');
-        }
+        showToast(data.error || 'Gagal membuat kode', 'error');
       }
     } catch (error) {
-      showToast('Error membuat kode aktivasi: ' + error.message, 'error');
+      showToast('Error: ' + error.message, 'error');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleToggleActivation = async (id, currentStatus) => {
+  const handleToggle = async (id, isActivated) => {
+    const action = isActivated ? 'deactivate' : 'activate';
     try {
-      const action = currentStatus ? 'deactivate' : 'activate';
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/activation-codes/${id}/${action}`, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = await res.json();
-
       if (res.ok && data.success) {
-        showToast(`Kode aktivasi berhasil ${action === 'activate' ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
-        fetchActivationCodes();
+        showToast(`Kode berhasil ${isActivated ? 'dinonaktifkan' : 'diaktifkan'}`, 'success');
+        fetchCodes();
       } else {
-        // Check if session was invalidated (logged in on another device)
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          // Remove token and sessionId from localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('sessionId');
-          // Redirect to home page
-          navigate('/');
-        } else {
-          showToast(data.error || `Gagal ${action === 'activate' ? 'mengaktifkan' : 'menonaktifkan'} kode aktivasi`, 'error');
-        }
+        showToast(data.error || 'Gagal mengubah status', 'error');
       }
     } catch (error) {
-      showToast(`Error ${currentStatus ? 'menonaktifkan' : 'mengaktifkan'} kode aktivasi: ` + error.message, 'error');
+      showToast('Error: ' + error.message, 'error');
     }
   };
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
-  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
-  const getStatusBadge = (code) => {
+  const StatusBadge = ({ code }) => {
     if (code.isUsed) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          Sudah Digunakan
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
+          <AlertCircle className="w-3 h-3" />
+          Digunakan
         </span>
       );
-    } else if (code.isActivated) {
+    }
+    if (code.isActivated) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-          <CheckCircle className="w-3 h-3 mr-1" />
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle className="w-3 h-3" />
           Aktif
         </span>
       );
-    } else {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
-          <XCircle className="w-3 h-3 mr-1" />
-          Tidak Aktif
-        </span>
-      );
     }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400">
+        <XCircle className="w-3 h-3" />
+        Nonaktif
+      </span>
+    );
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <LoadingOverlay isLoading={loading} />
 
-      {/* Breadcrumb */}
-      <Breadcrumb />
-
-      {/* Page Header */}
-      <PageHeader
-        title="Kode Aktivasi"
-        subtitle="Kelola kode pendaftaran pengguna"
-        icon="key"
-        actions={
-          <button
-            className="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleGenerateCode}
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Membuat...
-              </>
-            ) : (
-              <>
-                <Plus className="w-5 h-5 mr-2" />
-                Buat Kode Baru
-              </>
-            )}
-          </button>
-        }
-      />
-
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center">
-            <List className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Semua Kode Aktivasi</h3>
-          </div>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Kode Aktivasi</h1>
+          <p className="text-slate-500 dark:text-slate-400">Kelola kode pendaftaran pengguna</p>
         </div>
+        <button
+          onClick={handleGenerate}
+          disabled={isGenerating}
+          className="btn-primary flex items-center gap-2"
+        >
+          {isGenerating ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Membuat...</span>
+            </>
+          ) : (
+            <>
+              <Plus className="w-5 h-5" />
+              <span>Buat Kode</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="glass-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-slate-50 dark:bg-slate-800/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Kode
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Digunakan Oleh
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Tanggal Dibuat
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Tanggal Digunakan
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Aksi
-                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Kode</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Digunakan Oleh</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Dibuat</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Aksi</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {activationCodes.length === 0 ? (
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+              {codes.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center">
-                    <Key className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-500 dark:text-gray-400">Tidak ada kode aktivasi</p>
+                  <td colSpan="5" className="px-6 py-12 text-center">
+                    <Key className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                    <p className="text-slate-500">Belum ada kode aktivasi</p>
                   </td>
                 </tr>
               ) : (
-                activationCodes.map((code) => (
-                  <tr key={code._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-mono bg-gray-900 dark:bg-gray-700 text-white">
+                codes.map((code) => (
+                  <tr key={code._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <code className="px-3 py-1.5 rounded-lg bg-slate-900 dark:bg-slate-700 text-white text-sm font-mono">
                         {code.code}
-                      </span>
+                      </code>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(code)}
+                    <td className="px-6 py-4">
+                      <StatusBadge code={code} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {code.usedBy ? (
-                          <>
-                            <User className="w-4 h-4 text-gray-400 mr-2" />
-                            <span className="text-gray-900 dark:text-white">{code.usedBy}</span>
-                          </>
-                        ) : (
-                          <span className="text-gray-500 dark:text-gray-400">-</span>
-                        )}
-                      </div>
+                    <td className="px-6 py-4">
+                      {code.usedBy ? (
+                        <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                          <User className="w-4 h-4 text-slate-400" />
+                          {code.usedBy}
+                        </div>
+                      ) : (
+                        <span className="text-slate-400">-</span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <Calendar className="w-4 h-4 mr-2" />
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2 text-sm text-slate-500">
+                        <Calendar className="w-4 h-4" />
                         {formatDate(code.createdAt)}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        {code.usedAt ? (
-                          <>
-                            <Calendar className="w-4 h-4 mr-2" />
-                            {formatDate(code.usedAt)}
-                          </>
-                        ) : (
-                          <span>-</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       {!code.isUsed && (
                         <button
-                          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          onClick={() => handleToggle(code._id, code.isActivated)}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                             code.isActivated
-                              ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800'
-                              : 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-800'
+                              ? 'text-red-600 bg-red-50 dark:bg-red-500/10 hover:bg-red-100'
+                              : 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100'
                           }`}
-                          onClick={() => handleToggleActivation(code._id, code.isActivated)}
                         >
                           {code.isActivated ? 'Nonaktifkan' : 'Aktifkan'}
                         </button>
@@ -283,6 +204,6 @@ const ActivationCodePage = ({ showToast, token }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ActivationCodePage;

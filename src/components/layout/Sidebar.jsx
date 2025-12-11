@@ -1,71 +1,76 @@
+import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Plus, Clock, Tags, Key, Wallet } from 'lucide-react';
+import { LayoutDashboard, Plus, History, FolderOpen, Key, X, Wallet } from 'lucide-react';
 
-const Sidebar = ({ username, isMobileOpen, onMobileClose }) => {
-  const handleLinkClick = () => {
-    onMobileClose?.();
-  };
+const NAV_ITEMS = [
+  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/add-transaction', icon: Plus, label: 'Tambah' },
+  { to: '/history', icon: History, label: 'Riwayat' },
+  { to: '/categories', icon: FolderOpen, label: 'Kategori' },
+];
 
-  const navItems = [
-    { to: '/', icon: Home, label: 'Dasbor' },
-    { to: '/add-transaction', icon: Plus, label: 'Tambah Transaksi' },
-    { to: '/history', icon: Clock, label: 'Riwayat Transaksi' },
-    { to: '/categories', icon: Tags, label: 'Kategori' },
-  ];
-
-  if (username === 'rezz') {
-    navItems.push({ to: '/activation-codes', icon: Key, label: 'Kode Aktivasi' });
-  }
+const Sidebar = memo(function Sidebar({ username, isMobileOpen, onMobileClose }) {
+  const navItems = username === 'rezz'
+    ? [...NAV_ITEMS, { to: '/activation-codes', icon: Key, label: 'Aktivasi' }]
+    : NAV_ITEMS;
 
   return (
     <>
-      {/* Mobile Overlay */}
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300 ${
-          isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        }`}
-        onClick={onMobileClose}
-      />
+      {/* Overlay */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onMobileClose}
+        />
+      )}
 
       {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg z-50 transform transition-transform duration-300 lg:translate-x-0 ${
-        isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        {/* Brand */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <NavLink
-            to="/"
-            className="flex items-center space-x-3 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
-            onClick={handleLinkClick}
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 
+                    transform transition-transform duration-300 ease-out lg:translate-x-0 ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between h-16 px-5 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-lg font-semibold text-slate-900 dark:text-white">FlexiFi</span>
+          </div>
+          <button
+            onClick={onMobileClose}
+            className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <Wallet className="w-8 h-8" />
-            <span className="text-xl font-bold">FlexiFi</span>
-          </NavLink>
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        {/* Nav */}
+        <nav className="p-4 space-y-1.5">
+          <p className="px-3 mb-3 text-xs font-medium text-slate-400 uppercase tracking-wider">Menu</p>
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
+              onClick={onMobileClose}
               className={({ isActive }) =>
-                `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                `flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                   isActive
-                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-l-4 border-primary-600 dark:border-primary-400'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400'
+                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
                 }`
               }
-              onClick={handleLinkClick}
             >
               <Icon className="w-5 h-5" />
-              <span className="font-medium">{label}</span>
+              {label}
             </NavLink>
           ))}
         </nav>
-      </div>
+      </aside>
     </>
   );
-};
+});
 
 export default Sidebar;

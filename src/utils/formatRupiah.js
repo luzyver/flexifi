@@ -1,37 +1,47 @@
+// Cached formatter for better performance
+const rupiahFormatter = new Intl.NumberFormat('id-ID', {
+  style: 'currency',
+  currency: 'IDR',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
+/**
+ * Format number to Indonesian Rupiah currency
+ * @param {number|string} amount - Amount to format
+ * @returns {string} Formatted currency string
+ */
 export const formatRupiah = (amount) => {
-  // Handle non-numeric values
   if (amount === null || amount === undefined || isNaN(amount)) {
     return 'Rp 0';
   }
 
-  // Convert to number if it's a string
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
 
-  // Handle NaN after conversion
   if (isNaN(numAmount)) {
     return 'Rp 0';
   }
 
-  const formatter = new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-
-  // Format and replace the weird space that sometimes appears in IDR format
-  return formatter.format(numAmount).replace(/\s+/g, ' ');
+  return rupiahFormatter.format(numAmount).replace(/\s+/g, ' ');
 };
 
-// Function to parse Rupiah string back to number
+/**
+ * Parse Rupiah string back to number
+ * @param {string} rupiahString - Rupiah formatted string
+ * @returns {number} Parsed number
+ */
 export const parseRupiahToNumber = (rupiahString) => {
   if (!rupiahString) return 0;
 
-  const trimmed = rupiahString.trim();
-  // Remove currency symbol, dots, and other non-digit characters
-  // but retain a leading '-' for negative values
-  const numericString = trimmed.replace(/(?!^-)[^0-9]/g, '');
-
-  // Convert to number
+  const numericString = rupiahString.trim().replace(/(?!^-)[^0-9]/g, '');
   return numericString ? parseInt(numericString, 10) : 0;
+};
+
+/**
+ * Format number with thousand separators
+ * @param {number} num - Number to format
+ * @returns {string} Formatted number string
+ */
+export const formatNumber = (num) => {
+  return new Intl.NumberFormat('id-ID').format(num);
 };

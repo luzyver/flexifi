@@ -1,134 +1,71 @@
+import { memo } from 'react';
 import AddTransaction from '../components/transactions/AddTransaction';
-import Breadcrumb from '../components/common/Breadcrumb';
-import PageHeader from '../components/common/PageHeader';
-import { Wallet, Lightbulb, CheckCircle, Tags, Calculator, Clock } from 'lucide-react';
+import { Receipt, Lightbulb, CheckCircle, Tags, Calculator, Clock } from 'lucide-react';
 
-const AddTransactionPage = ({
+const TIPS = [
+  { icon: CheckCircle, title: 'Deskripsi Jelas', desc: 'Gunakan nama yang mudah dikenali' },
+  { icon: Tags, title: 'Pilih Kategori', desc: 'Kategorikan untuk analisis lebih baik' },
+  { icon: Calculator, title: 'Periksa Ulang', desc: 'Pastikan jumlah dan tanggal benar' },
+  { icon: Clock, title: 'Konsisten', desc: 'Catat transaksi secara rutin' },
+];
+
+const AddTransactionPage = memo(function AddTransactionPage({
   onAddTransaction,
   showToast,
   transactions,
   categories,
-}) => {
+}) {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Breadcrumb */}
-      <Breadcrumb />
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <Receipt className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Tambah Transaksi</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Catat pemasukan atau pengeluaran</p>
+        </div>
+      </div>
 
-      {/* Page Header */}
-      <PageHeader
-        title="Tambah Transaksi Baru"
-        subtitle="Catat transaksi pemasukan atau pengeluaran Anda"
-        icon="plus-circle"
-      />
-
-      {/* 2 Kolom: kiri form, kanan tips (sama tinggi) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-        {/* KIRI */}
-        <div className="lg:col-span-2 h-full">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in h-full flex flex-col">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center">
-                <Wallet className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Detail Transaksi
-                </h3>
-              </div>
-            </div>
-            {/* Content (flex-1 agar card mengisi tinggi container) */}
-            <div className="p-6 flex-1">
-              <AddTransaction
-                onAddTransaction={onAddTransaction}
-                showToast={showToast}
-                transactions={transactions}
-                categories={categories}
-              />
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Form */}
+        <div className="lg:col-span-2">
+          <div className="glass-card p-6">
+            <AddTransaction
+              onAddTransaction={onAddTransaction}
+              showToast={showToast}
+              transactions={transactions}
+              categories={categories}
+            />
           </div>
         </div>
 
-        {/* KANAN */}
-        <div className="lg:col-span-1 h-full">
-          <div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in h-full flex flex-col"
-            style={{ animationDelay: '0.2s' }}
-          >
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center">
-                <Lightbulb className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Tips Pro
-                </h3>
-              </div>
+        {/* Tips */}
+        <div className="lg:col-span-1">
+          <div className="glass-card p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Lightbulb className="w-5 h-5 text-amber-500" />
+              <h3 className="font-semibold text-slate-900 dark:text-white">Tips</h3>
             </div>
-
-            {/* Content (flex-1 agar tinggi mengikuti kiri) */}
-            <div className="p-6 flex-1">
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-success-100 dark:bg-success-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
-                    <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
+            <div className="space-y-4">
+              {TIPS.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      Buat Deskripsi Jelas
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Gunakan nama yang jelas dan deskriptif untuk pelacakan dan kategorisasi yang mudah.
-                    </p>
+                    <p className="font-medium text-slate-900 dark:text-white text-sm">{title}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{desc}</p>
                   </div>
                 </div>
-
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
-                    <Tags className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      Pilih Kategori
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Pilih kategori yang tepat untuk wawasan dan laporan keuangan yang lebih baik.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-warning-100 dark:bg-warning-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
-                    <Calculator className="w-5 h-5 text-warning-600 dark:text-warning-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      Periksa Ulang
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Verifikasi jumlah dan tanggal sebelum menyimpan untuk menjaga catatan yang akurat.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-info-100 dark:bg-info-900/30 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
-                    <Clock className="w-5 h-5 text-info-600 dark:text-info-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      Tetap Konsisten
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Catat transaksi secara teratur untuk gambaran keuangan yang paling akurat.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-            {/* footer kosong jika perlu spacer tambahan */}
           </div>
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default AddTransactionPage;

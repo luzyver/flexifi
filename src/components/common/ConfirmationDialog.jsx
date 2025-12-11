@@ -1,34 +1,34 @@
+import { memo } from 'react';
 import { AlertTriangle, Trash2, X } from 'lucide-react';
 
-/**
- * Dialog konfirmasi yang dapat dikustomisasi untuk berbagai tindakan
- */
-const ConfirmationDialog = ({
-  title = "Konfirmasi Tindakan",
+const ConfirmationDialog = memo(function ConfirmationDialog({
+  title = 'Konfirmasi',
   message,
-  confirmText = "Hapus",
-  cancelText = "Batal",
+  confirmText = 'Hapus',
+  cancelText = 'Batal',
   onConfirm,
   onCancel,
   isOpen,
   isProcessing = false,
-  processingText = "Memproses..."
-}) => {
+  processingText = 'Memproses...',
+}) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full transform transition-all duration-300 scale-100">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full animate-fade-in overflow-hidden">
         {/* Header */}
-        <div className="bg-danger-600 text-white p-6 rounded-t-2xl">
+        <div className="bg-gradient-to-r from-rose-500 to-pink-600 p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <AlertTriangle className="w-6 h-6 mr-2" />
-              <h3 className="text-lg font-semibold">{title}</h3>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-white">{title}</h3>
             </div>
             <button
               onClick={onCancel}
-              className="text-white hover:text-gray-200 transition-colors"
+              className="p-2 rounded-xl hover:bg-white/20 transition-colors text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -37,44 +37,45 @@ const ConfirmationDialog = ({
 
         {/* Body */}
         <div className="p-6">
-          {message && message.includes('\n') ? (
-            <div className="text-left">
-              {message.split('\n').map((line, index) => (
-                <p key={index} className={`${index === 0 ? 'text-lg mb-4' : 'mb-2'} text-gray-700 dark:text-gray-300`}>
+          {message?.includes('\n') ? (
+            <div className="space-y-2">
+              {message.split('\n').map((line, i) => (
+                <p
+                  key={i}
+                  className={`text-slate-700 dark:text-slate-300 ${i === 0 ? 'font-medium' : 'text-sm'}`}
+                >
                   {line}
                 </p>
               ))}
             </div>
           ) : (
-            <p className="text-lg text-center text-gray-700 dark:text-gray-300">{message}</p>
+            <p className="text-slate-700 dark:text-slate-300">{message}</p>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex justify-center space-x-3 p-6 pt-0">
+        <div className="flex gap-3 p-6 pt-0">
           <button
-            type="button"
-            className="px-6 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
             onClick={onCancel}
             disabled={isProcessing}
+            className="btn-secondary flex-1"
           >
             {cancelText}
           </button>
           <button
-            type="button"
-            className={`px-6 py-2 text-white rounded-lg transition-colors font-medium flex items-center ${isProcessing ? 'bg-danger-600/70 cursor-not-allowed' : 'bg-danger-600 hover:bg-danger-700'}`}
             onClick={onConfirm}
             disabled={isProcessing}
+            className="btn-danger flex-1 flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                {processingText}
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>{processingText}</span>
               </>
             ) : (
               <>
-                <Trash2 className="w-4 h-4 mr-2" />
-                {confirmText}
+                <Trash2 className="w-4 h-4" />
+                <span>{confirmText}</span>
               </>
             )}
           </button>
@@ -82,6 +83,6 @@ const ConfirmationDialog = ({
       </div>
     </div>
   );
-};
+});
 
 export default ConfirmationDialog;

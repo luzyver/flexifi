@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatRupiah, parseRupiahToNumber } from '../../utils/formatRupiah';
-import { ArrowUpDown, FileText, DollarSign, Tags, Calendar, XCircle, CheckCircle, Clock } from 'lucide-react';
+import { ArrowUpDown, FileText, DollarSign, Tags, Calendar, X, Check, Clock } from 'lucide-react';
 
-const AddTransaction = ({ onAddTransaction, showToast, transactions, categories }) => {
+const getTodayDate = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+const AddTransaction = memo(function AddTransaction({
+  onAddTransaction,
+  showToast,
+  transactions,
+  categories,
+}) {
   const navigate = useNavigate();
-
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   const [type, setType] = useState('pengeluaran');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -21,75 +22,46 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
   const [category, setCategory] = useState('');
   const [date, setDate] = useState(getTodayDate());
   const [suggestions, setSuggestions] = useState([]);
-  const [isSuggestionsVisible, setSuggestionsVisible] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const inputRef = useRef(null);
 
-  const descriptionInputRef = useRef(null);
-
-  const normalize = (s) => (s || '').trim().toLowerCase();
-
-  // unique descriptions dari transaksi (hindari duplikat)
   const uniqueDescriptions = useMemo(() => {
     const set = new Set();
-    transactions.forEach((t) => {
-      if (t?.description) set.add(t.description);
-    });
+    transactions.forEach((t) => t?.description && set.add(t.description));
     return Array.from(set);
   }, [transactions]);
 
-  // Filter kategori berdasarkan type + set default kategori sekali saat type/categories berubah
-  const filteredCategoriesForType = useMemo(
+  const filteredCategories = useMemo(
     () => categories.filter((cat) => cat.type === type),
     [categories, type]
   );
 
   useEffect(() => {
-    if (filteredCategoriesForType.length > 0) {
+    if (filteredCategories.length > 0) {
       setCategory((prev) => {
-        // pertahankan pilihan jika masih valid
-        const stillValid = filteredCategoriesForType.some((c) => c.category === prev);
-        return stillValid ? prev : filteredCategoriesForType[0].category;
+        const stillValid = filteredCategories.some((c) => c.category === prev);
+        return stillValid ? prev : filteredCategories[0].category;
       });
     } else {
       setCategory('');
     }
-  }, [filteredCategoriesForType]);
+  }, [filteredCategories]);
 
-  // Suggestions: hanya muncul jika ada partial match dan BUKAN exact match
   useEffect(() => {
-    const q = normalize(description);
+    const q = description.trim().toLowerCase();
     if (!q) {
       setSuggestions([]);
-      setSuggestionsVisible(false);
+      setShowSuggestions(false);
       return;
     }
-
     const filtered = uniqueDescriptions
-      .filter((d) => {
-        const nd = normalize(d);
-        return nd.includes(q) && nd !== q; // hilangkan exact match
-      })
+      .filter((d) => d.toLowerCase().includes(q) && d.toLowerCase() !== q)
       .slice(0, 5);
-
     setSuggestions(filtered);
-    setSuggestionsVisible(filtered.length > 0);
+    setShowSuggestions(filtered.length > 0);
   }, [description, uniqueDescriptions]);
 
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
-  const handleSuggestionClick = (s) => {
-    setDescription(s);
-    setSuggestions([]);
-    setSuggestionsVisible(false);
-  };
-
-  const handleTypeChange = (e) => {
-    setType(e.target.value);
-  };
-
-  // Format input jumlah
   const handleAmountChange = (value) => {
     const numericValue = parseRupiahToNumber(value);
     setAmount(numericValue.toString());
@@ -98,106 +70,101 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
     if (!description || !amount || !category || !date) {
-      showToast('Harap isi semua kolom', 'error');
+      showToast('Harap isi semua field', 'error');
       return;
     }
 
     const parsedAmount = parseInt(amount, 10);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      showToast('Jumlah harus berupa angka positif yang valid', 'error');
+      showToast('Jumlah harus angka positif', 'error');
       return;
     }
 
     setIsSubmitting(true);
-
-    const newTransaction = {
-      type,
-      description,
-      amount: parsedAmount,
-      category,
-      date: new Date(date).toISOString(),
-    };
-
     try {
-      await onAddTransaction(newTransaction);
-
-      // Reset form
+      await onAddTransaction({
+        type,
+        description,
+        amount: parsedAmount,
+        category,
+        date: new Date(date).toISOString(),
+      });
       setDescription('');
       setAmount('');
       setFormattedAmount('');
       setDate(getTodayDate());
-      setSuggestions([]);
-      setSuggestionsVisible(false);
-    } catch {
-      // Error ditangani di parent
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
-      {/* Jenis Transaksi */}
+    <form onSubmit={onSubmit} className="space-y-5">
+      {/* Type */}
       <div>
-        <label
-          htmlFor="type"
-          className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          <ArrowUpDown className="w-4 h-4 mr-2" />
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <ArrowUpDown className="w-4 h-4" />
           Jenis Transaksi
         </label>
-        <select
-          id="type"
-          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          value={type}
-          onChange={handleTypeChange}
-          disabled={isSubmitting}
-        >
-          <option value="pengeluaran">💸 Expense (Pengeluaran)</option>
-          <option value="pemasukan">💰 Income (Pemasukan)</option>
-        </select>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setType('pengeluaran')}
+            className={`p-4 rounded-xl border-2 transition-all ${
+              type === 'pengeluaran'
+                ? 'border-rose-500 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+            }`}
+          >
+            <span className="text-2xl mb-1">💸</span>
+            <p className="font-medium">Pengeluaran</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => setType('pemasukan')}
+            className={`p-4 rounded-xl border-2 transition-all ${
+              type === 'pemasukan'
+                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+            }`}
+          >
+            <span className="text-2xl mb-1">💰</span>
+            <p className="font-medium">Pemasukan</p>
+          </button>
+        </div>
       </div>
 
-      {/* Deskripsi + Suggestions */}
-      <div className="relative" ref={descriptionInputRef}>
-        <label
-          htmlFor="description"
-          className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          <FileText className="w-4 h-4 mr-2" />
+      {/* Description */}
+      <div className="relative" ref={inputRef}>
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <FileText className="w-4 h-4" />
           Deskripsi
         </label>
         <input
-          id="description"
           type="text"
-          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           value={description}
-          onChange={handleDescriptionChange}
-          placeholder="Masukkan deskripsi transaksi..."
-          autoComplete="off"
+          onChange={(e) => setDescription(e.target.value)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+          placeholder="Contoh: Makan siang"
+          className="input-modern"
           disabled={isSubmitting}
           required
-          onBlur={() => {
-            // tutup dropdown saat blur (sedikit delay supaya klik item tetap masuk)
-            setTimeout(() => setSuggestionsVisible(false), 150);
-          }}
-          onFocus={() => {
-            // buka kembali jika masih ada suggestions dan bukan exact match
-            setSuggestionsVisible(suggestions.length > 0 && normalize(description) !== '' && !suggestions.includes(description));
-          }}
         />
-        {isSuggestionsVisible && suggestions.length > 0 && (
-          <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-            {suggestions.map((s, idx) => (
+        {showSuggestions && (
+          <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+            {suggestions.map((s, i) => (
               <li
-                key={`${s}-${idx}`}
-                onMouseDown={(e) => e.preventDefault()} // cegah blur sebelum click
-                onClick={() => handleSuggestionClick(s)}
-                className="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                key={i}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setDescription(s);
+                  setShowSuggestions(false);
+                }}
+                className="flex items-center gap-2 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
               >
-                <Clock className="w-4 h-4 mr-2 text-gray-400" />
+                <Clock className="w-4 h-4 text-slate-400" />
                 {s}
               </li>
             ))}
@@ -205,26 +172,20 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
         )}
       </div>
 
-      {/* Jumlah */}
+      {/* Amount */}
       <div>
-        <label
-          htmlFor="amount"
-          className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          <DollarSign className="w-4 h-4 mr-2" />
-          Jumlah (IDR)
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <DollarSign className="w-4 h-4" />
+          Jumlah
         </label>
-        <div className="flex">
-          <div className="flex items-center px-3 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-xl">
-            <span className="text-gray-600 dark:text-gray-400 font-medium">Rp</span>
-          </div>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">Rp</span>
           <input
-            id="amount"
             type="text"
-            className="flex-1 px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             value={formattedAmount}
             onChange={(e) => handleAmountChange(e.target.value)}
             placeholder="0"
+            className="input-modern pl-12"
             disabled={isSubmitting}
             required
             inputMode="numeric"
@@ -232,87 +193,79 @@ const AddTransaction = ({ onAddTransaction, showToast, transactions, categories 
         </div>
       </div>
 
-      {/* Kategori → DIPINDAH ke bawah Jumlah (vertikal) */}
+      {/* Category */}
       <div>
-        <label
-          htmlFor="category"
-          className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          <Tags className="w-4 h-4 mr-2" />
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <Tags className="w-4 h-4" />
           Kategori
         </label>
         <select
-          id="category"
-          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          className="input-modern"
           disabled={isSubmitting}
           required
         >
-          {filteredCategoriesForType.map((cat) => (
+          {filteredCategories.map((cat) => (
             <option key={cat.category} value={cat.category}>
               {cat.category}
             </option>
           ))}
-          {filteredCategoriesForType.length === 0 && (
+          {filteredCategories.length === 0 && (
             <option value="" disabled>
-              Tidak ada kategori tersedia
+              Tidak ada kategori
             </option>
           )}
         </select>
       </div>
 
-      {/* Tanggal */}
+      {/* Date */}
       <div>
-        <label
-          htmlFor="date"
-          className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          <Calendar className="w-4 h-4 mr-2" />
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <Calendar className="w-4 h-4" />
           Tanggal
         </label>
         <input
-          id="date"
           type="date"
-          className="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          className="input-modern"
           disabled={isSubmitting}
           required
         />
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:justify-end pt-4">
+      {/* Actions */}
+      <div className="flex gap-3 pt-4">
         <button
           type="button"
-          className="px-6 py-3 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           onClick={() => navigate('/')}
           disabled={isSubmitting}
+          className="btn-secondary flex-1 flex items-center justify-center gap-2"
         >
-          <XCircle className="w-5 h-5 mr-2" />
+          <X className="w-5 h-5" />
           Batal
         </button>
         <button
           type="submit"
-          className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           disabled={isSubmitting}
+          className="btn-primary flex-1 flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-              Menambahkan...
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Menyimpan...</span>
             </>
           ) : (
             <>
-              <CheckCircle className="w-5 h-5 mr-2" />
-              Tambah Transaksi
+              <Check className="w-5 h-5" />
+              <span>Simpan</span>
             </>
           )}
         </button>
       </div>
     </form>
   );
-};
+});
 
 export default AddTransaction;

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, Shield, Key } from 'lucide-react';
-import Breadcrumb from '../components/common/Breadcrumb';
-import PageHeader from '../components/common/PageHeader';
+import { Eye, EyeOff, Lock, Shield, Key, ArrowLeft, Check } from 'lucide-react';
 import PasswordStrengthMeter from '../components/common/PasswordStrengthMeter';
+import { API_BASE_URL } from '../services/api';
 
 const ChangePasswordPage = ({ showToast }) => {
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -13,272 +13,224 @@ const ChangePasswordPage = ({ showToast }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const navigate = useNavigate();
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const isFormValid = useMemo(
+    () =>
+      currentPassword &&
+      newPassword &&
+      confirmNewPassword &&
+      newPassword === confirmNewPassword &&
+      newPassword.length >= 6,
+    [currentPassword, newPassword, confirmNewPassword]
+  );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    if (newPassword !== confirmNewPassword) {
-      showToast('Kata sandi baru tidak cocok', 'error');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      showToast('Kata sandi baru harus minimal 6 karakter', 'error');
-      return;
-    }
-
-    if (currentPassword === newPassword) {
-      showToast('Kata sandi baru harus berbeda dari kata sandi saat ini', 'error');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showToast('Token autentikasi tidak ditemukan. Silakan masuk.', 'error');
-        navigate('/');
+      if (newPassword !== confirmNewPassword) {
+        showToast('Password baru tidak cocok', 'error');
         return;
       }
 
-      const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        showToast('Kata sandi berhasil diubah!', 'success');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmNewPassword('');
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      } else {
-        if (data.sessionInvalidated) {
-          showToast('Akun Anda telah login di perangkat lain', 'warning');
-          localStorage.removeItem('token');
-          localStorage.removeItem('sessionId');
-          navigate('/');
-        } else {
-          showToast(data.error || 'Gagal mengubah kata sandi', 'error');
-        }
+      if (newPassword.length < 6) {
+        showToast('Password minimal 6 karakter', 'error');
+        return;
       }
-    } catch (error) {
-      showToast('Kesalahan mengubah kata sandi: ' + error.message, 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
-  const isFormValid = currentPassword && newPassword && confirmNewPassword &&
-                     newPassword === confirmNewPassword && newPassword.length >= 6;
+      if (currentPassword === newPassword) {
+        showToast('Password baru harus berbeda', 'error');
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          showToast('Silakan login ulang', 'error');
+          navigate('/');
+          return;
+        }
+
+        const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showToast('Password berhasil diubah!', 'success');
+          setTimeout(() => navigate('/'), 1500);
+        } else {
+          showToast(data.error || 'Gagal mengubah password', 'error');
+        }
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [currentPassword, newPassword, confirmNewPassword, showToast, navigate]
+  );
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Breadcrumb */}
-      <Breadcrumb />
-
-      {/* Page Header */}
-      <PageHeader
-        title="Ubah Kata Sandi"
-        subtitle="Perbarui keamanan akun Anda untuk perlindungan yang lebih baik"
-        icon="shield"
-      />
-
-      {/* Change Password Form */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center">
-            <Key className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pembaruan Kata Sandi</h3>
-          </div>
+    <div className="max-w-lg mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <Key className="w-6 h-6 text-white" />
         </div>
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Current Password */}
-                <div>
-                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Kata Sandi Saat Ini
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      id="currentPassword"
-                      className="w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Masukkan kata sandi saat ini"
-                      required
-                      disabled={isSubmitting}
-                      autoComplete="current-password"
-                    />
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      disabled={isSubmitting}
-                    >
-                      {showCurrentPassword ?
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
-                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-                      }
-                    </button>
-                  </div>
-                </div>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Ubah Password</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Perbarui keamanan akun Anda</p>
+        </div>
+      </div>
 
-                {/* New Password */}
-                <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Kata Sandi Baru
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Shield className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      id="newPassword"
-                      className="w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Masukkan kata sandi baru"
-                      required
-                      disabled={isSubmitting}
-                      autoComplete="new-password"
-                      minLength="6"
-                    />
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      disabled={isSubmitting}
-                    >
-                      {showNewPassword ?
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
-                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-                      }
-                    </button>
-                  </div>
-                  <div className="mt-2">
-                    <PasswordStrengthMeter password={newPassword} />
-                  </div>
-                </div>
-
-                {/* Confirm New Password */}
-                <div>
-                  <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Konfirmasi Kata Sandi Baru
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Shield className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      id="confirmNewPassword"
-                      className={`w-full pl-10 pr-12 py-3 bg-white dark:bg-gray-700 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                        confirmNewPassword && newPassword !== confirmNewPassword
-                          ? 'border-red-500 dark:border-red-400'
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}
-                      value={confirmNewPassword}
-                      onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      placeholder="Konfirmasi kata sandi baru Anda"
-                      required
-                      disabled={isSubmitting}
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      disabled={isSubmitting}
-                    >
-                      {showConfirmPassword ?
-                        <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" /> :
-                        <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-                      }
-                    </button>
-                  </div>
-                  {confirmNewPassword && newPassword !== confirmNewPassword && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                      Kata sandi tidak cocok
-                    </p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <div className="space-y-3">
-                  <button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
-                    disabled={!isFormValid || isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Sedang Memperbarui...</span>
-                      </>
-                    ) : (
-                      'Ubah Kata Sandi'
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-3 px-6 rounded-xl transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={() => navigate('/')}
-                    disabled={isSubmitting}
-                  >
-                    Batal
-                  </button>
-                </div>
-              </form>
+      {/* Form */}
+      <div className="glass-card p-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Current Password */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Password Saat Ini
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type={showCurrentPassword ? 'text' : 'password'}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Masukkan password saat ini"
+                required
+                disabled={isSubmitting}
+                className="input-modern pl-12 pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
-          {/* Security Tips */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                <Shield className="w-5 h-5 text-success mr-2" />
-                Tips Keamanan
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="flex items-start">
-                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Gunakan minimal 6 karakter</p>
-                </div>
-                <div className="flex items-start">
-                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Sertakan huruf dan angka</p>
-                </div>
-                <div className="flex items-start">
-                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Jangan gunakan kembali kata sandi lama</p>
-                </div>
-                <div className="flex items-start">
-                  <Shield className="w-4 h-4 text-success mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Jaga kerahasiaan dan keamanannya</p>
-                </div>
-              </div>
+          {/* New Password */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Password Baru
+            </label>
+            <div className="relative">
+              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Masukkan password baru"
+                required
+                disabled={isSubmitting}
+                className="input-modern pl-12 pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
+            <PasswordStrengthMeter password={newPassword} />
           </div>
+
+          {/* Confirm New Password */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Konfirmasi Password Baru
+            </label>
+            <div className="relative">
+              <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                placeholder="Ulangi password baru"
+                required
+                disabled={isSubmitting}
+                className="input-modern pl-12 pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {confirmNewPassword && newPassword !== confirmNewPassword && (
+              <p className="text-sm text-rose-600 mt-1">Password tidak cocok</p>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              disabled={isSubmitting}
+              className="btn-secondary flex-1 flex items-center justify-center gap-2"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={!isFormValid || isSubmitting}
+              className="btn-primary flex-1 flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Menyimpan...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-5 h-5" />
+                  <span>Simpan</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Tips */}
+      <div className="glass-card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield className="w-5 h-5 text-emerald-600" />
+          <h3 className="font-semibold text-slate-900 dark:text-white">Tips Keamanan</h3>
         </div>
+        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+          <li className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-emerald-600" />
+            Gunakan minimal 6 karakter
+          </li>
+          <li className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-emerald-600" />
+            Kombinasikan huruf dan angka
+          </li>
+          <li className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-emerald-600" />
+            Jangan gunakan password yang sama
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 };
 

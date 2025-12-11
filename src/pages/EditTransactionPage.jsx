@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2, AlertCircle, Edit3 } from 'lucide-react';
 import EditTransaction from '../components/transactions/EditTransaction';
-import Breadcrumb from '../components/common/Breadcrumb';
-import PageHeader from '../components/common/PageHeader';
 
 const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, categories }) => {
   const { id } = useParams();
@@ -13,58 +11,40 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // First try to find the transaction in the existing transactions array
-    const existingTransaction = transactions.find(t => t._id === id);
+    const existing = transactions.find((t) => t._id === id);
 
-    if (existingTransaction) {
-      setTransaction(existingTransaction);
+    if (existing) {
+      setTransaction(existing);
       setLoading(false);
     } else {
-      // If not found in the existing transactions, fetch it from the API
       const fetchTransaction = async () => {
         try {
           const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/transactions/${id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           });
           const data = await res.json();
           if (res.ok && data.success) {
             setTransaction(data.data);
           } else {
-            throw new Error(data.error || `Failed to fetch transaction (Status: ${res.status}).`);
+            throw new Error(data.error || 'Transaksi tidak ditemukan');
           }
         } catch (err) {
-          console.error('Error fetching transaction:', err);
-          setError('Transaksi tidak ditemukan atau terjadi kesalahan saat mengambil data');
+          setError(err.message);
           showToast('Transaksi tidak ditemukan', 'error');
         } finally {
           setLoading(false);
         }
       };
-
       fetchTransaction();
     }
   }, [id, transactions, showToast]);
 
-  const handleCancel = () => {
-    navigate(-1); // Go back to the previous page
-  };
-
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 py-6">
-        <Breadcrumb />
-        <PageHeader
-          title="Edit Transaksi"
-          subtitle="Memuat data transaksi..."
-          icon="edit"
-        />
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 p-8">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
-            <p className="text-gray-600 dark:text-gray-400">Memuat data transaksi...</p>
-          </div>
+      <div className="max-w-2xl mx-auto">
+        <div className="glass-card p-12 text-center">
+          <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500">Memuat data transaksi...</p>
         </div>
       </div>
     );
@@ -72,55 +52,46 @@ const EditTransactionPage = ({ onUpdateTransaction, showToast, transactions, cat
 
   if (error || !transaction) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 py-6">
-        <Breadcrumb />
-        <PageHeader
-          title="Edit Transaksi"
-          subtitle="Terjadi kesalahan"
-          icon="alert-triangle"
-        />
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 p-8">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <AlertCircle className="w-12 h-12 text-red-500" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Transaksi Tidak Ditemukan</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-center">{error || 'Transaksi tidak ditemukan atau tidak dapat diakses'}</p>
-            <button
-              className="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-300 flex items-center space-x-2"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Kembali</span>
-            </button>
+      <div className="max-w-2xl mx-auto">
+        <div className="glass-card p-12 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-rose-600" />
           </div>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+            Transaksi Tidak Ditemukan
+          </h3>
+          <p className="text-slate-500 mb-6">{error || 'Transaksi tidak dapat diakses'}</p>
+          <button onClick={() => navigate(-1)} className="btn-primary inline-flex items-center gap-2">
+            <ArrowLeft className="w-5 h-5" />
+            Kembali
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 py-6">
-      <Breadcrumb />
-      <PageHeader
-        title="Edit Transaksi"
-        subtitle="Perbarui detail transaksi Anda"
-        icon="edit-3"
-      />
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden animate-fade-in">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center">
-            <Edit3 className="w-5 h-5 text-gray-600 dark:text-gray-400 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Detail Transaksi</h3>
-          </div>
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <Edit3 className="w-6 h-6 text-white" />
         </div>
-        <div className="p-6">
-          <EditTransaction
-            transaction={transaction}
-            onUpdateTransaction={onUpdateTransaction}
-            showToast={showToast}
-            categories={categories}
-            onCancel={handleCancel}
-          />
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Edit Transaksi</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Perbarui detail transaksi</p>
         </div>
+      </div>
+
+      {/* Form */}
+      <div className="glass-card p-6">
+        <EditTransaction
+          transaction={transaction}
+          onUpdateTransaction={onUpdateTransaction}
+          showToast={showToast}
+          categories={categories}
+          onCancel={() => navigate(-1)}
+        />
       </div>
     </div>
   );
