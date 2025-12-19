@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { Key, Plus, CheckCircle, XCircle, AlertCircle, Calendar, User } from 'lucide-react';
+import Skeleton from '../components/common/Skeleton';
 
 const ActivationCodePage = memo(function ActivationCodePage({ showToast, token }) {
   const [codes, setCodes] = useState([]);
@@ -105,8 +106,43 @@ const ActivationCodePage = memo(function ActivationCodePage({ showToast, token }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-3 border-gray-200 dark:border-gray-700 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+      <div className="space-y-6 animate-fade-in">
+        {/* Header Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <Skeleton className="h-8 w-40 rounded-lg mb-2" />
+            <Skeleton className="h-4 w-56 rounded-lg" />
+          </div>
+          <Skeleton className="h-10 w-32 rounded-lg" />
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="glass-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-50 dark:bg-slate-800/50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Kode</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Digunakan Oleh</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Dibuat</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td className="px-6 py-4"><Skeleton className="h-8 w-28 rounded-lg" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-lg" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-5 w-24 rounded-lg" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-5 w-32 rounded-lg" /></td>
+                    <td className="px-6 py-4"><Skeleton className="h-8 w-24 rounded-lg" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }
