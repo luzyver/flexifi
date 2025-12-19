@@ -19,7 +19,7 @@ const EditTransactionPage = lazy(() => import('./pages/EditTransactionPage'));
 // Components
 import DashboardLayout from './components/layout/DashboardLayout';
 import ConfirmationDialog from './components/common/ConfirmationDialog';
-import LoadingOverlay from './components/common/LoadingOverlay';
+
 import ToastNotification from './components/common/ToastNotification';
 import { formatRupiah } from './utils/formatRupiah';
 
@@ -121,9 +121,13 @@ function AppContent() {
     handleLogout();
   };
 
-  // Loading state
+  // Loading state - simple spinner while checking auth
   if (isAuthLoading) {
-    return <LoadingOverlay isLoading={true} />;
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-200 dark:border-gray-700 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+      </div>
+    );
   }
 
   // Unauthenticated routes
