@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, memo } from 'react';
-import LoadingOverlay from '../components/common/LoadingOverlay';
 import { Key, Plus, CheckCircle, XCircle, AlertCircle, Calendar, User } from 'lucide-react';
 
 const ActivationCodePage = memo(function ActivationCodePage({ showToast, token }) {
@@ -104,10 +103,16 @@ const ActivationCodePage = memo(function ActivationCodePage({ showToast, token }
     );
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 border-3 border-gray-200 dark:border-gray-700 border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <LoadingOverlay isLoading={loading} />
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
